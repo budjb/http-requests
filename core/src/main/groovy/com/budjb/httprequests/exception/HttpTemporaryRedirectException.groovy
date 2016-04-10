@@ -15,10 +15,10 @@
  */
 package com.budjb.httprequests.exception
 
-import com.budjb.httprequests.HttpRequest
+import com.budjb.httprequests.HttpResponse
 
 class HttpTemporaryRedirectException extends HttpResponseException {
-    HttpTemporaryRedirectException(HttpRequest request) {
+    HttpTemporaryRedirectException(HttpResponse request) {
         super(request)
     }
 }
