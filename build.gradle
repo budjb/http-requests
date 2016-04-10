@@ -1,12 +1,3 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.3.3.RELEASE'
-    }
-}
-
 subprojects {
     apply plugin: 'groovy'
 
@@ -57,9 +48,9 @@ subprojects {
         testRuntime "cglib:cglib-nodep:3.1"
         testRuntime "org.objenesis:objenesis:2.1"
 
-        integrationTestCompile 'org.springframework.boot:spring-boot-starter-web'
+        integrationTestCompile 'org.springframework.boot:spring-boot-starter-web:1.3.3.RELEASE'
+        integrationTestCompile 'org.springframework:spring-test:4.2.5.RELEASE'
         integrationTestCompile 'org.spockframework:spock-spring:1.0-groovy-2.3'
-        integrationTestCompile 'org.springframework:spring-test'
     }
 }
 
