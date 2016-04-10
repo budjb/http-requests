@@ -1,0 +1,6 @@
+include 'core'
+include 'jersey1'
+
+rootProject.name = 'http-requests'
+project(':core').name = 'http-requests-core'
+project(':jersey1').name = 'http-requests-jersey1'

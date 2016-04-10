@@ -1,0 +1,78 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.3.3.RELEASE'
+    }
+}
+
+subprojects {
+    apply plugin: 'groovy'
+    apply plugin: 'spring-boot'
+
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+
+    sourceSets {
+        integrationTest {
+            groovy {
+                compileClasspath += main.output
+                runtimeClasspath += main.output
+                srcDir file('src/integration-test/groovy')
+            }
+            resources {
+                srcDir file('src/integration-test/resources')
+            }
+        }
+    }
+
+    configurations {
+        integrationTestCompile.extendsFrom testCompile
+        integrationTestRuntime.extendsFrom testRuntime
+    }
+
+    task(type: Test, 'integrationTest') {
+        group 'Verification'
+        description 'Run integration tests.'
+
+        testClassesDir = sourceSets.integrationTest.output.classesDir
+        classpath = sourceSets.integrationTest.runtimeClasspath
+
+        include '**/*Spec.*'
+        systemProperty 'spring.profiles.active', 'integration'
+
+        outputs.upToDateWhen { false }
+    }.shouldRunAfter test
+
+    check.dependsOn integrationTest
+
+    dependencies {
+        testCompile "org.spockframework:spock-core:1.0-groovy-2.4"
+        testCompile "org.hamcrest:hamcrest-core:1.3"
+        testRuntime "cglib:cglib-nodep:3.1"
+        testRuntime "org.objenesis:objenesis:2.1"
+
+        integrationTestCompile 'org.springframework.boot:spring-boot-starter-web'
+        integrationTestCompile 'org.spockframework:spock-spring:1.0-groovy-2.3'
+        integrationTestCompile 'org.springframework:spring-test'
+    }
+}
+
+project(':http-requests-core') {
+    dependencies {
+        compile 'org.slf4j:slf4j-api:1.7.13'
+        compile 'org.codehaus.groovy:groovy-all:2.4.6'
+    }
+}
+
+project(':http-requests-jersey1') {
+    dependencies {
+        compile project(':http-requests-core')
+        compile 'com.sun.jersey:jersey-client:1.19'
+
+        integrationTestCompile project(':http-requests-core').sourceSets.integrationTest.output
+    }
+}
