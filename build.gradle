@@ -9,7 +9,6 @@ buildscript {
 
 subprojects {
     apply plugin: 'groovy'
-    apply plugin: 'spring-boot'
 
     repositories {
         mavenCentral()
