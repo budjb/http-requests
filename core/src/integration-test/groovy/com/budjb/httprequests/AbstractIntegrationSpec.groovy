@@ -7,10 +7,10 @@ import org.springframework.boot.test.WebIntegrationTest
 import spock.lang.Ignore
 import spock.lang.Specification
 
-@WebIntegrationTest('server.port:0')
-@SpringApplicationConfiguration(TestApp)
 @Ignore
-abstract class BaseIntegrationSpec extends Specification {
+@WebIntegrationTest
+@SpringApplicationConfiguration(TestApp)
+abstract class AbstractIntegrationSpec extends Specification {
     /**
      * HTTP client factory to use with tests.
      */
@@ -45,10 +45,5 @@ abstract class BaseIntegrationSpec extends Specification {
      */
     def setup() {
         httpClientFactory = createHttpClientFactory()
-    }
-
-    def 'make sure it works!'() {
-        expect:
-        httpClientFactory.createHttpClient().get(new HttpRequest(uri: "${baseUrl}/test")).entityAsString == '{"foo":"bar"}'
     }
 }

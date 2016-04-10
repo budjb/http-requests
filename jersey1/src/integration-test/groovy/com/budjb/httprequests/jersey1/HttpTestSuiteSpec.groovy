@@ -1,9 +1,9 @@
 package com.budjb.httprequests.jersey1
 
-import com.budjb.httprequests.BaseIntegrationSpec
 import com.budjb.httprequests.HttpClientFactory
+import com.budjb.httprequests.HttpIntegrationTestSuiteSpec
 
-class Jersey1Spec extends BaseIntegrationSpec {
+class HttpTestSuiteSpec extends HttpIntegrationTestSuiteSpec {
     /**
      * Create an HTTP client factory to use with tests.
      *

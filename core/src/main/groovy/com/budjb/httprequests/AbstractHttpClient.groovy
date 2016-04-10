@@ -10,9 +10,10 @@ abstract class AbstractHttpClient implements HttpClient {
      *
      * @param request
      * @return
+     * @throws IOException
      */
     @Override
-    HttpResponse get(HttpRequest request) {
+    HttpResponse get(HttpRequest request) throws IOException {
         return execute(HttpMethod.GET, request)
     }
 
@@ -21,9 +22,10 @@ abstract class AbstractHttpClient implements HttpClient {
      *
      * @param request
      * @return
+     * @throws IOException
      */
     @Override
-    HttpResponse post(HttpRequest request) {
+    HttpResponse post(HttpRequest request) throws IOException {
         return execute(HttpMethod.POST, request)
     }
 
@@ -33,9 +35,10 @@ abstract class AbstractHttpClient implements HttpClient {
      * @param request
      * @param entity
      * @return
+     * @throws IOException
      */
     @Override
-    HttpResponse post(HttpRequest request, byte[] entity) {
+    HttpResponse post(HttpRequest request, byte[] entity) throws IOException {
         return execute(HttpMethod.POST, request, entity)
     }
 
@@ -45,9 +48,10 @@ abstract class AbstractHttpClient implements HttpClient {
      * @param request
      * @param entity
      * @return
+     * @throws IOException
      */
     @Override
-    HttpResponse post(HttpRequest request, String entity) {
+    HttpResponse post(HttpRequest request, String entity) throws IOException {
         return execute(HttpMethod.POST, request, entity)
     }
 
@@ -57,9 +61,10 @@ abstract class AbstractHttpClient implements HttpClient {
      * @param request
      * @param inputStream
      * @return
+     * @throws IOException
      */
     @Override
-    HttpResponse post(HttpRequest request, InputStream inputStream) {
+    HttpResponse post(HttpRequest request, InputStream inputStream) throws IOException {
         return execute(HttpMethod.POST, request, inputStream)
     }
 
@@ -68,9 +73,10 @@ abstract class AbstractHttpClient implements HttpClient {
      *
      * @param request
      * @return
+     * @throws IOException
      */
     @Override
-    HttpResponse put(HttpRequest request) {
+    HttpResponse put(HttpRequest request) throws IOException {
         return execute(HttpMethod.PUT, request)
     }
 
@@ -80,9 +86,10 @@ abstract class AbstractHttpClient implements HttpClient {
      * @param request
      * @param entity
      * @return
+     * @throws IOException
      */
     @Override
-    HttpResponse put(HttpRequest request, byte[] entity) {
+    HttpResponse put(HttpRequest request, byte[] entity) throws IOException {
         return execute(HttpMethod.PUT, request, entity)
     }
 
@@ -92,9 +99,10 @@ abstract class AbstractHttpClient implements HttpClient {
      * @param request
      * @param entity
      * @return
+     * @throws IOException
      */
     @Override
-    HttpResponse put(HttpRequest request, String entity) {
+    HttpResponse put(HttpRequest request, String entity) throws IOException {
         return execute(HttpMethod.PUT, request, entity)
     }
 
@@ -104,9 +112,10 @@ abstract class AbstractHttpClient implements HttpClient {
      * @param request
      * @param inputStream
      * @return
+     * @throws IOException
      */
     @Override
-    HttpResponse put(HttpRequest request, InputStream inputStream) {
+    HttpResponse put(HttpRequest request, InputStream inputStream) throws IOException {
         return execute(HttpMethod.PUT, request, inputStream)
     }
 
@@ -115,9 +124,10 @@ abstract class AbstractHttpClient implements HttpClient {
      *
      * @param request
      * @return
+     * @throws IOException
      */
     @Override
-    HttpResponse delete(HttpRequest request) {
+    HttpResponse delete(HttpRequest request) throws IOException {
         return execute(HttpMethod.DELETE, request)
     }
 
@@ -126,9 +136,10 @@ abstract class AbstractHttpClient implements HttpClient {
      *
      * @param request
      * @return
+     * @throws IOException
      */
     @Override
-    HttpResponse options(HttpRequest request) {
+    HttpResponse options(HttpRequest request) throws IOException {
         return execute(HttpMethod.OPTIONS, request)
     }
 
@@ -138,9 +149,10 @@ abstract class AbstractHttpClient implements HttpClient {
      * @param request
      * @param entity
      * @return
+     * @throws IOException
      */
     @Override
-    HttpResponse options(HttpRequest request, byte[] entity) {
+    HttpResponse options(HttpRequest request, byte[] entity) throws IOException {
         return execute(HttpMethod.OPTIONS, request, entity)
     }
 
@@ -150,9 +162,10 @@ abstract class AbstractHttpClient implements HttpClient {
      * @param request
      * @param entity
      * @return
+     * @throws IOException
      */
     @Override
-    HttpResponse options(HttpRequest request, String entity) {
+    HttpResponse options(HttpRequest request, String entity) throws IOException {
         return execute(HttpMethod.OPTIONS, request, entity)
     }
 
@@ -162,9 +175,10 @@ abstract class AbstractHttpClient implements HttpClient {
      * @param request
      * @param inputStream
      * @return
+     * @throws IOException
      */
     @Override
-    HttpResponse options(HttpRequest request, InputStream inputStream) {
+    HttpResponse options(HttpRequest request, InputStream inputStream) throws IOException {
         return execute(HttpMethod.OPTIONS, request, inputStream)
     }
 
@@ -173,9 +187,10 @@ abstract class AbstractHttpClient implements HttpClient {
      *
      * @param request
      * @return
+     * @throws IOException
      */
     @Override
-    HttpResponse head(HttpRequest request) {
+    HttpResponse head(HttpRequest request) throws IOException {
         return execute(HttpMethod.HEAD, request)
     }
 
@@ -184,9 +199,10 @@ abstract class AbstractHttpClient implements HttpClient {
      *
      * @param request
      * @return
+     * @throws IOException
      */
     @Override
-    HttpResponse trace(HttpRequest request) {
+    HttpResponse trace(HttpRequest request) throws IOException {
         return execute(HttpMethod.TRACE, request)
     }
 }

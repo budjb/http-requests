@@ -7,8 +7,9 @@ interface HttpClient {
      * @param method
      * @param request
      * @return
+     * @throws IOException
      */
-    HttpResponse execute(HttpMethod method, HttpRequest request)
+    HttpResponse execute(HttpMethod method, HttpRequest request) throws IOException
 
     /**
      * Executes an HTTP request with the given method, request parameters, and request entity.
@@ -17,8 +18,9 @@ interface HttpClient {
      * @param request
      * @param entity
      * @return
+     * @throws IOException
      */
-    HttpResponse execute(HttpMethod method, HttpRequest request, byte[] entity)
+    HttpResponse execute(HttpMethod method, HttpRequest request, byte[] entity) throws IOException
 
     /**
      * Executes an HTTP request with the given method, request parameters, and request entity.
@@ -27,8 +29,9 @@ interface HttpClient {
      * @param request
      * @param entity
      * @return
+     * @throws IOException
      */
-    HttpResponse execute(HttpMethod method, HttpRequest request, String entity)
+    HttpResponse execute(HttpMethod method, HttpRequest request, String entity) throws IOException
 
     /**
      * Executes an HTTP request with the given method, request parameters, and input stream.
@@ -37,24 +40,27 @@ interface HttpClient {
      * @param request
      * @param inputStream
      * @return
+     * @throws IOException
      */
-    HttpResponse execute(HttpMethod method, HttpRequest request, InputStream inputStream)
+    HttpResponse execute(HttpMethod method, HttpRequest request, InputStream inputStream) throws IOException
 
     /**
      * Perform an HTTP GET request.
      *
      * @param request
      * @return
+     * @throws IOException
      */
-    HttpResponse get(HttpRequest request)
+    HttpResponse get(HttpRequest request) throws IOException
 
     /**
      * Perform an HTTP POST request without a request entity.
      *
      * @param request
      * @return
+     * @throws IOException
      */
-    HttpResponse post(HttpRequest request)
+    HttpResponse post(HttpRequest request) throws IOException
 
     /**
      * Perform an HTTP POST request with the given request entity.
@@ -62,8 +68,9 @@ interface HttpClient {
      * @param request
      * @param entity
      * @return
+     * @throws IOException
      */
-    HttpResponse post(HttpRequest request, byte[] entity)
+    HttpResponse post(HttpRequest request, byte[] entity) throws IOException
 
     /**
      * Perform an HTTP POST request with the given request entity.
@@ -71,8 +78,9 @@ interface HttpClient {
      * @param request
      * @param entity
      * @return
+     * @throws IOException
      */
-    HttpResponse post(HttpRequest request, String entity)
+    HttpResponse post(HttpRequest request, String entity) throws IOException
 
     /**
      * Perform an HTTP POST request with the given input stream.
@@ -80,16 +88,18 @@ interface HttpClient {
      * @param request
      * @param inputStream
      * @return
+     * @throws IOException
      */
-    HttpResponse post(HttpRequest request, InputStream inputStream)
+    HttpResponse post(HttpRequest request, InputStream inputStream) throws IOException
 
     /**
      * Perform an HTTP PUT request without a request entity.
      *
      * @param request
      * @return
+     * @throws IOException
      */
-    HttpResponse put(HttpRequest request)
+    HttpResponse put(HttpRequest request) throws IOException
 
     /**
      * Perform an HTTP PUT request with the given request entity.
@@ -97,8 +107,9 @@ interface HttpClient {
      * @param request
      * @param entity
      * @return
+     * @throws IOException
      */
-    HttpResponse put(HttpRequest request, byte[] entity)
+    HttpResponse put(HttpRequest request, byte[] entity) throws IOException
 
     /**
      * Perform an HTTP PUT request with the given request entity.
@@ -106,8 +117,9 @@ interface HttpClient {
      * @param request
      * @param entity
      * @return
+     * @throws IOException
      */
-    HttpResponse put(HttpRequest request, String entity)
+    HttpResponse put(HttpRequest request, String entity) throws IOException
 
     /**
      * Perform an HTTP PUT request with the given input stream..
@@ -115,24 +127,27 @@ interface HttpClient {
      * @param request
      * @param inputStream
      * @return
+     * @throws IOException
      */
-    HttpResponse put(HttpRequest request, InputStream inputStream)
+    HttpResponse put(HttpRequest request, InputStream inputStream) throws IOException
 
     /**
      * Perform an HTTP DELETE request.
      *
      * @param request
      * @return
+     * @throws IOException
      */
-    HttpResponse delete(HttpRequest request)
+    HttpResponse delete(HttpRequest request) throws IOException
 
     /**
      * Perform an HTTP OPTIONS request.
      *
      * @param request
      * @return
+     * @throws IOException
      */
-    HttpResponse options(HttpRequest request)
+    HttpResponse options(HttpRequest request) throws IOException
 
     /**
      * Perform an HTTP OPTIONS request with the given request entity.
@@ -140,8 +155,9 @@ interface HttpClient {
      * @param request
      * @param entity
      * @return
+     * @throws IOException
      */
-    HttpResponse options(HttpRequest request, byte[] entity)
+    HttpResponse options(HttpRequest request, byte[] entity) throws IOException
 
     /**
      * Perform an HTTP OPTIONS request with the given request entity.
@@ -149,8 +165,9 @@ interface HttpClient {
      * @param request
      * @param entity
      * @return
+     * @throws IOException
      */
-    HttpResponse options(HttpRequest request, String entity)
+    HttpResponse options(HttpRequest request, String entity) throws IOException
 
     /**
      * Perform an HTTP OPTIONS request with the given input stream.
@@ -158,22 +175,25 @@ interface HttpClient {
      * @param request
      * @param inputStream
      * @return
+     * @throws IOException
      */
-    HttpResponse options(HttpRequest request, InputStream inputStream)
+    HttpResponse options(HttpRequest request, InputStream inputStream) throws IOException
 
     /**
      * Perform an HTTP HEAD request.
      *
      * @param request
      * @return
+     * @throws IOException
      */
-    HttpResponse head(HttpRequest request)
+    HttpResponse head(HttpRequest request) throws IOException
 
     /**
      * Perform an HTTP TRACE request.
      *
      * @param request
      * @return
+     * @throws IOException
      */
-    HttpResponse trace(HttpRequest request)
+    HttpResponse trace(HttpRequest request) throws IOException
 }

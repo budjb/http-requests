@@ -6,6 +6,7 @@ import com.budjb.httprequests.HttpRequest
 import com.budjb.httprequests.HttpResponse
 import com.budjb.httprequests.exception.HttpResponseException
 import com.sun.jersey.api.client.Client
+import com.sun.jersey.api.client.ClientHandlerException
 import com.sun.jersey.api.client.ClientResponse
 import com.sun.jersey.api.client.WebResource
 import com.sun.jersey.api.client.config.ClientConfig
@@ -26,9 +27,10 @@ class JerseyHttpClient extends AbstractHttpClient {
      * @param method
      * @param request
      * @return
+     * @throws IOException
      */
     @Override
-    HttpResponse execute(HttpMethod method, HttpRequest request) {
+    HttpResponse execute(HttpMethod method, HttpRequest request) throws IOException {
         return doExecute(method, request)
     }
 
@@ -39,9 +41,10 @@ class JerseyHttpClient extends AbstractHttpClient {
      * @param request
      * @param entity
      * @return
+     * @throws IOException
      */
     @Override
-    HttpResponse execute(HttpMethod method, HttpRequest request, byte[] entity) {
+    HttpResponse execute(HttpMethod method, HttpRequest request, byte[] entity) throws IOException {
         return doExecute(method, request, entity)
     }
 
@@ -52,9 +55,10 @@ class JerseyHttpClient extends AbstractHttpClient {
      * @param request
      * @param entity
      * @return
+     * @throws IOException
      */
     @Override
-    HttpResponse execute(HttpMethod method, HttpRequest request, String entity) {
+    HttpResponse execute(HttpMethod method, HttpRequest request, String entity) throws IOException {
         return doExecute(method, request, entity)
     }
 
@@ -65,9 +69,10 @@ class JerseyHttpClient extends AbstractHttpClient {
      * @param request
      * @param inputStream
      * @return
+     * @throws IOException
      */
     @Override
-    HttpResponse execute(HttpMethod method, HttpRequest request, InputStream inputStream) {
+    HttpResponse execute(HttpMethod method, HttpRequest request, InputStream inputStream) throws IOException {
         return doExecute(method, request, inputStream)
     }
 
@@ -77,7 +82,7 @@ class JerseyHttpClient extends AbstractHttpClient {
      * @return Configured jersey client
      */
     protected Client createClient(HttpRequest request) {
-        if (!request.isSslValidated()) {
+        if (request.isSslValidated()) {
             return Client.create()
         }
 
@@ -125,8 +130,9 @@ class JerseyHttpClient extends AbstractHttpClient {
      * @param request
      * @param entity
      * @return
+     * @throws IOException
      */
-    protected HttpResponse doExecute(HttpMethod method, HttpRequest request, Object entity) {
+    protected HttpResponse doExecute(HttpMethod method, HttpRequest request, Object entity) throws IOException {
         Client client = createClient(request)
 
         WebResource resource = client.resource(request.getUri())
@@ -149,11 +155,19 @@ class JerseyHttpClient extends AbstractHttpClient {
         }
 
         ClientResponse response
-        if (entity != null) {
-            response = builder.method(method.toString(), ClientResponse, entity)
+        try {
+            if (entity != null) {
+                response = builder.method(method.toString(), ClientResponse, entity)
+            }
+            else {
+                response = builder.method(method.toString(), ClientResponse)
+            }
         }
-        else {
-            response = builder.method(method.toString(), ClientResponse)
+        catch (ClientHandlerException e) {
+            if (e.getCause() instanceof IOException) {
+                throw e.getCause()
+            }
+            throw e
         }
 
         return buildResponse(request, response)
@@ -178,7 +192,7 @@ class JerseyHttpClient extends AbstractHttpClient {
         }
 
         if (request.isThrowStatusExceptions() && clientResponse.getStatus() >= 400) {
-            throw new HttpResponseException(response)
+            throw HttpResponseException.build(response)
         }
 
         return response
