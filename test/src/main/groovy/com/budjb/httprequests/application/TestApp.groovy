@@ -18,23 +18,18 @@ class TestApp {
         SpringApplication.run(TestApp, args)
     }
 
-    @RequestMapping(value = '/test', method = RequestMethod.GET, produces = 'application/json;charset=ISO-8859-8')
-    Map index() {
-        return [foo: 'bar']
-    }
-
     @RequestMapping(value = '/testBasicGet', method = RequestMethod.GET, produces = 'text/plain')
     String testBasicGet() {
         return "The quick brown fox jumps over the lazy dog."
     }
 
     @RequestMapping(value = '/testBasicPost', method = RequestMethod.POST, produces = 'text/plain')
-    String testBasicPost(String entity) {
+    String testBasicPost(@RequestBody String entity) {
         return entity
     }
 
     @RequestMapping(value = '/testBasicPut', method = RequestMethod.PUT, produces = 'text/plain')
-    String testBasicPut(String entity) {
+    String testBasicPut(@RequestBody String entity) {
         return entity
     }
 
@@ -99,19 +94,17 @@ class TestApp {
     }
 
     @RequestMapping(value = '/test500', method = RequestMethod.GET)
-    void test500(HttpServletResponse response) {
-        response.getWriter().write('something bad happened')
-        response.setStatus(500)
+    ResponseEntity<String> test500() {
+        return new ResponseEntity<String>('something bad happened', HttpStatus.valueOf(500))
     }
 
     @RequestMapping(value = '/testAuth', method = RequestMethod.GET, produces = 'text/plain')
-    void testAuth(@RequestHeader('Authorization') authorization, HttpServletResponse response) {
+    ResponseEntity<String> testAuth(@RequestHeader('Authorization') authorization) {
         if (authorization) {
-            response.getWriter().write('authentication required')
-            response.setStatus(401)
+            return new ResponseEntity<String>('authentication required', HttpStatus.valueOf(401))
         }
         else {
-            response.getWriter().write('welcome')
+            return new ResponseEntity<String>('welcome', HttpStatus.valueOf(200))
         }
     }
 }

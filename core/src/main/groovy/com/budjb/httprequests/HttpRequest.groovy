@@ -32,6 +32,16 @@ class HttpRequest {
     String charset = 'UTF-8'
 
     /**
+     * The read timeout of the HTTP connection, in milliseconds. Defaults to 0 (infinity).
+     */
+    int readTimeout = 0
+
+    /**
+     * The connection timeout of the HTTP connection, in milliseconds. Defaults to 0 (infinity).
+     */
+    int connectionTimeout = 0
+
+    /**
      * Whether SSL certificates will be validated.
      */
     boolean sslValidated = true
@@ -40,6 +50,11 @@ class HttpRequest {
      * Whether the client should throw an exception for a non-2XX HTTP status.
      */
     boolean throwStatusExceptions = true
+
+    /**
+     * Whether the client should automatically follow redirects.
+     */
+    boolean followRedirects = true
 
     /**
      * Base constructor.

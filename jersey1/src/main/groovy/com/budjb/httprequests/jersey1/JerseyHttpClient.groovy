@@ -14,6 +14,7 @@ import com.sun.jersey.api.client.config.DefaultClientConfig
 import com.sun.jersey.client.urlconnection.HTTPSProperties
 
 import javax.net.ssl.*
+import javax.ws.rs.core.MultivaluedMap
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
 
@@ -135,12 +136,35 @@ class JerseyHttpClient extends AbstractHttpClient {
     protected HttpResponse doExecute(HttpMethod method, HttpRequest request, Object entity) throws IOException {
         Client client = createClient(request)
 
+        client.setReadTimeout(request.getReadTimeout())
+        client.setConnectTimeout(request.getConnectionTimeout())
+        client.setFollowRedirects(request.isFollowRedirects())
+
         WebResource resource = client.resource(request.getUri())
 
-        request.addQueryParameters(request.getQueryParameters())
-        request.addHeaders(request.getHeaders())
+        request.getQueryParameters().each { name, values ->
+            if (values instanceof Collection) {
+                values.each { value ->
+                    resource = resource.queryParam(name, value.toString())
+                }
+            }
+            else {
+                resource = resource.queryParam(name, values.toString())
+            }
+        }
 
         WebResource.Builder builder = resource.getRequestBuilder()
+
+        request.getHeaders().each { name, values ->
+            if (values instanceof Collection) {
+                values.each { value ->
+                    builder = builder.header(name, value.toString())
+                }
+            }
+            else {
+                builder = builder.header(name, values.toString())
+            }
+        }
 
         if (request.getContentType()) {
             String contentType = request.getContentType()
@@ -185,13 +209,13 @@ class JerseyHttpClient extends AbstractHttpClient {
 
         response.setStatus(clientResponse.getStatus())
         response.setEntity(clientResponse.getEntity(byte[]))
-        response.setContentType(clientResponse.getType().toString())
+        response.setContentType(clientResponse.getType()?.toString())
         response.setHeaders(clientResponse.getHeaders())
-        if (clientResponse.getType().getParameters().containsKey('charset')) {
+        if (clientResponse.getType()?.getParameters()?.containsKey('charset')) {
             response.setCharset(clientResponse.getType().getParameters().get('charset'))
         }
 
-        if (request.isThrowStatusExceptions() && clientResponse.getStatus() >= 400) {
+        if (request.isThrowStatusExceptions() && clientResponse.getStatus() >= 300) {
             throw HttpResponseException.build(response)
         }
 
