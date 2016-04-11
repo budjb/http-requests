@@ -96,11 +96,11 @@ configure(subprojects.findAll { it.name != 'test' }) {
         publications = ['maven']
         publish = true
         pkg {
-            repo = 'generic' // TODO: change this
+            repo = 'maven'
             name = "${artifactIdBaseName}-${project.name}"
             desc = projectDescription
             websiteUrl = 'https://github.com/budjb/http-requests'
-            issueTrackerUrl = 'https://github.com/budjb/http-request/issues'
+            issueTrackerUrl = 'https://github.com/budjb/http-requests/issues'
             vcsUrl = 'https://github.com/budjb/http-requests.git'
             licenses = ['Apache-2.0']
             publicDownloadNumbers = true
