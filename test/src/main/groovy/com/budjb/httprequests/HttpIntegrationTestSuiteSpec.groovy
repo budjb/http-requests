@@ -187,25 +187,36 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         response.status == 500
     }
 
-    /*
-    def 'Tests the form parameter of the request builder'() {}
-        def response = jerseyRequestBuilder.post {
-            uri = getUri('/test/testParams')
-            form = ['foo': 'bar', 'key': 'value']
-        }
-        assert response == ['foo': 'bar', 'key': 'value']
+    def 'Tests the form parameter of the request builder'() {
+        setup:
+        FormData formData = new FormData()
+        formData.addField('foo', 'bar')
+        formData.addField('key', 'value')
+
+
+        when:
+        def response = httpClientFactory.createHttpClient().post(new HttpRequest(uri: "${baseUrl}/testForm"), formData)
+
+        then:
+        response.entityAsJson == ['foo': ['bar'], 'key': ['value']]
     }
 
     def 'Tests the form parameter when it has multivalued entries'() {
-        def response = jerseyRequestBuilder.post {
-            uri = getUri('/test/testParams')
-            addFormField 'foo', 'bar'
-            addFormField 'foo', 'baz'
-            addFormField 'hi', 'there'
-        }
-        assert response == ['foo': ['bar', 'baz'], 'hi': 'there']
+        setup:
+        FormData formData = new FormData()
+        formData.addField('foo', 'bar')
+        formData.addField('foo', 'baz')
+        formData.addField('key', 'value')
+
+
+        when:
+        def response = httpClientFactory.createHttpClient().post(new HttpRequest(uri: "${baseUrl}/testForm"), formData)
+
+        then:
+        response.entityAsJson == ['foo': ['bar', 'baz'], 'key': ['value']]
     }
 
+    /*
     def 'Test basic auth functionality'() {
         when:
         httpClientFactory.createHttpClient().get(new HttpRequest(uri: "${baseUrl}/testAuth"))

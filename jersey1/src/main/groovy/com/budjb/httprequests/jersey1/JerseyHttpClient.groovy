@@ -1,9 +1,11 @@
 package com.budjb.httprequests.jersey1
 
 import com.budjb.httprequests.AbstractHttpClient
+import com.budjb.httprequests.FormData
 import com.budjb.httprequests.HttpMethod
 import com.budjb.httprequests.HttpRequest
 import com.budjb.httprequests.HttpResponse
+import com.budjb.httprequests.StreamingHttpResponse
 import com.budjb.httprequests.exception.HttpResponseException
 import com.sun.jersey.api.client.Client
 import com.sun.jersey.api.client.ClientHandlerException
@@ -11,6 +13,7 @@ import com.sun.jersey.api.client.ClientResponse
 import com.sun.jersey.api.client.WebResource
 import com.sun.jersey.api.client.config.ClientConfig
 import com.sun.jersey.api.client.config.DefaultClientConfig
+import com.sun.jersey.api.representation.Form
 import com.sun.jersey.client.urlconnection.HTTPSProperties
 
 import javax.net.ssl.*
@@ -75,6 +78,20 @@ class JerseyHttpClient extends AbstractHttpClient {
     @Override
     HttpResponse execute(HttpMethod method, HttpRequest request, InputStream inputStream) throws IOException {
         return doExecute(method, request, inputStream)
+    }
+
+    /**
+     * Executes an HTTP request with the given method, request parameters, and form data.
+     *
+     * @param method
+     * @param request
+     * @param form
+     * @return
+     * @throws IOException
+     */
+    @Override
+    HttpResponse execute(HttpMethod method, HttpRequest request, FormData form) throws IOException {
+        return doExecute(method, request, form.getElements() as Form)
     }
 
     /**
@@ -205,10 +222,17 @@ class JerseyHttpClient extends AbstractHttpClient {
      * @return
      */
     protected HttpResponse buildResponse(HttpRequest request, ClientResponse clientResponse) {
-        HttpResponse response = new HttpResponse()
+        HttpResponse response
+        if (request.isStreamingResponse()) {
+            response = new StreamingHttpResponse()
+            response.setInputStream(clientResponse.getEntityInputStream())
+        }
+        else {
+            response = new HttpResponse()
+            response.setEntity(clientResponse.getEntity(byte[]))
+        }
 
         response.setStatus(clientResponse.getStatus())
-        response.setEntity(clientResponse.getEntity(byte[]))
         response.setContentType(clientResponse.getType()?.toString())
         response.setHeaders(clientResponse.getHeaders())
         if (clientResponse.getType()?.getParameters()?.containsKey('charset')) {

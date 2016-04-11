@@ -69,6 +69,19 @@ abstract class AbstractHttpClient implements HttpClient {
     }
 
     /**
+     * Perform an HTTP POST request with the given form data.
+     *
+     * @param request
+     * @param form
+     * @return
+     * @throws IOException
+     */
+    @Override
+    HttpResponse post(HttpRequest request, FormData form) throws IOException {
+        return execute(HttpMethod.POST, request, form)
+    }
+
+    /**
      * Perform an HTTP PUT request without a request entity.
      *
      * @param request
@@ -117,6 +130,19 @@ abstract class AbstractHttpClient implements HttpClient {
     @Override
     HttpResponse put(HttpRequest request, InputStream inputStream) throws IOException {
         return execute(HttpMethod.PUT, request, inputStream)
+    }
+
+    /**
+     * Perform an HTTP PUT request with the given input stream.
+     *
+     * @param request
+     * @param form
+     * @return
+     * @throws IOException
+     */
+    @Override
+    HttpResponse put(HttpRequest request, FormData form) throws IOException {
+        return execute(HttpMethod.PUT, request, form)
     }
 
     /**

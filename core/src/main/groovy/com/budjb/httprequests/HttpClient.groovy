@@ -45,6 +45,17 @@ interface HttpClient {
     HttpResponse execute(HttpMethod method, HttpRequest request, InputStream inputStream) throws IOException
 
     /**
+     * Executes an HTTP request with the given method, request parameters, and form data.
+     *
+     * @param method
+     * @param request
+     * @param form
+     * @return
+     * @throws IOException
+     */
+    HttpResponse execute(HttpMethod method, HttpRequest request, FormData form) throws IOException
+
+    /**
      * Perform an HTTP GET request.
      *
      * @param request
@@ -93,6 +104,16 @@ interface HttpClient {
     HttpResponse post(HttpRequest request, InputStream inputStream) throws IOException
 
     /**
+     * Perform an HTTP POST request with the given form data.
+     *
+     * @param request
+     * @param form
+     * @return
+     * @throws IOException
+     */
+    HttpResponse post(HttpRequest request, FormData form) throws IOException
+
+    /**
      * Perform an HTTP PUT request without a request entity.
      *
      * @param request
@@ -130,6 +151,16 @@ interface HttpClient {
      * @throws IOException
      */
     HttpResponse put(HttpRequest request, InputStream inputStream) throws IOException
+
+    /**
+     * Perform an HTTP PUT request with the given form data.
+     *
+     * @param request
+     * @param form
+     * @return
+     * @throws IOException
+     */
+    HttpResponse put(HttpRequest request, FormData form) throws IOException
 
     /**
      * Perform an HTTP DELETE request.

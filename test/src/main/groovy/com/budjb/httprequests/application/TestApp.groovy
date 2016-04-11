@@ -107,4 +107,9 @@ class TestApp {
             return new ResponseEntity<String>('welcome', HttpStatus.valueOf(200))
         }
     }
+
+    @RequestMapping(value = '/testForm', method = RequestMethod.POST, produces = 'text/plain')
+    String testForm(@RequestBody MultiValueMap<String,String> formData) {
+        return new JsonBuilder(formData).toString()
+    }
 }

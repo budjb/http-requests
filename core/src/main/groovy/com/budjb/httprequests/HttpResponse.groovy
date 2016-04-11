@@ -45,7 +45,7 @@ class HttpResponse {
      * @return
      */
     String getEntityAsString() {
-        return new String(entity, charset)
+        return new String(getEntity(), charset)
     }
 
     /**
@@ -54,7 +54,7 @@ class HttpResponse {
      * @return
      */
     Object getEntityAsJson() {
-        return new JsonSlurper().parse(entity, charset)
+        return new JsonSlurper().parse(getEntity(), charset)
     }
 
     /**

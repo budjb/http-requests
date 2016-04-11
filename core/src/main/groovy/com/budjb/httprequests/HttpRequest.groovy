@@ -57,6 +57,13 @@ class HttpRequest {
     boolean followRedirects = true
 
     /**
+     * Whether the response should expose the response entity as an input stream. When true, a response of type
+     * {@link StreamingHttpResponse} is returned. It is important to note that these object needs to be closed
+     * before they are disposed of.
+     */
+    boolean streamingResponse = false
+
+    /**
      * Base constructor.
      */
     HttpRequest() { void }
@@ -155,6 +162,30 @@ class HttpRequest {
      */
     HttpRequest addHeaders(Map<String, List<String>> headers) {
         this.headers.putAll(headers)
+        return this
+    }
+
+    /**
+     * Overwrites the given header and sets it to the given value.
+     *
+     * @param name
+     * @param value
+     * @return
+     */
+    HttpRequest setHeader(String name, String value) {
+        headers.put(name, [value])
+        return this
+    }
+
+    /**
+     * Overwrites the given header and sets it to the given list of values.
+     *
+     * @param name
+     * @param values
+     * @return
+     */
+    HttpRequest setHeader(String name, List<String> values) {
+        headers.put(name, values)
         return this
     }
 
