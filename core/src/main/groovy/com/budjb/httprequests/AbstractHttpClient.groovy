@@ -413,7 +413,7 @@ abstract class AbstractHttpClient implements HttpClient {
     /**
      * Orchestrates making the HTTP request. Fires appropriate listener events and hands off to the implementation
      * to perform the actual HTTP request.
-     * 
+     *
      * @param request
      * @param action
      * @return

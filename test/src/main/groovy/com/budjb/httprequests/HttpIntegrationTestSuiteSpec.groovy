@@ -5,11 +5,13 @@ import com.budjb.httprequests.exception.HttpInternalServerErrorException
 import com.budjb.httprequests.exception.HttpNotAcceptableException
 import com.budjb.httprequests.exception.HttpUnauthorizedException
 import com.budjb.httprequests.listener.BasicAuthListener
+import com.budjb.httprequests.listener.HttpClientListener
+import com.budjb.httprequests.listener.HttpClientRetryListener
 import spock.lang.Ignore
 
 @Ignore
 abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
-    def 'Test simple usage of the GET method'() {
+    def 'When a GET request is made to /testBasicGet, the proper response is received'() {
         when:
         def response = httpClientFactory.createHttpClient().get(new HttpRequest(uri: "${baseUrl}/testBasicGet"))
 
@@ -17,7 +19,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         response.getEntityAsString() == 'The quick brown fox jumps over the lazy dog.'
     }
 
-    def 'Test simple usage of the DELETE method'() {
+    def 'When a DELETE request is made to /testBasicDelete, the proper response is received'() {
         when:
         def response = httpClientFactory.createHttpClient().delete(new HttpRequest(uri: "${baseUrl}/testBasicDelete"))
 
@@ -25,7 +27,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         response.entityAsString == "Please don't hurt me!"
     }
 
-    def 'Test simple usage of the POST method'() {
+    def 'When a POST request is made to /testBasicPost, the proper response is received'() {
         when:
         def response = httpClientFactory.createHttpClient().post(
             new HttpRequest(uri: "${baseUrl}/testBasicPost"),
@@ -36,7 +38,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         response.entityAsString == "Please don't play the repeating game!"
     }
 
-    def 'Test simple usage of the PUT method'() {
+    def 'When a PUT request is made to /testBasicPut, the proper response is received'() {
         when:
         def response = httpClientFactory.createHttpClient().put(
             new HttpRequest(uri: "${baseUrl}/testBasicPut"),
@@ -47,7 +49,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         response.entityAsString == "Please don't play the repeating game!"
     }
 
-    def 'Tests that the accept header is received and respected by the server'() {
+    def 'When an Accept header is assigned, the server receives and processes it correctly'() {
         when:
         def response = httpClientFactory.createHttpClient().get(new HttpRequest(
             uri: "${baseUrl}/testAccept",
@@ -58,7 +60,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         response.entityAsString == 'I am plain text.'
     }
 
-    def 'Tests that an unacceptable accept type is handled and the correct exception thrown'() {
+    def 'When an unknown Accept header is assigned, the server receives it and returns an error'() {
         when:
         httpClientFactory.createHttpClient().get(new HttpRequest(
             uri: "${baseUrl}/testAccept",
@@ -69,7 +71,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         thrown HttpNotAcceptableException
     }
 
-    def 'Tests the read timeout handling'() {
+    def 'When a read timeout is reached, a SocketTimeoutException occurs'() {
         when:
         httpClientFactory.createHttpClient().get(new HttpRequest(
             uri: "${baseUrl}/testReadTimeout",
@@ -80,7 +82,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         thrown SocketTimeoutException
     }
 
-    def 'Tests the binary entity of the response'() {
+    def 'When a call to /testBasicGet is made, the proper byte stream is received'() {
         when:
         def response = httpClientFactory.createHttpClient().get(new HttpRequest(uri: "${baseUrl}/testBasicGet"))
 
@@ -88,7 +90,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         response.entity == [84, 104, 101, 32, 113, 117, 105, 99, 107, 32, 98, 114, 111, 119, 110, 32, 102, 111, 120, 32, 106, 117, 109, 112, 115, 32, 111, 118, 101, 114, 32, 116, 104, 101, 32, 108, 97, 122, 121, 32, 100, 111, 103, 46] as byte[]
     }
 
-    def 'Tests the output of a redirect'() {
+    def 'When a redirect is received and the client is configured to follow it, the proper response is received'() {
         when:
         def response = httpClientFactory.createHttpClient().get(new HttpRequest(
             uri: "${baseUrl}/testRedirect",
@@ -99,7 +101,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         response.entityAsString == 'The quick brown fox jumps over the lazy dog.'
     }
 
-    def 'Tests that the appropriate exception is thrown on a redirect when redirects are disabled'() {
+    def 'When a redirect is received and the client is configured to not follow it, an HttpFoundException is thrown'() {
         when:
         httpClientFactory.createHttpClient().get(new HttpRequest(
             uri: "${baseUrl}/testRedirect",
@@ -110,7 +112,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         thrown HttpFoundException
     }
 
-    def 'Test the headers parameter'() {
+    def 'When a request includes headers, the server receives them correctly'() {
         when:
         def response = httpClientFactory.createHttpClient().get(new HttpRequest(
             uri: "${baseUrl}/testHeaders",
@@ -123,7 +125,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         json.key == ['value']
     }
 
-    def 'Test the headers parameter when multivalued entries are present'() {
+    def 'When a request includes headers with multiple values, the server receives them correctly'() {
         setup:
         def request = new HttpRequest()
             .setUri("${baseUrl}/testHeaders")
@@ -140,7 +142,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         json.hi == ['there']
     }
 
-    def 'Test the query parameter'() {
+    def 'When a request includes query parameters, the server receives them correctly'() {
         setup:
         def request = new HttpRequest()
             .setUri("${baseUrl}/testParams")
@@ -154,7 +156,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         response.entityAsJson == [foo: ['bar'], key: ['value']]
     }
 
-    def 'Test the query parameters when multivalued entries are present'() {
+    def 'When a request includes query parameters with multiple values, the server receives them correctly'() {
         setup:
         def request = new HttpRequest()
             .setUri("${baseUrl}/testParams")
@@ -169,7 +171,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         response.entityAsJson == ['foo': ['bar', 'baz'], 'hi': ['there']]
     }
 
-    def 'Test that a proper exception is thrown when throwStatusExceptions = true'() {
+    def 'When a response has a status of 500, an HttpInternalServerErrorException is thrown'() {
         when:
         httpClientFactory.createHttpClient().get(new HttpRequest(uri: "${baseUrl}/test500"))
 
@@ -177,7 +179,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         thrown HttpInternalServerErrorException
     }
 
-    def 'Test that no exception is thrown when throwStatusExceptions = false'() {
+    def 'When a response has a status of 500 but the client is configured to not throw exceptions, no exception is thrown'() {
         when:
         def response = httpClientFactory.createHttpClient().get(new HttpRequest(
             uri: "${baseUrl}/test500",
@@ -189,7 +191,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         response.status == 500
     }
 
-    def 'Tests the form parameter of the request builder'() {
+    def 'When the client sends form data as the request entity, the server receives them correctly'() {
         setup:
         FormData formData = new FormData()
         formData.addField('foo', 'bar')
@@ -203,7 +205,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         response.entityAsJson == ['foo': ['bar'], 'key': ['value']]
     }
 
-    def 'Tests the form parameter when it has multivalued entries'() {
+    def 'When the client sends form data with multiple values as the request entity, the server receives them correctly'() {
         setup:
         FormData formData = new FormData()
         formData.addField('foo', 'bar')
@@ -218,24 +220,81 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         response.entityAsJson == ['foo': ['bar', 'baz'], 'key': ['value']]
     }
 
-    def 'Test basic auth functionality'() {
-        setup:
-        HttpRequest request = new HttpRequest()
-        request.setUri("${baseUrl}/testAuth")
-
+    def 'When a server requires basic authentication but none is provided, an HttpUnauthorizedException is thrown'() {
         when:
-        httpClientFactory.createHttpClient().get(request)
+        httpClientFactory.createHttpClient().get(new HttpRequest().setUri("${baseUrl}/testAuth"))
 
         then:
         thrown HttpUnauthorizedException
+    }
 
+    def 'When a server requires basic authentication and the client provides it, the proper response is received'() {
         when:
         def response = httpClientFactory
             .createHttpClient()
             .addListener(new BasicAuthListener('foo', 'bar'))
-            .get(request)
+            .get(new HttpRequest().setUri("${baseUrl}/testAuth"))
 
         then:
         response.entityAsString == 'welcome'
+    }
+
+    def 'If a retry listener requests a retry, ensure its proper operations'() {
+        setup:
+        HttpClientRetryListener listener = new HttpClientRetryListener() {
+            @Override
+            boolean shouldRetry(HttpRequest request, HttpResponse response, int retries) {
+                return retries == 0
+            }
+
+            @Override
+            void onRetry(HttpRequest request, HttpResponse response) {
+                request.setHeader('foo', 'bar')
+            }
+        }
+
+        when:
+        def response = httpClientFactory.createHttpClient().addListener(listener).get(new HttpRequest(uri: "${baseUrl}/testHeaders"))
+
+        then:
+        response.entityAsJson.foo == ['bar']
+    }
+
+    def 'If a retry listener requests a retry and another does, not, ensure the non-requester is not called'() {
+        setup:
+        HttpClientRetryListener listener1 = new HttpClientRetryListener() {
+            @Override
+            boolean shouldRetry(HttpRequest request, HttpResponse response, int retries) {
+                return retries == 0
+            }
+
+            @Override
+            void onRetry(HttpRequest request, HttpResponse response) {
+                request.setHeader('foo', 'bar')
+            }
+        }
+
+        HttpClientListener listener2 = new HttpClientRetryListener() {
+            @Override
+            boolean shouldRetry(HttpRequest request, HttpResponse response, int retries) {
+                return false
+            }
+
+            @Override
+            void onRetry(HttpRequest request, HttpResponse response) {
+                request.setHeader('hi', 'there')
+            }
+        }
+
+        when:
+        def response = httpClientFactory
+            .createHttpClient()
+            .addListener(listener1)
+            .addListener(listener2)
+            .get(new HttpRequest(uri: "${baseUrl}/testHeaders"))
+
+        then:
+        response.entityAsJson.foo == ['bar']
+        !response.entityAsJson.hi
     }
 }
