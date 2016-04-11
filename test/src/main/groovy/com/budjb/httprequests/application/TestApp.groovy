@@ -99,8 +99,8 @@ class TestApp {
     }
 
     @RequestMapping(value = '/testAuth', method = RequestMethod.GET, produces = 'text/plain')
-    ResponseEntity<String> testAuth(@RequestHeader('Authorization') authorization) {
-        if (authorization) {
+    ResponseEntity<String> testAuth(@RequestHeader(value = 'Authorization', required = false) authorization) {
+        if (!authorization) {
             return new ResponseEntity<String>('authentication required', HttpStatus.valueOf(401))
         }
         else {

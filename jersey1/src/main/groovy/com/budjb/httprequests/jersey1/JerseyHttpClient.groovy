@@ -1,12 +1,6 @@
 package com.budjb.httprequests.jersey1
 
-import com.budjb.httprequests.AbstractHttpClient
-import com.budjb.httprequests.FormData
-import com.budjb.httprequests.HttpMethod
-import com.budjb.httprequests.HttpRequest
-import com.budjb.httprequests.HttpResponse
-import com.budjb.httprequests.StreamingHttpResponse
-import com.budjb.httprequests.exception.HttpResponseException
+import com.budjb.httprequests.*
 import com.sun.jersey.api.client.Client
 import com.sun.jersey.api.client.ClientHandlerException
 import com.sun.jersey.api.client.ClientResponse
@@ -17,7 +11,6 @@ import com.sun.jersey.api.representation.Form
 import com.sun.jersey.client.urlconnection.HTTPSProperties
 
 import javax.net.ssl.*
-import javax.ws.rs.core.MultivaluedMap
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
 
@@ -26,119 +19,53 @@ import java.security.cert.X509Certificate
  */
 class JerseyHttpClient extends AbstractHttpClient {
     /**
-     * Execute an HTTP request with the given method and request parameters and without a request entity.
+     * Perform the request.
      *
      * @param method
      * @param request
      * @return
-     * @throws IOException
      */
-    @Override
-    HttpResponse execute(HttpMethod method, HttpRequest request) throws IOException {
-        return doExecute(method, request)
+    HttpResponse doExecute(HttpMethod method, HttpRequest request) {
+        return performRequest(method, request, null)
     }
 
     /**
-     * Executes an HTTP request with the given method, request parameters, and request entity.
-     *
-     * @param method
-     * @param request
-     * @param entity
-     * @return
-     * @throws IOException
-     */
-    @Override
-    HttpResponse execute(HttpMethod method, HttpRequest request, byte[] entity) throws IOException {
-        return doExecute(method, request, entity)
-    }
-
-    /**
-     * Executes an HTTP request with the given method, request parameters, and request entity.
+     * Implements the logic to make an actual request with an HTTP client library.
      *
      * @param method
      * @param request
      * @param entity
      * @return
-     * @throws IOException
      */
     @Override
-    HttpResponse execute(HttpMethod method, HttpRequest request, String entity) throws IOException {
-        return doExecute(method, request, entity)
+    HttpResponse doExecute(HttpMethod method, HttpRequest request, byte[] entity) {
+        return performRequest(method, request, entity)
     }
 
     /**
-     * Executes an HTTP request with the given method, request parameters, and input stream.
+     * Implements the logic to make an actual request with an HTTP client library.
      *
      * @param method
      * @param request
-     * @param inputStream
+     * @param stream
      * @return
-     * @throws IOException
      */
     @Override
-    HttpResponse execute(HttpMethod method, HttpRequest request, InputStream inputStream) throws IOException {
-        return doExecute(method, request, inputStream)
+    HttpResponse doExecute(HttpMethod method, HttpRequest request, InputStream stream) {
+        return performRequest(method, request, stream)
     }
 
     /**
-     * Executes an HTTP request with the given method, request parameters, and form data.
+     * Implements the logic to make an actual request with an HTTP client library.
      *
      * @param method
      * @param request
      * @param form
      * @return
-     * @throws IOException
      */
     @Override
-    HttpResponse execute(HttpMethod method, HttpRequest request, FormData form) throws IOException {
-        return doExecute(method, request, form.getElements() as Form)
-    }
-
-    /**
-     * Creates the Jersey Client instance.
-     *
-     * @return Configured jersey client
-     */
-    protected Client createClient(HttpRequest request) {
-        if (request.isSslValidated()) {
-            return Client.create()
-        }
-
-        TrustManager[] certs = [new X509TrustManager() {
-            X509Certificate[] getAcceptedIssuers() {
-                null
-            }
-
-            void checkClientTrusted(X509Certificate[] certs, String authType) {}
-
-            void checkServerTrusted(X509Certificate[] certs, String authType) {}
-        }]
-
-        SSLContext ctx = SSLContext.getInstance("TLS")
-        ctx.init(null, certs, new SecureRandom())
-
-        ClientConfig config = new DefaultClientConfig()
-        config.getProperties().put(HTTPSProperties.PROPERTY_HTTPS_PROPERTIES, new HTTPSProperties(
-            new HostnameVerifier() {
-                boolean verify(String hostname, SSLSession session) {
-                    return true
-                }
-            },
-            ctx
-        ))
-
-        return Client.create(config)
-    }
-
-    /**
-     * Perform the request.
-     *
-     * @param method
-     * @param request
-     * @return
-     */
-    protected HttpResponse doExecute(HttpMethod method, HttpRequest request) {
-        return doExecute(method, request, null)
+    HttpResponse doExecute(HttpMethod method, HttpRequest request, FormData form) {
+        return performRequest(method, request, form.getElements() as Form)
     }
 
     /**
@@ -150,7 +77,7 @@ class JerseyHttpClient extends AbstractHttpClient {
      * @return
      * @throws IOException
      */
-    protected HttpResponse doExecute(HttpMethod method, HttpRequest request, Object entity) throws IOException {
+    HttpResponse performRequest(HttpMethod method, HttpRequest request, Object entity) throws IOException {
         Client client = createClient(request)
 
         client.setReadTimeout(request.getReadTimeout())
@@ -215,6 +142,42 @@ class JerseyHttpClient extends AbstractHttpClient {
     }
 
     /**
+     * Creates the Jersey Client instance.
+     *
+     * @return Configured jersey client
+     */
+    protected Client createClient(HttpRequest request) {
+        if (request.isSslValidated()) {
+            return Client.create()
+        }
+
+        TrustManager[] certs = [new X509TrustManager() {
+            X509Certificate[] getAcceptedIssuers() {
+                null
+            }
+
+            void checkClientTrusted(X509Certificate[] certs, String authType) {}
+
+            void checkServerTrusted(X509Certificate[] certs, String authType) {}
+        }]
+
+        SSLContext ctx = SSLContext.getInstance("TLS")
+        ctx.init(null, certs, new SecureRandom())
+
+        ClientConfig config = new DefaultClientConfig()
+        config.getProperties().put(HTTPSProperties.PROPERTY_HTTPS_PROPERTIES, new HTTPSProperties(
+            new HostnameVerifier() {
+                boolean verify(String hostname, SSLSession session) {
+                    return true
+                }
+            },
+            ctx
+        ))
+
+        return Client.create(config)
+    }
+
+    /**
      * Builds an HttpResponse object from Jersey's ClientResponse.
      *
      * @param request
@@ -237,10 +200,6 @@ class JerseyHttpClient extends AbstractHttpClient {
         response.setHeaders(clientResponse.getHeaders())
         if (clientResponse.getType()?.getParameters()?.containsKey('charset')) {
             response.setCharset(clientResponse.getType().getParameters().get('charset'))
-        }
-
-        if (request.isThrowStatusExceptions() && clientResponse.getStatus() >= 300) {
-            throw HttpResponseException.build(response)
         }
 
         return response

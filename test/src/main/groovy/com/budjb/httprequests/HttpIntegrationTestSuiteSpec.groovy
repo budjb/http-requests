@@ -3,6 +3,8 @@ package com.budjb.httprequests
 import com.budjb.httprequests.exception.HttpFoundException
 import com.budjb.httprequests.exception.HttpInternalServerErrorException
 import com.budjb.httprequests.exception.HttpNotAcceptableException
+import com.budjb.httprequests.exception.HttpUnauthorizedException
+import com.budjb.httprequests.listener.BasicAuthListener
 import spock.lang.Ignore
 
 @Ignore
@@ -216,24 +218,24 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         response.entityAsJson == ['foo': ['bar', 'baz'], 'key': ['value']]
     }
 
-    /*
     def 'Test basic auth functionality'() {
+        setup:
+        HttpRequest request = new HttpRequest()
+        request.setUri("${baseUrl}/testAuth")
+
         when:
-        httpClientFactory.createHttpClient().get(new HttpRequest(uri: "${baseUrl}/testAuth"))
+        httpClientFactory.createHttpClient().get(request)
 
         then:
         thrown HttpUnauthorizedException
 
         when:
-        def response = httpClientFactory.createHttpClient().get(new HttpRequest(
-            uri: "${baseUrl}/testAuth",
-            useBasicAuth: true,
-            basicAuthUserName: 'foo',
-            basicAuthPassword: 'bar'
-        ))
+        def response = httpClientFactory
+            .createHttpClient()
+            .addListener(new BasicAuthListener('foo', 'bar'))
+            .get(request)
 
         then:
         response.entityAsString == 'welcome'
     }
-    */
 }

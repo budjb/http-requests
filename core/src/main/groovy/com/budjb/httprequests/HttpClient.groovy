@@ -1,5 +1,7 @@
 package com.budjb.httprequests
 
+import com.budjb.httprequests.listener.HttpClientListener
+
 interface HttpClient {
     /**
      * Execute an HTTP request with the given method and request parameters and without a request entity.
@@ -227,4 +229,25 @@ interface HttpClient {
      * @throws IOException
      */
     HttpResponse trace(HttpRequest request) throws IOException
+
+    /**
+     * Adds a {@link HttpClientListener} to the HTTP client.
+     *
+     * @param listener
+     */
+    HttpClient addListener(HttpClientListener listener)
+
+    /**
+     * Returns the list of all registered {@link HttpClientListener} instances.
+     *
+     * @return
+     */
+    List<HttpClientListener> getListeners()
+
+    /**
+     * Unregisters a {@link HttpClientListener} from the HTTP client.
+     *
+     * @param listener
+     */
+    HttpClient removeListener(HttpClientListener listener)
 }
