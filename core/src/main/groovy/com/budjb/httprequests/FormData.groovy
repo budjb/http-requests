@@ -14,7 +14,7 @@ class FormData {
      *
      * @param name Name of the form field.
      * @param value Value of the form field.
-     * @return
+     * @return The same object the method was called on.
      */
     FormData addField(String name, String value) {
         if (!data.containsKey(name) || !(data.get(name) instanceof List)) {
@@ -27,9 +27,9 @@ class FormData {
     /**
      * Adds a form field with multiple values.
      *
-     * @param name
-     * @param values
-     * @return
+     * @param name Name of the field to add.
+     * @param values List of values to add to the field.
+     * @return The same object the method was called on.
      */
     FormData addField(String name, List<String> values) {
         values.each {
@@ -41,8 +41,9 @@ class FormData {
     /**
      * Adds many elements to the form.
      *
-     * @param data
-     * @return
+     * @param data A map of fields to add, where the key is the name of the field and the value
+     *             is either a <code>String</code> or a <code>List</code> of <code>String</code>s.
+     * @return The same object the method was called on.
      */
     FormData addFields(Map<String, Object> data) {
         data.each { name, values ->
@@ -60,7 +61,7 @@ class FormData {
      * Return the form elements as a map, where the key is the name of the form field and the value is a list of values
      * for the form field, even if there is only one value.
      *
-     * @return
+     * @return All fields in the object.
      */
     Map<String, List<String>> getFields() {
         return data
@@ -70,7 +71,7 @@ class FormData {
      * Return the form fields as map, where the key is the name of the form field and the value is either a String or
      * a List of Strings if the field has multiple values.
      *
-     * @return
+     * @return All fields in the objects.
      */
     Map<String, Object> getFlattenedFields() {
         return data.collectEntries { name, values ->

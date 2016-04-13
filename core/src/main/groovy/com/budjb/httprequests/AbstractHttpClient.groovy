@@ -7,8 +7,9 @@ import com.budjb.httprequests.listener.HttpClientResponseListener
 import com.budjb.httprequests.listener.HttpClientRetryListener
 
 /**
- * A base class that proxies all HTTP method-specific methods to their proper <code>execute</code> counterparts.
- * This class is useful to avoid significant amounts of boilerplate code when implementing new HTTP clients.
+ * A base class for HTTP clients that implements most of the functionality of the {@link HttpClient} interface.
+ *
+ * Individual HTTP client library implementations should extend this class.
  */
 abstract class AbstractHttpClient implements HttpClient {
     /**
@@ -24,7 +25,7 @@ abstract class AbstractHttpClient implements HttpClient {
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
-    abstract HttpResponse doExecute(HttpMethod method, HttpRequest request) throws IOException
+    protected abstract HttpResponse doExecute(HttpMethod method, HttpRequest request) throws IOException
 
     /**
      * Implements the logic to make an actual request with an HTTP client library.
@@ -35,7 +36,7 @@ abstract class AbstractHttpClient implements HttpClient {
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
-    abstract HttpResponse doExecute(HttpMethod method, HttpRequest request, byte[] entity) throws IOException
+    protected abstract HttpResponse doExecute(HttpMethod method, HttpRequest request, byte[] entity) throws IOException
 
     /**
      * Implements the logic to make an actual request with an HTTP client library.
@@ -46,7 +47,7 @@ abstract class AbstractHttpClient implements HttpClient {
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
-    abstract HttpResponse doExecute(HttpMethod method, HttpRequest request, InputStream inputStream) throws IOException
+    protected abstract HttpResponse doExecute(HttpMethod method, HttpRequest request, InputStream inputStream) throws IOException
 
     /**
      * Implements the logic to make an actual request with an HTTP client library.
@@ -57,7 +58,7 @@ abstract class AbstractHttpClient implements HttpClient {
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
-    abstract HttpResponse doExecute(HttpMethod method, HttpRequest request, FormData form) throws IOException
+    protected abstract HttpResponse doExecute(HttpMethod method, HttpRequest request, FormData form) throws IOException
 
     /**
      * Execute an HTTP request with the given method and request parameters and without a request entity.
@@ -359,6 +360,7 @@ abstract class AbstractHttpClient implements HttpClient {
      * Adds a {@link HttpClientListener} to the HTTP client.
      *
      * @param listener Listener instance to register with the client.
+     * @return The object the method was called on.
      */
     @Override
     HttpClient addListener(HttpClientListener listener) {
@@ -370,6 +372,7 @@ abstract class AbstractHttpClient implements HttpClient {
      * Unregisters a {@link HttpClientListener} from the HTTP client.
      *
      * @param listener Listener instance to remove from the client.
+     * @return The object the method was called on.
      */
     @Override
     HttpClient removeListener(HttpClientListener listener) {
