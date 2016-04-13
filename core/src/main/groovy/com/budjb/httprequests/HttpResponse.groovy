@@ -75,14 +75,18 @@ class HttpResponse {
      * @param value
      */
     void setHeader(String name, Object value) {
+        if (!headers.containsKey(name)) {
+            headers.put(name, [])
+        }
+
         if (value instanceof Collection) {
             value.each {
-                setHeader(name, it)
+                headers.get(name).add(it.toString())
             }
         }
         else {
             value.toString().split(/w\s*/).each {
-                headers.put(name, [it.toString()])
+                headers.get(name).add(it.toString())
             }
         }
     }
@@ -136,10 +140,10 @@ class HttpResponse {
     Map<String, Object> getFlattenedHeaders() {
         return headers.collectEntries { name, values ->
             if (values.size() == 1) {
-                return [name: values[0]]
+                return [(name): values[0]]
             }
             else {
-                return [name: values]
+                return [(name): values]
             }
         } as Map<String, Object>
     }

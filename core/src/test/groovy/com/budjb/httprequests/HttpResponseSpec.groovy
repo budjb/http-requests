@@ -46,4 +46,46 @@ class HttpResponseSpec extends Specification {
         'null'  | null
         'blank' | ''
     }
+
+    def 'When a null character set is assigned, the existing value is not overwritten'() {
+        setup:
+        def response = new HttpResponse()
+        response.setCharset('ISO-8859-1')
+
+        when:
+        response.setContentType(null)
+
+        then:
+        response.charset == 'ISO-8859-1'
+    }
+
+    def 'Verify header parsing and retrieval'() {
+        setup:
+        def response = new HttpResponse()
+
+        when:
+        response.headers = [
+            foo: ['bar', 'baz'],
+            hi: ['there'],
+            peek: 'boo'
+        ]
+
+        then:
+        response.getHeaders() == [
+            foo: ['bar', 'baz'],
+            hi: ['there'],
+            peek: ['boo']
+        ]
+        response.getFlattenedHeaders() == [
+            foo: ['bar', 'baz'],
+            hi: 'there',
+            peek: 'boo'
+        ]
+        response.getHeaders('foo') == ['bar', 'baz']
+        response.getHeaders('hi') == ['there']
+        response.getHeaders('peek') == ['boo']
+        response.getHeader('foo') == 'bar'
+        response.getHeader('hi') == 'there'
+        response.getHeader('peek') == 'boo'
+    }
 }

@@ -36,13 +36,16 @@ class HttpRequestSpec extends Specification {
             .setAccept('text/plain')
             .setContentType('application/json')
             .addHeader('foo', 'bar')
-            .addHeaders('foo', ['1', '2'])
-            .addHeaders([hi: ['there']])
+            .addHeader('foo', ['1', '2'])
+            .addHeader([hi: ['there']])
             .addQueryParameter('foo', 'bar')
             .addQueryParameter('foo', ['1', '2'])
-            .addQueryParameters([hi: ['there']])
+            .addQueryParameter([hi: ['there']])
             .setSslValidated(false)
             .setThrowStatusExceptions(false)
+            .setReadTimeout(5000)
+            .setConnectionTimeout(10000)
+            .setUri('http://localhost')
 
         then:
         request.getCharset() == 'ISO-8859-8'
@@ -52,5 +55,30 @@ class HttpRequestSpec extends Specification {
         request.getQueryParameters() == [foo: ['bar', '1', '2'], hi: ['there']]
         !request.isSslValidated()
         !request.isThrowStatusExceptions()
+        request.connectionTimeout == 10000
+        request.readTimeout == 5000
+        request.uri == 'http://localhost'
+
+        when:
+        request
+            .setHeader('foo', 'meh')
+            .setHeader('hi', 'meh')
+            .setQueryParameter('foo', 'meh')
+            .setQueryParameter('hi', 'meh')
+
+        then:
+        request.headers == [foo: ['meh'], hi: ['meh']]
+        request.queryParameters == [foo: ['meh'], hi: ['meh']]
+
+        when:
+        request
+            .setHeader('foo', ['bar', 'baz'])
+            .setHeader('hi', ['there', 'man'])
+            .setQueryParameter('foo', ['bar', 'baz'])
+            .setQueryParameter('hi', ['there', 'man'])
+
+        then:
+        request.headers == [foo: ['bar', 'baz'], hi: ['there', 'man']]
+        request.queryParameters == [foo: ['bar', 'baz'], hi: ['there', 'man']]
     }
 }

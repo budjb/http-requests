@@ -11,7 +11,7 @@ abstract class HttpsIntegrationTestSuiteSpec extends AbstractHttpsIntegrationSpe
         HttpClient client = httpClientFactory.createHttpClient()
 
         when:
-        client.get(new HttpRequest(uri: "${baseUrl}/test"))
+        client.get(new HttpRequest().setUri("${baseUrl}/test"))
 
         then:
         thrown SSLException
@@ -22,7 +22,7 @@ abstract class HttpsIntegrationTestSuiteSpec extends AbstractHttpsIntegrationSpe
         HttpClient client = httpClientFactory.createHttpClient()
 
         when:
-        client.get(new HttpRequest(uri: "${baseUrl}/testBasicGet", sslValidated: false))
+        client.get(new HttpRequest().setUri("${baseUrl}/testBasicGet").setSslValidated(false))
 
         then:
         notThrown SSLException

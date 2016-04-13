@@ -72,10 +72,10 @@ class FormData {
     Map<String, Object> getFlattenedElements() {
         return data.collectEntries { name, values ->
             if (values.size() == 1) {
-                return [name: values.get(0)]
+                return [(name): values.get(0)]
             }
             else {
-                return [name: values]
+                return [(name): values]
             }
         } as Map<String, Object>
     }

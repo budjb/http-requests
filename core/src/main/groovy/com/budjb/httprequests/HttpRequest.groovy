@@ -9,12 +9,12 @@ class HttpRequest {
     /**
      * Request headers.
      */
-    private Map<String, List<String>> headers = [:]
+    private final Map<String, List<String>> headers = [:]
 
     /**
-     * Query paramters.
+     * Query parameters.
      */
-    private Map<String, List<String>> queryParameters = [:]
+    private final Map<String, List<String>> queryParameters = [:]
 
     /**
      * Content type of the request.
@@ -121,7 +121,7 @@ class HttpRequest {
      * @return
      */
     Map<String, List<String>> getHeaders() {
-        return headers
+        return headers.clone() as Map<String, List<String>>
     }
 
     /**
@@ -146,7 +146,7 @@ class HttpRequest {
      * @param values
      * @return
      */
-    HttpRequest addHeaders(String name, List<String> values) {
+    HttpRequest addHeader(String name, List<String> values) {
         if (!headers.containsKey(name)) {
             headers.put(name, [])
         }
@@ -160,7 +160,7 @@ class HttpRequest {
      * @param headers
      * @return
      */
-    HttpRequest addHeaders(Map<String, List<String>> headers) {
+    HttpRequest addHeader(Map<String, List<String>> headers) {
         this.headers.putAll(headers)
         return this
     }
@@ -173,8 +173,7 @@ class HttpRequest {
      * @return
      */
     HttpRequest setHeader(String name, String value) {
-        headers.put(name, [value])
-        return this
+        return setHeader(name, [value])
     }
 
     /**
@@ -195,7 +194,7 @@ class HttpRequest {
      * @return
      */
     Map<String, List<String>> getQueryParameters() {
-        return queryParameters
+        return queryParameters.clone() as Map<String, List<String>>
     }
 
     /**
@@ -234,8 +233,35 @@ class HttpRequest {
      * @param parameters
      * @return
      */
-    HttpRequest addQueryParameters(Map<String, List<String>> parameters) {
+    HttpRequest addQueryParameter(Map<String, List<String>> parameters) {
         queryParameters.putAll(parameters)
+        return this
+    }
+
+    /**
+     * Sets the query parameter with the given name.
+     *
+     * Note that this will overwrite any existing query parameter value(s).
+     *
+     * @param name
+     * @param value
+     * @return
+     */
+    HttpRequest setQueryParameter(String name, String value) {
+        return setQueryParameter(name, [value])
+    }
+
+    /**
+     * Sets the query parameter with the given name.
+     *
+     * Note that this will overwrite any existing query parameter value(s).
+
+     * @param name
+     * @param values
+     * @return
+     */
+    HttpRequest setQueryParameter(String name, List<String> values) {
+        queryParameters.put(name, values)
         return this
     }
 
@@ -291,6 +317,39 @@ class HttpRequest {
      */
     HttpRequest setCharset(String charSet) {
         this.charset = charSet
+        return this
+    }
+
+    /**
+     * Sets the read timeout, in milliseconds. 0 means infinity.
+     *
+     * @param timeout
+     * @return
+     */
+    HttpRequest setReadTimeout(int timeout) {
+        this.readTimeout = timeout
+        return this
+    }
+
+    /**
+     * Sets the connection timeout, in milliseconds. 0 means infinity.
+     *
+     * @param timeout
+     * @return
+     */
+    HttpRequest setConnectionTimeout(int timeout) {
+        this.connectionTimeout = timeout
+        return this
+    }
+
+    /**
+     * Sets whether the client should follow redirects.
+     *
+     * @param followRedirects
+     * @return
+     */
+    HttpRequest setFollowRedirects(boolean followRedirects) {
+        this.followRedirects = followRedirects
         return this
     }
 }
