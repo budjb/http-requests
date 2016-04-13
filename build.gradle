@@ -181,6 +181,13 @@ project(':jersey1') {
     }
 }
 
+project(':spring4') {
+    dependencies {
+        compile project(':core')
+        compile 'org.springframework:spring-beans:4.2.0.RELEASE'
+    }
+}
+
 task wrapper(type: Wrapper) {
     gradleVersion = '2.9'
 }

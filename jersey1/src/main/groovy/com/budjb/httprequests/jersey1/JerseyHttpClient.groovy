@@ -55,7 +55,7 @@ class JerseyHttpClient extends AbstractHttpClient {
      */
     @Override
     protected HttpResponse doExecute(HttpMethod method, HttpRequest request, InputStream inputStream) throws IOException {
-        return performRequest(method, request, stream)
+        return performRequest(method, request, inputStream)
     }
 
     /**
