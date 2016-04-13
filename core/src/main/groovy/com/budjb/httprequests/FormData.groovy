@@ -1,5 +1,8 @@
 package com.budjb.httprequests
 
+/**
+ * The <code>FormData</code> class contains a multi-valued map useful for submitting form elements with an HTTP request.
+ */
 class FormData {
     /**
      * Map containing the values of the form.
@@ -9,8 +12,8 @@ class FormData {
     /**
      * Adds a form field.
      *
-     * @param name
-     * @param value
+     * @param name Name of the form field.
+     * @param value Value of the form field.
      * @return
      */
     FormData addField(String name, String value) {
@@ -55,21 +58,21 @@ class FormData {
 
     /**
      * Return the form elements as a map, where the key is the name of the form field and the value is a list of values
-     * for the form element, even if there is only one value.
+     * for the form field, even if there is only one value.
      *
      * @return
      */
-    Map<String, List<String>> getElements() {
+    Map<String, List<String>> getFields() {
         return data
     }
 
     /**
-     * Return the form elements as map, where the key is the name of the form field and the value is either a String or
+     * Return the form fields as map, where the key is the name of the form field and the value is either a String or
      * a List of Strings if the field has multiple values.
      *
      * @return
      */
-    Map<String, Object> getFlattenedElements() {
+    Map<String, Object> getFlattenedFields() {
         return data.collectEntries { name, values ->
             if (values.size() == 1) {
                 return [(name): values.get(0)]

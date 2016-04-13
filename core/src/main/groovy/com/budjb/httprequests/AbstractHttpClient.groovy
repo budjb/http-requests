@@ -19,48 +19,52 @@ abstract class AbstractHttpClient implements HttpClient {
     /**
      * Implements the logic to make an actual request with an HTTP client library.
      *
-     * @param method
-     * @param request
-     * @return
+     * @param method HTTP method to use with the HTTP request.
+     * @param request Request properties to use with the HTTP request.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
+     * @throws IOException
      */
-    abstract HttpResponse doExecute(HttpMethod method, HttpRequest request)
+    abstract HttpResponse doExecute(HttpMethod method, HttpRequest request) throws IOException
 
     /**
      * Implements the logic to make an actual request with an HTTP client library.
      *
-     * @param method
-     * @param request
-     * @param entity
-     * @return
+     * @param method HTTP method to use with the HTTP request.
+     * @param request Request properties to use with the HTTP request.
+     * @param entity A byte array to send with the request.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
+     * @throws IOException
      */
-    abstract HttpResponse doExecute(HttpMethod method, HttpRequest request, byte[] entity)
+    abstract HttpResponse doExecute(HttpMethod method, HttpRequest request, byte[] entity) throws IOException
 
     /**
      * Implements the logic to make an actual request with an HTTP client library.
      *
-     * @param method
-     * @param request
-     * @param stream
-     * @return
+     * @param method HTTP method to use with the HTTP request.
+     * @param request Request properties to use with the HTTP request.
+     * @param inputStream An {@link InputStream} containing the response body.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
+     * @throws IOException
      */
-    abstract HttpResponse doExecute(HttpMethod method, HttpRequest request, InputStream stream)
+    abstract HttpResponse doExecute(HttpMethod method, HttpRequest request, InputStream inputStream) throws IOException
 
     /**
      * Implements the logic to make an actual request with an HTTP client library.
      *
-     * @param method
-     * @param request
-     * @param form
-     * @return
+     * @param method HTTP method to use with the HTTP request.
+     * @param request Request properties to use with the HTTP request.
+     * @param form Form data to send with the request.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
+     * @throws IOException
      */
-    abstract HttpResponse doExecute(HttpMethod method, HttpRequest request, FormData form)
+    abstract HttpResponse doExecute(HttpMethod method, HttpRequest request, FormData form) throws IOException
 
     /**
      * Execute an HTTP request with the given method and request parameters and without a request entity.
      *
-     * @param method
-     * @param request
-     * @return
+     * @param method HTTP method to use with the HTTP request.
+     * @param request Request properties to use with the HTTP request.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
     @Override
@@ -71,10 +75,10 @@ abstract class AbstractHttpClient implements HttpClient {
     /**
      * Executes an HTTP request with the given method, request parameters, and request entity.
      *
-     * @param method
-     * @param request
-     * @param entity
-     * @return
+     * @param method HTTP method to use with the HTTP request.
+     * @param request Request properties to use with the HTTP request.
+     * @param entity A byte array to send with the request.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
     @Override
@@ -85,10 +89,10 @@ abstract class AbstractHttpClient implements HttpClient {
     /**
      * Executes an HTTP request with the given method, request parameters, and request entity.
      *
-     * @param method
-     * @param request
-     * @param entity
-     * @return
+     * @param method HTTP method to use with the HTTP request.
+     * @param request Request properties to use with the HTTP request.
+     * @param entity A <code>String</code> to send with the request.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
     @Override
@@ -99,10 +103,10 @@ abstract class AbstractHttpClient implements HttpClient {
     /**
      * Executes an HTTP request with the given method, request parameters, and input stream.
      *
-     * @param method
-     * @param request
-     * @param inputStream
-     * @return
+     * @param method HTTP method to use with the HTTP request.
+     * @param request Request properties to use with the HTTP request.
+     * @param inputStream An {@link InputStream} containing the response body.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
     @Override
@@ -113,10 +117,10 @@ abstract class AbstractHttpClient implements HttpClient {
     /**
      * Executes an HTTP request with the given method, request parameters, and form data.
      *
-     * @param method
-     * @param request
-     * @param form
-     * @return
+     * @param method HTTP method to use with the HTTP request.
+     * @param request Request properties to use with the HTTP request.
+     * @param form Form data to send with the request.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
     @Override
@@ -127,8 +131,8 @@ abstract class AbstractHttpClient implements HttpClient {
     /**
      * Perform an HTTP GET request.
      *
-     * @param request
-     * @return
+     * @param request Request properties to use with the HTTP request.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
     @Override
@@ -139,8 +143,8 @@ abstract class AbstractHttpClient implements HttpClient {
     /**
      * Perform an HTTP POST request without a request entity.
      *
-     * @param request
-     * @return
+     * @param request Request properties to use with the HTTP request.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
     @Override
@@ -151,9 +155,9 @@ abstract class AbstractHttpClient implements HttpClient {
     /**
      * Perform an HTTP POST request with the given request entity.
      *
-     * @param request
-     * @param entity
-     * @return
+     * @param request Request properties to use with the HTTP request.
+     * @param entity A byte array to send with the request.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
     @Override
@@ -164,9 +168,9 @@ abstract class AbstractHttpClient implements HttpClient {
     /**
      * Perform an HTTP POST request with the given request entity.
      *
-     * @param request
-     * @param entity
-     * @return
+     * @param request Request properties to use with the HTTP request.
+     * @param entity A <code>String</code> to send with the request.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
     @Override
@@ -177,9 +181,9 @@ abstract class AbstractHttpClient implements HttpClient {
     /**
      * Perform an HTTP POST request with the given input stream.
      *
-     * @param request
-     * @param inputStream
-     * @return
+     * @param request Request properties to use with the HTTP request.
+     * @param inputStream An {@link InputStream} containing the response body.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
     @Override
@@ -190,9 +194,9 @@ abstract class AbstractHttpClient implements HttpClient {
     /**
      * Perform an HTTP POST request with the given form data.
      *
-     * @param request
-     * @param form
-     * @return
+     * @param request Request properties to use with the HTTP request.
+     * @param form Form data to send with the request.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
     @Override
@@ -203,8 +207,8 @@ abstract class AbstractHttpClient implements HttpClient {
     /**
      * Perform an HTTP PUT request without a request entity.
      *
-     * @param request
-     * @return
+     * @param request Request properties to use with the HTTP request.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
     @Override
@@ -215,9 +219,9 @@ abstract class AbstractHttpClient implements HttpClient {
     /**
      * Perform an HTTP PUT request with the given request entity.
      *
-     * @param request
-     * @param entity
-     * @return
+     * @param request Request properties to use with the HTTP request.
+     * @param entity A byte array to send with the request.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
     @Override
@@ -228,9 +232,9 @@ abstract class AbstractHttpClient implements HttpClient {
     /**
      * Perform an HTTP PUT request with the given request entity.
      *
-     * @param request
-     * @param entity
-     * @return
+     * @param request Request properties to use with the HTTP request.
+     * @param entity A <code>String</code> to send with the request.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
     @Override
@@ -241,9 +245,9 @@ abstract class AbstractHttpClient implements HttpClient {
     /**
      * Perform an HTTP PUT request with the given input stream..
      *
-     * @param request
-     * @param inputStream
-     * @return
+     * @param request Request properties to use with the HTTP request.
+     * @param inputStream An {@link InputStream} containing the response body.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
     @Override
@@ -252,11 +256,11 @@ abstract class AbstractHttpClient implements HttpClient {
     }
 
     /**
-     * Perform an HTTP PUT request with the given input stream.
+     * Perform an HTTP PUT request with the given form data.
      *
-     * @param request
-     * @param form
-     * @return
+     * @param request Request properties to use with the HTTP request.
+     * @param form Form data to send with the request.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
     @Override
@@ -267,8 +271,8 @@ abstract class AbstractHttpClient implements HttpClient {
     /**
      * Perform an HTTP DELETE request.
      *
-     * @param request
-     * @return
+     * @param request Request properties to use with the HTTP request.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
     @Override
@@ -279,8 +283,8 @@ abstract class AbstractHttpClient implements HttpClient {
     /**
      * Perform an HTTP OPTIONS request.
      *
-     * @param request
-     * @return
+     * @param request Request properties to use with the HTTP request.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
     @Override
@@ -291,9 +295,9 @@ abstract class AbstractHttpClient implements HttpClient {
     /**
      * Perform an HTTP OPTIONS request with the given request entity.
      *
-     * @param request
-     * @param entity
-     * @return
+     * @param request Request properties to use with the HTTP request.
+     * @param entity A byte array to send with the request.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
     @Override
@@ -304,9 +308,9 @@ abstract class AbstractHttpClient implements HttpClient {
     /**
      * Perform an HTTP OPTIONS request with the given request entity.
      *
-     * @param request
-     * @param entity
-     * @return
+     * @param request Request properties to use with the HTTP request.
+     * @param entity A <code>String</code> to send with the request.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
     @Override
@@ -317,9 +321,9 @@ abstract class AbstractHttpClient implements HttpClient {
     /**
      * Perform an HTTP OPTIONS request with the given input stream.
      *
-     * @param request
-     * @param inputStream
-     * @return
+     * @param request Request properties to use with the HTTP request.
+     * @param inputStream An {@link InputStream} containing the response body.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
     @Override
@@ -330,8 +334,8 @@ abstract class AbstractHttpClient implements HttpClient {
     /**
      * Perform an HTTP HEAD request.
      *
-     * @param request
-     * @return
+     * @param request Request properties to use with the HTTP request.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
     @Override
@@ -342,8 +346,8 @@ abstract class AbstractHttpClient implements HttpClient {
     /**
      * Perform an HTTP TRACE request.
      *
-     * @param request
-     * @return
+     * @param request Request properties to use with the HTTP request.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
     @Override
@@ -354,7 +358,7 @@ abstract class AbstractHttpClient implements HttpClient {
     /**
      * Adds a {@link HttpClientListener} to the HTTP client.
      *
-     * @param listener
+     * @param listener Listener instance to register with the client.
      */
     @Override
     HttpClient addListener(HttpClientListener listener) {
@@ -365,7 +369,7 @@ abstract class AbstractHttpClient implements HttpClient {
     /**
      * Unregisters a {@link HttpClientListener} from the HTTP client.
      *
-     * @param listener
+     * @param listener Listener instance to remove from the client.
      */
     @Override
     HttpClient removeListener(HttpClientListener listener) {
@@ -376,7 +380,7 @@ abstract class AbstractHttpClient implements HttpClient {
     /**
      * Returns the list of all registered {@link HttpClientListener} instances.
      *
-     * @return
+     * @return The list of registered listener instances.
      */
     @Override
     List<HttpClientListener> getListeners() {
@@ -384,27 +388,27 @@ abstract class AbstractHttpClient implements HttpClient {
     }
 
     /**
-     * Return a list of all registered request listeners.
+     * Return a list of all registered {@link HttpClientRequestListener} instances.
      *
-     * @return
+     * @return All registered {@link HttpClientRequestListener} instances.
      */
     protected List<HttpClientRequestListener> getRequestListeners() {
         return getListeners().findAll { it instanceof HttpClientRequestListener } as List<HttpClientRequestListener>
     }
 
     /**
-     * Return a list of all registered response listeners.
+     * Return a list of all registered {@link HttpClientResponseListener} instances.
      *
-     * @return
+     * @return A list of all registered {@link HttpClientResponseListener} instances.
      */
     protected List<HttpClientResponseListener> getResponseListeners() {
         return getListeners().findAll { it instanceof HttpClientResponseListener } as List<HttpClientResponseListener>
     }
 
     /**
-     * Return a list of all registered retry listeners.
+     * Return a list of all registered {@link HttpClientRetryListener} instances.
      *
-     * @return
+     * @return A list of all registered {@link HttpClientRetryListener} instances.
      */
     protected List<HttpClientRetryListener> getRetryListeners() {
         return getListeners().findAll { it instanceof HttpClientRetryListener } as List<HttpClientRetryListener>
@@ -414,9 +418,9 @@ abstract class AbstractHttpClient implements HttpClient {
      * Orchestrates making the HTTP request. Fires appropriate listener events and hands off to the implementation
      * to perform the actual HTTP request.
      *
-     * @param request
-     * @param action
-     * @return
+     * @param request {@link HttpRequest} object to configure the request.
+     * @param action A closure containing the logic to run against the HTTP client implementation.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
      */
     protected HttpResponse run(HttpRequest request, Closure action) {
         getRequestListeners()*.doWithRequest(request)

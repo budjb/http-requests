@@ -12,21 +12,21 @@ class FormDataSpec extends Specification {
         data.addField('hi', 'there')
 
         then:
-        data.getElements() == [foo: ['bar'], hi: ['there']]
-        data.getFlattenedElements() == [foo: 'bar', hi: 'there']
+        data.getFields() == [foo: ['bar'], hi: ['there']]
+        data.getFlattenedFields() == [foo: 'bar', hi: 'there']
 
         when:
         data.addField('foo', ['baz', 'bat'])
 
         then:
-        data.getElements() == [foo: ['bar', 'baz', 'bat'], hi: ['there']]
-        data.getFlattenedElements() == [foo: ['bar', 'baz', 'bat'], hi: 'there']
+        data.getFields() == [foo: ['bar', 'baz', 'bat'], hi: ['there']]
+        data.getFlattenedFields() == [foo: ['bar', 'baz', 'bat'], hi: 'there']
 
         when:
         data.addFields([meh: 'moo', blah: ['bleh'], foo: 'bas'])
 
         then:
-        data.getElements() == [foo: ['bar', 'baz', 'bat', 'bas'], hi: ['there'], meh: ['moo'], blah: ['bleh']]
-        data.getFlattenedElements() == [foo: ['bar', 'baz', 'bat', 'bas'], hi: 'there', meh: 'moo', blah: 'bleh']
+        data.getFields() == [foo: ['bar', 'baz', 'bat', 'bas'], hi: ['there'], meh: ['moo'], blah: ['bleh']]
+        data.getFlattenedFields() == [foo: ['bar', 'baz', 'bat', 'bas'], hi: 'there', meh: 'moo', blah: 'bleh']
     }
 }

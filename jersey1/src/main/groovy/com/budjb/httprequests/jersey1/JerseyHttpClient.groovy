@@ -25,7 +25,7 @@ class JerseyHttpClient extends AbstractHttpClient {
      * @param request
      * @return
      */
-    HttpResponse doExecute(HttpMethod method, HttpRequest request) {
+    HttpResponse doExecute(HttpMethod method, HttpRequest request) throws IOException {
         return performRequest(method, request, null)
     }
 
@@ -38,7 +38,7 @@ class JerseyHttpClient extends AbstractHttpClient {
      * @return
      */
     @Override
-    HttpResponse doExecute(HttpMethod method, HttpRequest request, byte[] entity) {
+    HttpResponse doExecute(HttpMethod method, HttpRequest request, byte[] entity) throws IOException {
         return performRequest(method, request, entity)
     }
 
@@ -51,7 +51,7 @@ class JerseyHttpClient extends AbstractHttpClient {
      * @return
      */
     @Override
-    HttpResponse doExecute(HttpMethod method, HttpRequest request, InputStream stream) {
+    HttpResponse doExecute(HttpMethod method, HttpRequest request, InputStream stream) throws IOException {
         return performRequest(method, request, stream)
     }
 
@@ -64,8 +64,8 @@ class JerseyHttpClient extends AbstractHttpClient {
      * @return
      */
     @Override
-    HttpResponse doExecute(HttpMethod method, HttpRequest request, FormData form) {
-        return performRequest(method, request, form.getElements() as Form)
+    HttpResponse doExecute(HttpMethod method, HttpRequest request, FormData form) throws IOException {
+        return performRequest(method, request, form.getFields() as Form)
     }
 
     /**
