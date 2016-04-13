@@ -17,7 +17,7 @@ package com.budjb.httprequests.exception
 
 import com.budjb.httprequests.HttpResponse
 
-class HttpUnsupportedMediaTypeException extends HttpResponseException {
+class HttpUnsupportedMediaTypeException extends HttpStatusException {
     HttpUnsupportedMediaTypeException(HttpResponse response) {
         super(response)
     }

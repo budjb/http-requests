@@ -17,7 +17,7 @@ package com.budjb.httprequests.exception
 
 import com.budjb.httprequests.HttpResponse
 
-class HttpLengthRequiredException extends HttpResponseException {
+class HttpLengthRequiredException extends HttpStatusException {
     HttpLengthRequiredException(HttpResponse response) {
         super(response)
     }

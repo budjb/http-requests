@@ -17,7 +17,7 @@ package com.budjb.httprequests.exception
 
 import com.budjb.httprequests.HttpResponse
 
-class HttpServiceUnavailableException extends HttpResponseException {
+class HttpServiceUnavailableException extends HttpStatusException {
     HttpServiceUnavailableException(HttpResponse response) {
         super(response)
     }

@@ -17,7 +17,7 @@ package com.budjb.httprequests.exception
 
 import com.budjb.httprequests.HttpResponse
 
-class HttpUseProxyException extends HttpResponseException {
+class HttpUseProxyException extends HttpStatusException {
     HttpUseProxyException(HttpResponse response) {
         super(response)
     }

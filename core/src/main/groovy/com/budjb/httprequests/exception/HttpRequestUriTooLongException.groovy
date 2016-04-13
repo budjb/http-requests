@@ -17,7 +17,7 @@ package com.budjb.httprequests.exception
 
 import com.budjb.httprequests.HttpResponse
 
-class HttpRequestUriTooLongException extends HttpResponseException {
+class HttpRequestUriTooLongException extends HttpStatusException {
     HttpRequestUriTooLongException(HttpResponse response) {
         super(response)
     }

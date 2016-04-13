@@ -17,7 +17,7 @@ package com.budjb.httprequests.exception
 
 import com.budjb.httprequests.HttpResponse
 
-class HttpMovedPermanentlyException extends HttpResponseException {
+class HttpMovedPermanentlyException extends HttpStatusException {
     HttpMovedPermanentlyException(HttpResponse response) {
         super(response)
     }

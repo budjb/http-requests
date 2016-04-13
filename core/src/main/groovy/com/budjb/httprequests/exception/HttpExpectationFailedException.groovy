@@ -17,7 +17,7 @@ package com.budjb.httprequests.exception
 
 import com.budjb.httprequests.HttpResponse
 
-class HttpExpectationFailedException extends HttpResponseException {
+class HttpExpectationFailedException extends HttpStatusException {
     HttpExpectationFailedException(HttpResponse response) {
         super(response)
     }

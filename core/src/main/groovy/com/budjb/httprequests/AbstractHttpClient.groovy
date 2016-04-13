@@ -1,6 +1,6 @@
 package com.budjb.httprequests
 
-import com.budjb.httprequests.exception.HttpResponseException
+import com.budjb.httprequests.exception.HttpStatusException
 import com.budjb.httprequests.listener.HttpClientListener
 import com.budjb.httprequests.listener.HttpClientRequestListener
 import com.budjb.httprequests.listener.HttpClientResponseListener
@@ -451,7 +451,7 @@ abstract class AbstractHttpClient implements HttpClient {
         getResponseListeners()*.doWithResponse(request, response)
 
         if (request.isThrowStatusExceptions() && response.getStatus() >= 300) {
-            throw HttpResponseException.build(response)
+            throw HttpStatusException.build(response)
         }
 
         return response

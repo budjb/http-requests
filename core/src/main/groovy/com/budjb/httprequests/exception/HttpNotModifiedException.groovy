@@ -17,7 +17,7 @@ package com.budjb.httprequests.exception
 
 import com.budjb.httprequests.HttpResponse
 
-class HttpNotModifiedException extends HttpResponseException {
+class HttpNotModifiedException extends HttpStatusException {
     HttpNotModifiedException(HttpResponse response) {
         super(response)
     }

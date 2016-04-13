@@ -17,7 +17,7 @@ package com.budjb.httprequests.exception
 
 import com.budjb.httprequests.HttpResponse
 
-class HttpMethodNotAllowedException extends HttpResponseException {
+class HttpMethodNotAllowedException extends HttpStatusException {
     HttpMethodNotAllowedException(HttpResponse response) {
         super(response)
     }

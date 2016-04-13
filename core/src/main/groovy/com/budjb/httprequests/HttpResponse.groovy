@@ -2,6 +2,13 @@ package com.budjb.httprequests
 
 import groovy.json.JsonSlurper
 
+/**
+ * An object that represents the response of an HTTP request.
+ *
+ * This object contains the entity of the response, if present, in memory. If an {@link InputStream} is desired,
+ * configure the {@link HttpRequest#setThrowStatusExceptions} to <code>true</code>. When <code>true</code> an
+ * implementation of this object that exposes the stream is returned from HTTP requests.
+ */
 class HttpResponse {
     /**
      * The HTTP status of the response.
@@ -29,9 +36,9 @@ class HttpResponse {
     String charset = 'UTF-8'
 
     /**
-     * Sets the charset of the response.
+     * Sets the character set of the response.
      *
-     * @param charset
+     * @param charset Character set of the response.
      */
     void setCharset(String charset) {
         if (charset) {
@@ -40,18 +47,18 @@ class HttpResponse {
     }
 
     /**
-     * Return the entity as a string.
+     * Return the entity of the response as a <code>String</code>.
      *
-     * @return
+     * @return The entity of the response converted to a <code>String</code>.
      */
     String getEntityAsString() {
         return new String(getEntity(), charset)
     }
 
     /**
-     * Parses the entity as JSON and returns the resulting object.
+     * Parses the entity of the response as JSON and returns the resulting object.
      *
-     * @return
+     * @return The entity of the response parsed as JSON.
      */
     Object getEntityAsJson() {
         return new JsonSlurper().parse(getEntity(), charset)
@@ -60,7 +67,7 @@ class HttpResponse {
     /**
      * Sets the response headers from the given map.
      *
-     * @param headers
+     * @param headers Response headers of the request.
      */
     void setHeaders(Map<String, ?> headers) {
         headers.each { name, values ->
@@ -71,8 +78,8 @@ class HttpResponse {
     /**
      * Sets the response header with the given name, parsing out individual values.
      *
-     * @param name
-     * @param value
+     * @param name Name of the header.
+     * @param value Value(s) of the header.
      */
     void setHeader(String name, Object value) {
         if (!headers.containsKey(name)) {
@@ -94,8 +101,8 @@ class HttpResponse {
     /**
      * Returns the first value of the header with the given name, or null if it doesn't exist.
      *
-     * @param name
-     * @return
+     * @param name Name of the header.
+     * @return The first value of the requested header, or null if it doesn't exist.
      */
     String getHeader(String name) {
         if (headers.containsKey(name)) {
@@ -107,8 +114,8 @@ class HttpResponse {
     /**
      * Returns a list of values of the header with the given name, or null if the header doesn't exist.
      *
-     * @param name
-     * @return
+     * @param name Name of the header.
+     * @return A list of values of the requested header, or null if it doesn't exist.
      */
     List<String> getHeaders(String name) {
         if (headers.containsKey(name)) {
@@ -123,10 +130,10 @@ class HttpResponse {
      * This method returns a map where the key is the name of the header, and the value is a list of values
      * for the response header. This is true even when there is only one value for the header.
      *
-     * @return
+     * @return A copy of the map containing the response headers.
      */
     Map<String, List<String>> getHeaders() {
-        return headers
+        return headers.clone() as Map<String, List<String>>
     }
 
     /**
@@ -135,7 +142,7 @@ class HttpResponse {
      * This method returns a map where the key is the name of the header, and the value is either the single value
      * for that header or a list of values if multiple were received.
      *
-     * @return
+     * @return A copy of the map containing the response headers.
      */
     Map<String, Object> getFlattenedHeaders() {
         return headers.collectEntries { name, values ->

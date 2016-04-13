@@ -12,7 +12,7 @@ class HttpResponseExceptionSpec extends Specification {
         response.setStatus(status)
 
         expect:
-        HttpResponseException.build(response).getClass() == type
+        HttpStatusException.build(response).getClass() == type
 
         where:
         status | type

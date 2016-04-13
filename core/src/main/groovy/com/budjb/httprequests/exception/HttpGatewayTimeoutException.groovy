@@ -17,7 +17,7 @@ package com.budjb.httprequests.exception
 
 import com.budjb.httprequests.HttpResponse
 
-class HttpGatewayTimeoutException extends HttpResponseException {
+class HttpGatewayTimeoutException extends HttpStatusException {
     HttpGatewayTimeoutException(HttpResponse response) {
         super(response)
     }

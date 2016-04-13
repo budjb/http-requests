@@ -17,7 +17,7 @@ package com.budjb.httprequests.exception
 
 import com.budjb.httprequests.HttpResponse
 
-class HttpUseOtherException extends HttpResponseException {
+class HttpUseOtherException extends HttpStatusException {
     HttpUseOtherException(HttpResponse response) {
         super(response)
     }

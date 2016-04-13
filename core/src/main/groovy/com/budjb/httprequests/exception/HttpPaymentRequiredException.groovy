@@ -17,7 +17,7 @@ package com.budjb.httprequests.exception
 
 import com.budjb.httprequests.HttpResponse
 
-class HttpPaymentRequiredException extends HttpResponseException {
+class HttpPaymentRequiredException extends HttpStatusException {
     HttpPaymentRequiredException(HttpResponse response) {
         super(response)
     }

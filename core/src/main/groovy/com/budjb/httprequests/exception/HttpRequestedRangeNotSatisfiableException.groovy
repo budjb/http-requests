@@ -17,7 +17,7 @@ package com.budjb.httprequests.exception
 
 import com.budjb.httprequests.HttpResponse
 
-class HttpRequestedRangeNotSatisfiableException extends HttpResponseException {
+class HttpRequestedRangeNotSatisfiableException extends HttpStatusException {
     HttpRequestedRangeNotSatisfiableException(HttpResponse response) {
         super(response)
     }

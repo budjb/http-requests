@@ -17,7 +17,7 @@ package com.budjb.httprequests.exception
 
 import com.budjb.httprequests.HttpResponse
 
-class HttpForbiddenException extends HttpResponseException {
+class HttpForbiddenException extends HttpStatusException {
     HttpForbiddenException(HttpResponse response) {
         super(response)
     }

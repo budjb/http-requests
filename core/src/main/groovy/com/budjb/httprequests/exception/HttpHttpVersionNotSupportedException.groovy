@@ -17,7 +17,7 @@ package com.budjb.httprequests.exception
 
 import com.budjb.httprequests.HttpResponse
 
-class HttpHttpVersionNotSupportedException extends HttpResponseException {
+class HttpHttpVersionNotSupportedException extends HttpStatusException {
     HttpHttpVersionNotSupportedException(HttpResponse response) {
         super(response)
     }

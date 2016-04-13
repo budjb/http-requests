@@ -17,7 +17,7 @@ package com.budjb.httprequests.exception
 
 import com.budjb.httprequests.HttpResponse
 
-class HttpUnprocessableEntityException extends HttpResponseException {
+class HttpUnprocessableEntityException extends HttpStatusException {
     HttpUnprocessableEntityException(HttpResponse response) {
         super(response)
     }

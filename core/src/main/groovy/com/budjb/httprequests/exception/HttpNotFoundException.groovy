@@ -17,7 +17,7 @@ package com.budjb.httprequests.exception
 
 import com.budjb.httprequests.HttpResponse
 
-class HttpNotFoundException extends HttpResponseException {
+class HttpNotFoundException extends HttpStatusException {
     HttpNotFoundException(HttpResponse response) {
         super(response)
     }

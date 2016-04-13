@@ -17,7 +17,7 @@ package com.budjb.httprequests.exception
 
 import com.budjb.httprequests.HttpResponse
 
-class HttpTemporaryRedirectException extends HttpResponseException {
+class HttpTemporaryRedirectException extends HttpStatusException {
     HttpTemporaryRedirectException(HttpResponse request) {
         super(request)
     }

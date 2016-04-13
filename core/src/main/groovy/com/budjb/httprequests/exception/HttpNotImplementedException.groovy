@@ -17,7 +17,7 @@ package com.budjb.httprequests.exception
 
 import com.budjb.httprequests.HttpResponse
 
-class HttpNotImplementedException extends HttpResponseException {
+class HttpNotImplementedException extends HttpStatusException {
     HttpNotImplementedException(HttpResponse response) {
         super(response)
     }

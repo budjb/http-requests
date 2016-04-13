@@ -17,7 +17,7 @@ package com.budjb.httprequests.exception
 
 import com.budjb.httprequests.HttpResponse
 
-class HttpRequestEntityTooLargeException extends HttpResponseException {
+class HttpRequestEntityTooLargeException extends HttpStatusException {
     HttpRequestEntityTooLargeException(HttpResponse response) {
         super(response)
     }

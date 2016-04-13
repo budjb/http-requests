@@ -17,7 +17,7 @@ package com.budjb.httprequests.exception
 
 import com.budjb.httprequests.HttpResponse
 
-class HttpBadGatewayException extends HttpResponseException {
+class HttpBadGatewayException extends HttpStatusException {
     HttpBadGatewayException(HttpResponse response) {
         super(response)
     }

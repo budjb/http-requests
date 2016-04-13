@@ -17,7 +17,7 @@ package com.budjb.httprequests.exception
 
 import com.budjb.httprequests.HttpResponse
 
-class HttpPreconditionFailedException extends HttpResponseException {
+class HttpPreconditionFailedException extends HttpStatusException {
     HttpPreconditionFailedException(HttpResponse response) {
         super(response)
     }

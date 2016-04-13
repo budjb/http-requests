@@ -17,7 +17,7 @@ package com.budjb.httprequests.exception
 
 import com.budjb.httprequests.HttpResponse
 
-class HttpInternalServerErrorException extends HttpResponseException {
+class HttpInternalServerErrorException extends HttpStatusException {
     HttpInternalServerErrorException(HttpResponse response) {
         super(response)
     }

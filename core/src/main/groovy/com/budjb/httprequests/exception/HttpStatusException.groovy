@@ -6,11 +6,11 @@ import com.budjb.httprequests.HttpResponse
  * An exception representing a non-2XX HTTP response. Contains both the
  * HTTP status of the response and the response object itself.
  */
-class HttpResponseException extends RuntimeException {
+class HttpStatusException extends RuntimeException {
     /**
      * HTTP statuses mapped to exception types.
      */
-    protected static final Map<Integer, Class> httpStatusCodes = [
+    protected static final Map<Integer, Class<? extends HttpStatusException>> httpStatusCodes = [
         300: HttpMultipleChoicesException,
         301: HttpMovedPermanentlyException,
         302: HttpFoundException,
@@ -43,7 +43,7 @@ class HttpResponseException extends RuntimeException {
         503: HttpServiceUnavailableException,
         504: HttpGatewayTimeoutException,
         505: HttpHttpVersionNotSupportedException
-    ]
+    ] as Map<Integer, Class<? extends HttpStatusException>>
 
     /**
      * The HTTP status of the response.
@@ -58,9 +58,9 @@ class HttpResponseException extends RuntimeException {
     /**
      * Constructor.
      *
-     * @param httpResponse
+     * @param httpResponse Response properties of the HTTP request.
      */
-    HttpResponseException(HttpResponse httpResponse) {
+    HttpStatusException(HttpResponse httpResponse) {
         super("the HTTP request returned HTTP status ${httpResponse.getStatus()}")
 
         response = httpResponse
@@ -70,13 +70,13 @@ class HttpResponseException extends RuntimeException {
     /**
      * Returns the proper exception type for the given HTTP status code.
      *
-     * @param response
-     * @return
+     * @param response Response properties of the request.
+     * @return An appropriate subclass of the <code>HttpStatusException</code> for the request's status code.
      */
-    static HttpResponseException build(HttpResponse response) {
+    static HttpStatusException build(HttpResponse response) {
         if (!httpStatusCodes.containsKey(response.getStatus())) {
-            return new HttpResponseException(response)
+            return new HttpStatusException(response)
         }
-        return httpStatusCodes[response.getStatus()].newInstance(response) as HttpResponseException
+        return httpStatusCodes[response.getStatus()].newInstance(response) as HttpStatusException
     }
 }

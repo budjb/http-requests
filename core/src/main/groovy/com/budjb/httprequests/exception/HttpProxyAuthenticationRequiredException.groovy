@@ -17,7 +17,7 @@ package com.budjb.httprequests.exception
 
 import com.budjb.httprequests.HttpResponse
 
-class HttpProxyAuthenticationRequiredException extends HttpResponseException {
+class HttpProxyAuthenticationRequiredException extends HttpStatusException {
     HttpProxyAuthenticationRequiredException(HttpResponse response) {
         super(response)
     }

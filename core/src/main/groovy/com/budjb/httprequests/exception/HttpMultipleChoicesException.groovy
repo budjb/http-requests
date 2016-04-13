@@ -17,7 +17,7 @@ package com.budjb.httprequests.exception
 
 import com.budjb.httprequests.HttpResponse
 
-class HttpMultipleChoicesException extends HttpResponseException {
+class HttpMultipleChoicesException extends HttpStatusException {
     HttpMultipleChoicesException(HttpResponse response) {
         super(response)
     }

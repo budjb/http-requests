@@ -1,5 +1,11 @@
 package com.budjb.httprequests
 
+/**
+ * An {@link HttpResponse} implementation that provides direct access to the response's {@link InputStream}.
+ *
+ * Authors should ensure that once the response object is no longer needed, the {@link #close} method
+ * should be called so that the underlying resources are freed up.
+ */
 class StreamingHttpResponse extends HttpResponse implements Closeable {
     /**
      * The response's input stream.
@@ -9,7 +15,7 @@ class StreamingHttpResponse extends HttpResponse implements Closeable {
     /**
      * Returns the entity as a byte array. Note that calling this method will automatically close the input stream.
      *
-     * @return
+     * @return The entity of the response as a byte array.
      */
     @Override
     byte[] getEntity() {

@@ -17,7 +17,7 @@ package com.budjb.httprequests.exception
 
 import com.budjb.httprequests.HttpResponse
 
-class HttpUnauthorizedException extends HttpResponseException {
+class HttpUnauthorizedException extends HttpStatusException {
     HttpUnauthorizedException(HttpResponse response) {
         super(response)
     }

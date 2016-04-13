@@ -15,15 +15,16 @@ import java.security.SecureRandom
 import java.security.cert.X509Certificate
 
 /**
- * An implementation of HTTP client that uses the Jersey Client 1.x library.
+ * An implementation of {@link HttpClient} that uses the Jersey Client 1.x library.
  */
 class JerseyHttpClient extends AbstractHttpClient {
     /**
-     * Perform the request.
+     * Implements the logic to make an actual request with an HTTP client library.
      *
-     * @param method
-     * @param request
-     * @return
+     * @param method HTTP method to use with the HTTP request.
+     * @param request Request properties to use with the HTTP request.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
+     * @throws IOException
      */
     protected HttpResponse doExecute(HttpMethod method, HttpRequest request) throws IOException {
         return performRequest(method, request, null)
@@ -32,10 +33,11 @@ class JerseyHttpClient extends AbstractHttpClient {
     /**
      * Implements the logic to make an actual request with an HTTP client library.
      *
-     * @param method
-     * @param request
-     * @param entity
-     * @return
+     * @param method HTTP method to use with the HTTP request.
+     * @param request Request properties to use with the HTTP request.
+     * @param entity A byte array to send with the request.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
+     * @throws IOException
      */
     @Override
     protected HttpResponse doExecute(HttpMethod method, HttpRequest request, byte[] entity) throws IOException {
@@ -45,23 +47,25 @@ class JerseyHttpClient extends AbstractHttpClient {
     /**
      * Implements the logic to make an actual request with an HTTP client library.
      *
-     * @param method
-     * @param request
-     * @param stream
-     * @return
+     * @param method HTTP method to use with the HTTP request.
+     * @param request Request properties to use with the HTTP request.
+     * @param inputStream An {@link InputStream} containing the response body.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
+     * @throws IOException
      */
     @Override
-    protected HttpResponse doExecute(HttpMethod method, HttpRequest request, InputStream stream) throws IOException {
+    protected HttpResponse doExecute(HttpMethod method, HttpRequest request, InputStream inputStream) throws IOException {
         return performRequest(method, request, stream)
     }
 
     /**
      * Implements the logic to make an actual request with an HTTP client library.
      *
-     * @param method
-     * @param request
-     * @param form
-     * @return
+     * @param method HTTP method to use with the HTTP request.
+     * @param request Request properties to use with the HTTP request.
+     * @param form Form data to send with the request.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
+     * @throws IOException
      */
     @Override
     protected HttpResponse doExecute(HttpMethod method, HttpRequest request, FormData form) throws IOException {
@@ -71,10 +75,10 @@ class JerseyHttpClient extends AbstractHttpClient {
     /**
      * Perform the request.
      *
-     * @param method
-     * @param request
-     * @param entity
-     * @return
+     * @param method HTTP method tuse with the HTTP request.
+     * @param request Request properties to use with the HTTP request.
+     * @param entity Entity of the request. Can be null if there is no entity.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
     protected HttpResponse performRequest(HttpMethod method, HttpRequest request, Object entity) throws IOException {
@@ -142,9 +146,9 @@ class JerseyHttpClient extends AbstractHttpClient {
     }
 
     /**
-     * Creates the Jersey Client instance.
+     * Creates the Jersey {@link Client} instance.
      *
-     * @return Configured jersey client
+     * @return Configured Jersey {@link Client}.
      */
     protected Client createClient(HttpRequest request) {
         if (request.isSslValidated()) {
@@ -178,11 +182,11 @@ class JerseyHttpClient extends AbstractHttpClient {
     }
 
     /**
-     * Builds an HttpResponse object from Jersey's ClientResponse.
+     * Builds an {@link HttpResponse} object from Jersey's {@link ClientResponse}.
      *
-     * @param request
-     * @param clientResponse
-     * @return
+     * @param request Request properties to use with the HTTP request.
+     * @param clientResponse Jersey response object to build the {@link HttpResponse} object from.
+     * @return A fully configured {@HttpResponse} object representing the response of the request.
      */
     protected HttpResponse buildResponse(HttpRequest request, ClientResponse clientResponse) {
         HttpResponse response

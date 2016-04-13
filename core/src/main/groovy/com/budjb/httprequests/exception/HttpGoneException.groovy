@@ -17,7 +17,7 @@ package com.budjb.httprequests.exception
 
 import com.budjb.httprequests.HttpResponse
 
-class HttpGoneException extends HttpResponseException {
+class HttpGoneException extends HttpStatusException {
     HttpGoneException(HttpResponse response) {
         super(response)
     }

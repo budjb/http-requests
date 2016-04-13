@@ -17,7 +17,7 @@ package com.budjb.httprequests.exception
 
 import com.budjb.httprequests.HttpResponse
 
-class HttpNotAcceptableException extends HttpResponseException {
+class HttpNotAcceptableException extends HttpStatusException {
     HttpNotAcceptableException(HttpResponse response) {
         super(response)
     }

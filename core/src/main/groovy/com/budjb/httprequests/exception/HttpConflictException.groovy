@@ -17,7 +17,7 @@ package com.budjb.httprequests.exception
 
 import com.budjb.httprequests.HttpResponse
 
-class HttpConflictException extends HttpResponseException {
+class HttpConflictException extends HttpStatusException {
     HttpConflictException(HttpResponse response) {
         super(response)
     }
