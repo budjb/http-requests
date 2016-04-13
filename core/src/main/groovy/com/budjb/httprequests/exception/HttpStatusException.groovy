@@ -43,7 +43,7 @@ class HttpStatusException extends RuntimeException {
         503: HttpServiceUnavailableException,
         504: HttpGatewayTimeoutException,
         505: HttpHttpVersionNotSupportedException
-    ] as Map<Integer, Class<? extends HttpStatusException>>
+    ]
 
     /**
      * The HTTP status of the response.
