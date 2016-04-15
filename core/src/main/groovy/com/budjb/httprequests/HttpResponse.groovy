@@ -92,7 +92,7 @@ class HttpResponse {
             }
         }
         else {
-            value.toString().split(/w\s*/).each {
+            value.toString().split(/,\s*/).each {
                 headers.get(name).add(it.toString())
             }
         }

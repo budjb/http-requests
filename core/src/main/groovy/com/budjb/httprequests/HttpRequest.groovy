@@ -95,35 +95,16 @@ class HttpRequest {
      * @param uri URI of the request.
      */
     HttpRequest(URI uri) {
-        String scheme = uri.getScheme()
-        String host = uri.getHost()
-        int port = uri.getPort()
-        String path = uri.getPath()
-        String query = uri.getQuery()
+        parseUri(uri)
+    }
 
-        StringBuilder builder = new StringBuilder(scheme).append('://').append(host)
-
-        if (port != -1 && !(scheme == 'https' && port == 443) && !(scheme == 'http' && port == 80)) {
-            builder = builder.append(':').append(port)
-        }
-
-        builder.append(path)
-
-        this.uri = builder.toString()
-
-        if (query) {
-            query.split('&').each {
-                List<String> parts = it.split('=')
-
-                if (parts.size() == 1) {
-                    addQueryParameter(parts[0], '')
-                }
-                else {
-                    String name = parts.remove(0)
-                    addQueryParameter(name, parts.join('='))
-                }
-            }
-        }
+    /**
+     * Constructor that builds the request from a URI string.
+     *
+     * @param uri URI of the request.
+     */
+    HttpRequest(String uri) {
+        parseUri(uri)
     }
 
     /**
@@ -133,10 +114,20 @@ class HttpRequest {
      *
      * @param uri URI of the request.
      * @return The instance of this class the method was called with.
-     * @todo parse query parameters
      */
     HttpRequest setUri(String uri) {
-        this.uri = uri
+        parseUri(uri)
+        return this
+    }
+
+    /**
+     * Sets the URI of the request.
+     *
+     * @param uri URI of the request.
+     * @return The instance of this class the method was called with.
+     */
+    HttpRequest setUri(URI uri) {
+        parseUri(uri)
         return this
     }
 
@@ -418,5 +409,51 @@ class HttpRequest {
     HttpRequest setFollowRedirects(boolean followRedirects) {
         this.followRedirects = followRedirects
         return this
+    }
+
+    /**
+     * Parses the given URI and applies its properties to the HTTP request properties.
+     *
+     * @param uri URI as a <code>String</code>.
+     */
+    protected void parseUri(String uri) {
+        parseUri(new URI(uri))
+    }
+
+    /**
+     * Parses the given URI and applies its properties to the HTTP request properties.
+     *
+     * @param uri URI object to parse.
+     */
+    protected void parseUri(URI uri) {
+        String scheme = uri.getScheme()
+        String host = uri.getHost()
+        int port = uri.getPort()
+        String path = uri.getPath()
+        String query = uri.getQuery()
+
+        StringBuilder builder = new StringBuilder(scheme).append('://').append(host)
+
+        if (port != -1 && !(scheme == 'https' && port == 443) && !(scheme == 'http' && port == 80)) {
+            builder = builder.append(':').append(port)
+        }
+
+        builder.append(path)
+
+        this.uri = builder.toString()
+
+        if (query) {
+            query.split('&').each {
+                List<String> parts = it.split('=')
+
+                if (parts.size() == 1) {
+                    addQueryParameter(parts[0], '')
+                }
+                else {
+                    String name = parts.remove(0)
+                    addQueryParameter(name, parts.join('='))
+                }
+            }
+        }
     }
 }
