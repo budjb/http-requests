@@ -7,8 +7,10 @@ import com.sun.jersey.api.client.ClientResponse
 import com.sun.jersey.api.client.WebResource
 import com.sun.jersey.api.client.config.ClientConfig
 import com.sun.jersey.api.client.config.DefaultClientConfig
+import com.sun.jersey.api.client.filter.LoggingFilter
 import com.sun.jersey.api.representation.Form
 import com.sun.jersey.client.urlconnection.HTTPSProperties
+import groovy.util.logging.Slf4j
 
 import javax.net.ssl.*
 import java.security.SecureRandom
@@ -17,6 +19,7 @@ import java.security.cert.X509Certificate
 /**
  * An implementation of {@link HttpClient} that uses the Jersey Client 1.x library.
  */
+@Slf4j
 class JerseyHttpClient extends AbstractHttpClient {
     /**
      * Implements the logic to make an actual request with an HTTP client library.
@@ -84,6 +87,12 @@ class JerseyHttpClient extends AbstractHttpClient {
     protected HttpResponse performRequest(HttpMethod method, HttpRequest request, Object entity) throws IOException {
         Client client = createClient(request)
 
+        ByteArrayOutputStream logStream = null
+        if (request.isLogConversation()) {
+            logStream = new ByteArrayOutputStream()
+            client.addFilter(new LoggingFilter(new PrintStream(logStream)))
+        }
+
         client.setReadTimeout(request.getReadTimeout())
         client.setConnectTimeout(request.getConnectionTimeout())
         client.setFollowRedirects(request.isFollowRedirects())
@@ -140,6 +149,10 @@ class JerseyHttpClient extends AbstractHttpClient {
                 throw e.getCause()
             }
             throw e
+        }
+
+        if (logStream) {
+            log.debug("HTTP Conversation:\n${logStream.toString()}")
         }
 
         return buildResponse(request, response)

@@ -69,6 +69,13 @@ class HttpRequest {
     boolean streamingResponse = false
 
     /**
+     * Whether the HTTP client should log the request communication.
+     *
+     * Note that the logging behavior is specific to the HTTP client implementation in use.
+     */
+    boolean logConversation = false
+
+    /**
      * Construct a new {@link HttpRequest} object, configured with the given closure.
      *
      * @param closure
