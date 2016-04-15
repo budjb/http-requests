@@ -199,6 +199,26 @@ class HttpRequest {
     }
 
     /**
+     * Adds the given map of headers to the request.
+     *
+     * @param headers Map of headers.
+     * @return The instance of this class the method was called with.
+     */
+    HttpRequest setHeaders(Map headers) {
+        headers.each { name, values ->
+            if (values instanceof Collection) {
+                values.each { value ->
+                    addHeader(name.toString(), value.toString())
+                }
+            }
+            else {
+                addHeader(name.toString(), values.toString())
+            }
+        }
+        return this
+    }
+
+    /**
      * Returns the query parameters of the request.
      *
      * @return A copy of the map containing the query parameters.
@@ -273,6 +293,26 @@ class HttpRequest {
      */
     HttpRequest setQueryParameter(String name, List<String> values) {
         queryParameters.put(name, values)
+        return this
+    }
+
+    /**
+     * Adds the given map of query parameters to the request.
+     *
+     * @param queryParameters Map of headers.
+     * @return The instance of this class the method was called with.
+     */
+    HttpRequest setQueryParameters(Map queryParameters) {
+        queryParameters.each { name, values ->
+            if (values instanceof Collection) {
+                values.each { value ->
+                    addQueryParameter(name.toString(), value.toString())
+                }
+            }
+            else {
+                addQueryParameter(name.toString(), values.toString())
+            }
+        }
         return this
     }
 
