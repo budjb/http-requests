@@ -69,6 +69,22 @@ class HttpRequest {
     boolean streamingResponse = false
 
     /**
+     * Construct a new {@link HttpRequest} object, configured with the given closure.
+     *
+     * @param closure
+     * @return
+     */
+    static HttpRequest build(Closure closure) {
+        HttpRequest request = new HttpRequest()
+
+        closure = closure.clone() as Closure
+        closure.delegate = request
+        closure.call()
+
+        return request
+    }
+
+    /**
      * Base constructor.
      */
     HttpRequest() { void }
