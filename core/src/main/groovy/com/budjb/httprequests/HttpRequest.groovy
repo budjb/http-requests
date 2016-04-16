@@ -117,7 +117,7 @@ class HttpRequest {
     /**
      * Sets the URI of the request.
      *
-     * Note that query parameters are not parsed.
+     * Note that query parameters will reset to what is contained in the URI string.
      *
      * @param uri URI of the request.
      * @return The instance of this class the method was called with.
@@ -129,6 +129,8 @@ class HttpRequest {
 
     /**
      * Sets the URI of the request.
+     *
+     * Note that query parameters will reset to what is contained in the URI.
      *
      * @param uri URI of the request.
      * @return The instance of this class the method was called with.
@@ -184,7 +186,7 @@ class HttpRequest {
      *                <code>String</code> or a <code>List</code> of <code>String</code>s.
      * @return The instance of this class the method was called with.
      */
-    HttpRequest addHeader(Map<String, List<String>> headers) {
+    HttpRequest addHeaders(Map<String, List<String>> headers) {
         this.headers.putAll(headers)
         return this
     }
@@ -213,12 +215,13 @@ class HttpRequest {
     }
 
     /**
-     * Adds the given map of headers to the request.
+     * Sets the request headers to the given map of headers.
      *
      * @param headers Map of headers.
      * @return The instance of this class the method was called with.
      */
     HttpRequest setHeaders(Map headers) {
+        this.headers.clear()
         headers.each { name, values ->
             if (values instanceof Collection) {
                 values.each { value ->
@@ -278,7 +281,7 @@ class HttpRequest {
      *                   either a <code>String</code> or a <code>List</code> of <code>String</code>s.
      * @return The instance of this class the method was called with.
      */
-    HttpRequest addQueryParameter(Map<String, List<String>> parameters) {
+    HttpRequest addQueryParameters(Map<String, List<String>> parameters) {
         queryParameters.putAll(parameters)
         return this
     }
@@ -311,12 +314,13 @@ class HttpRequest {
     }
 
     /**
-     * Adds the given map of query parameters to the request.
+     * Sets the request query parameters to the given map of query parameters.
      *
      * @param queryParameters Map of headers.
      * @return The instance of this class the method was called with.
      */
     HttpRequest setQueryParameters(Map queryParameters) {
+        this.queryParameters.clear()
         queryParameters.each { name, values ->
             if (values instanceof Collection) {
                 values.each { value ->
@@ -433,6 +437,8 @@ class HttpRequest {
      * @param uri URI object to parse.
      */
     protected void parseUri(URI uri) {
+        queryParameters.clear()
+
         String scheme = uri.getScheme()
         String host = uri.getHost()
         int port = uri.getPort()

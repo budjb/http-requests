@@ -38,6 +38,11 @@ class TestApp {
         return "Please don't hurt me!"
     }
 
+    @RequestMapping(value = '/testBasicTrace', method = RequestMethod.TRACE, produces = 'application/json')
+    Map testBasicTrace(@RequestHeader Map<String, List<String>> headers) {
+        return headers
+    }
+
     @RequestMapping(value = '/testAccept', method = RequestMethod.GET)
     ResponseEntity<String> testAccept(@RequestHeader('Accept') accept) {
         String body

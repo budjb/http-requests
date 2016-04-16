@@ -32,20 +32,20 @@ class HttpRequestSpec extends Specification {
         HttpRequest request = new HttpRequest()
 
         when:
-        request.setCharset('ISO-8859-8')
+        request.setUri('http://localhost')
+            .setCharset('ISO-8859-8')
             .setAccept('text/plain')
             .setContentType('application/json')
             .addHeader('foo', 'bar')
             .addHeader('foo', ['1', '2'])
-            .addHeader([hi: ['there']])
+            .addHeaders([hi: ['there']])
             .addQueryParameter('foo', 'bar')
             .addQueryParameter('foo', ['1', '2'])
-            .addQueryParameter([hi: ['there']])
+            .addQueryParameters([hi: ['there']])
             .setSslValidated(false)
             .setThrowStatusExceptions(false)
             .setReadTimeout(5000)
             .setConnectionTimeout(10000)
-            .setUri('http://localhost')
 
         then:
         request.getCharset() == 'ISO-8859-8'
@@ -80,5 +80,60 @@ class HttpRequestSpec extends Specification {
         then:
         request.headers == [foo: ['bar', 'baz'], hi: ['there', 'man']]
         request.queryParameters == [foo: ['bar', 'baz'], hi: ['there', 'man']]
+
+        when:
+        request
+            .setHeaders([var: 'val'])
+            .setQueryParameters([var: 'val1'])
+
+        then:
+        request.headers == [var: ['val']]
+        request.queryParameters == [var: ['val1']]
+    }
+
+    def 'When a URI is passed to setUri(), the request properties are set as expected'() {
+        setup:
+        def uri = new URI('https://localhost:12345?f=&foo=bar&foo=baz')
+        def request = new HttpRequest().setUri('http://foo.bar.com?var=val')
+
+        when:
+        request.setUri(uri)
+
+        then:
+        request.uri == 'https://localhost:12345'
+        request.queryParameters == [f: [''], foo: ['bar', 'baz']]
+    }
+
+    def 'When a request is built with the closure builder, the properties are set correctly'() {
+        when:
+        def request = HttpRequest.build {
+            uri = 'https://localhost:8080?going=away'
+            accept = 'application/json'
+            contentType = 'text/plain'
+            connectionTimeout = 10000
+            readTimeout = 5000
+            followRedirects = false
+            logConversation = true
+            sslValidated = false
+            streamingResponse = true
+            throwStatusExceptions = false
+            charset = 'ISO-1234'
+            headers = [foo: 'bar']
+        }
+
+        then:
+        request.uri == 'https://localhost:8080'
+        request.accept == 'application/json'
+        request.contentType == 'text/plain'
+        request.connectionTimeout == 10000
+        request.readTimeout == 5000
+        !request.followRedirects
+        request.logConversation
+        !request.throwStatusExceptions
+        !request.sslValidated
+        request.streamingResponse
+        request.charset == 'ISO-1234'
+        request.headers == [foo: ['bar']]
+        request.queryParameters == [going: ['away']]
     }
 }

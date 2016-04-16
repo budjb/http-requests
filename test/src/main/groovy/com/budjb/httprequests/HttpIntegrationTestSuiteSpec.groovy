@@ -114,7 +114,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         when:
         def response = httpClientFactory.createHttpClient().get(new HttpRequest()
             .setUri("${baseUrl}/testHeaders")
-            .addHeader([foo: ['bar'], key: ['value']])
+            .addHeaders([foo: ['bar'], key: ['value']])
         )
 
         then:
@@ -297,4 +297,38 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         response.entityAsJson.foo == ['bar']
         !response.entityAsJson.hi
     }
+
+    def 'Validate builder form of GET works'() {
+        when:
+        def response = httpClientFactory.createHttpClient().get {
+            uri = "${baseUrl}/testBasicGet"
+        }
+
+        then:
+        response.entityAsString == 'The quick brown fox jumps over the lazy dog.'
+    }
+
+    def 'Validate builder form of DELETE works'() {
+        when:
+        def response = httpClientFactory.createHttpClient().delete {
+            uri = "${baseUrl}/testBasicDelete"
+        }
+
+        then:
+        response.entityAsString == 'Please don\'t hurt me!'
+    }
+
+    /*
+    def 'Validate builder form of TRACE works'() {
+        when:
+        def response = httpClientFactory.createHttpClient().trace {
+            uri = "${baseUrl}/testBasicTrace"
+            headers = [foo: 'bar']
+            logConversation = true
+        }
+
+        then:
+        response.entityAsJson == [foo: ['bar']]
+    }
+    */
 }

@@ -8,7 +8,7 @@ import spock.lang.Ignore
 import spock.lang.Specification
 
 @Ignore
-@WebIntegrationTest
+@WebIntegrationTest(['spring.mvc.dispatch-trace-request=true'])
 @SpringApplicationConfiguration(TestApp)
 abstract class AbstractIntegrationSpec extends Specification {
     /**
