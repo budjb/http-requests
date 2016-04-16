@@ -46,6 +46,7 @@ class HttpRequestSpec extends Specification {
             .setThrowStatusExceptions(false)
             .setReadTimeout(5000)
             .setConnectionTimeout(10000)
+            .setAutoBufferEntity(false)
 
         then:
         request.getCharset() == 'ISO-8859-8'
@@ -55,6 +56,7 @@ class HttpRequestSpec extends Specification {
         request.getQueryParameters() == [foo: ['bar', '1', '2'], hi: ['there']]
         !request.isSslValidated()
         !request.isThrowStatusExceptions()
+        !request.getAutoBufferEntity()
         request.connectionTimeout == 10000
         request.readTimeout == 5000
         request.uri == 'http://localhost'
@@ -115,7 +117,7 @@ class HttpRequestSpec extends Specification {
             followRedirects = false
             logConversation = true
             sslValidated = false
-            streamingResponse = true
+            autoBufferEntity = false
             throwStatusExceptions = false
             charset = 'ISO-1234'
             headers = [foo: 'bar']
@@ -131,9 +133,32 @@ class HttpRequestSpec extends Specification {
         request.logConversation
         !request.throwStatusExceptions
         !request.sslValidated
-        request.streamingResponse
+        !request.autoBufferEntity
         request.charset == 'ISO-1234'
         request.headers == [foo: ['bar']]
         request.queryParameters == [going: ['away']]
+    }
+
+    def 'When the response contains no entity, hasEntity() returns false'() {
+        expect:
+        !new HttpResponse(new HttpRequest()).hasEntity()
+    }
+
+    def 'When the response contains an open input stream, hasEntity() returns true'() {
+        setup:
+        def response = new HttpResponse(new HttpRequest())
+        response.setInputStream(new ByteArrayInputStream())
+
+        expect:
+        response.hasEntity()
+    }
+
+    def 'When the response contains a byte array entity, hasEntity() returns true'() {
+        setup:
+        def response = new HttpResponse(new HttpRequest())
+        response.setEntity([1, 2, 3] as byte[])
+
+        expect:
+        response.hasEntity()
     }
 }

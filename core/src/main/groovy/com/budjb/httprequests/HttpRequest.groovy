@@ -62,18 +62,17 @@ class HttpRequest {
     boolean followRedirects = true
 
     /**
-     * Whether the response should expose the response entity as an input stream. When true, a response of type
-     * {@link StreamingHttpResponse} is returned. It is important to note that these object needs to be closed
-     * before they are disposed of.
-     */
-    boolean streamingResponse = false
-
-    /**
      * Whether the HTTP client should log the request communication.
      *
      * Note that the logging behavior is specific to the HTTP client implementation in use.
      */
     boolean logConversation = false
+
+    /**
+     * Whether to automatically buffer the response entity in this object as a byte array. When <code>true</code>,
+     * the {@link HttpResponse#inputStream} is automatically closed.
+     */
+    boolean autoBufferEntity = true
 
     /**
      * Construct a new {@link HttpRequest} object, configured with the given closure.

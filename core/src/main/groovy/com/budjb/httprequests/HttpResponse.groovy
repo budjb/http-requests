@@ -5,11 +5,13 @@ import groovy.json.JsonSlurper
 /**
  * An object that represents the response of an HTTP request.
  *
- * This object contains the entity of the response, if present, in memory. If an {@link InputStream} is desired,
- * configure the {@link HttpRequest#setThrowStatusExceptions} to <code>true</code>. When <code>true</code> an
- * implementation of this object that exposes the stream is returned from HTTP requests.
+ * If the response contains an entity, and {@link HttpRequest#autoBufferEntity} is <code>true</code>, the response
+ * entity is read from the response and the {@link #inputStream} is automatically closed. If
+ * {@link HttpRequest#autoBufferEntity} is <code>false</code>, the {@link #inputStream} can be used to read the
+ * response entity. In the latter case, it is important to call {@link #close} so that the underlying resources
+ * can be freed up.
  */
-class HttpResponse {
+class HttpResponse implements Closeable {
     /**
      * The HTTP status of the response.
      */
@@ -28,12 +30,31 @@ class HttpResponse {
     /**
      * Entity of the response.
      */
-    byte[] entity
+    private byte[] entity
 
     /**
-     * The charater set of the response.
+     * The character set of the response.
      */
     String charset = 'UTF-8'
+
+    /**
+     * Input stream of the response.
+     */
+    InputStream inputStream
+
+    /**
+     * Request properties used to configure the request that generated this response.
+     */
+    HttpRequest request
+
+    /**
+     * Constructor.
+     *
+     * @param request Request properties used to configure the request that generated this response.
+     */
+    HttpResponse(HttpRequest request) {
+        this.request = request
+    }
 
     /**
      * Sets the character set of the response.
@@ -153,5 +174,90 @@ class HttpResponse {
                 return [(name): values]
             }
         } as Map<String, Object>
+    }
+
+    /**
+     * Returns the entity as a byte array. Note that calling this method will automatically close the input stream.
+     *
+     * @return The entity of the response as a byte array.
+     */
+    byte[] getEntity() {
+        if (entity == null) {
+            bufferEntity()
+        }
+
+        return entity
+    }
+
+    /**
+     * Sets the byte array entity of the response.
+     *
+     * Note that setting the byte array entity directly will close the input stream (if it was open) and thus discard
+     * the stream's contents.
+     *
+     * @param entity Byte array entity to store in the response.
+     */
+    void setEntity(byte[] entity) {
+        close()
+        this.entity = entity
+    }
+
+    /**
+     * Sets the input stream of the entity of the response.
+     *
+     * If {@link HttpRequest#autoBufferEntity} is <code>true</code>, the input stream is read and closed,
+     * with its contents stored in {@link #entity} as a byte array.
+     *
+     * @param inputStream Input stream from the HTTP client response.
+     */
+    void setInputStream(InputStream inputStream) {
+        this.inputStream = inputStream
+
+        if (request.getAutoBufferEntity()) {
+            bufferEntity()
+        }
+    }
+
+    /**
+     * Closes the input stream and releases any system resources associated
+     * with it. If the stream is already closed then invoking this
+     * method has no effect.
+     *
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    void close() throws IOException {
+        inputStream?.close()
+    }
+
+    /**
+     * Reads the contents of the entity from the input stream and stores it as a byte array.
+     */
+    protected void bufferEntity() {
+        if (!inputStream) {
+            return
+        }
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream()
+
+        int read
+        byte[] tmp = new byte[8192]
+
+        while ((read = inputStream.read(tmp, 0, 1892)) != -1) {
+            outputStream.write(tmp, 0, read)
+        }
+
+        outputStream.flush()
+        entity = outputStream.toByteArray()
+        inputStream.close()
+    }
+
+    /**
+     * Returns whether the response contains an entity.
+     *
+     * @return Whether the response contains an entity.
+     */
+    boolean hasEntity() {
+        return inputStream != null || entity != null
     }
 }
