@@ -8,8 +8,7 @@ class HttpResponseExceptionSpec extends Specification {
     @Unroll
     def 'When an HttpResponseException is build with status #status, exception type #type is returned'() {
         setup:
-        HttpResponse response = new HttpResponse()
-        response.setStatus(status)
+        HttpResponse response = new HttpResponse(new HttpRequest(), status, [:], null)
 
         expect:
         HttpStatusException.build(response).getClass() == type

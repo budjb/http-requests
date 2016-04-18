@@ -5,10 +5,12 @@ import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.http.RequestEntity
 import org.springframework.http.ResponseEntity
 import org.springframework.util.MultiValueMap
 import org.springframework.web.bind.annotation.*
 
+import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 @RestController
@@ -24,12 +26,12 @@ class TestApp {
     }
 
     @RequestMapping(value = '/testBasicPost', method = RequestMethod.POST, produces = 'text/plain')
-    String testBasicPost(@RequestBody String entity) {
+    String testBasicPost(@RequestBody(required=false) String entity) {
         return entity
     }
 
     @RequestMapping(value = '/testBasicPut', method = RequestMethod.PUT, produces = 'text/plain')
-    String testBasicPut(@RequestBody String entity) {
+    String testBasicPut(@RequestBody(required=false) String entity) {
         return entity
     }
 
@@ -41,6 +43,25 @@ class TestApp {
     @RequestMapping(value = '/testBasicTrace', method = RequestMethod.TRACE, produces = 'application/json')
     Map testBasicTrace(@RequestHeader Map<String, List<String>> headers) {
         return headers
+    }
+
+    @RequestMapping(value = '/testBasicHead', method = RequestMethod.HEAD)
+    void testBasicHead(HttpServletResponse response) {
+        response.addHeader('foo', 'bar')
+        response.addHeader('foo', 'baz')
+        response.addHeader('hi', 'there')
+        response.setStatus(200)
+    }
+
+    @RequestMapping(value = '/testBasicOptions', method = RequestMethod.OPTIONS)
+    ResponseEntity<String> testBasicOptions(@RequestBody(required = false) String entity) {
+        HttpHeaders headers = new HttpHeaders()
+        headers.add('Allow', 'GET')
+        headers.add('Allow', 'POST')
+
+        String response = entity ?: 'No entity'
+
+        return new ResponseEntity<String>(response, headers, HttpStatus.valueOf(200))
     }
 
     @RequestMapping(value = '/testAccept', method = RequestMethod.GET)

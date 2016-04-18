@@ -6,7 +6,7 @@ import spock.lang.Unroll
 class HttpResponseSpec extends Specification {
     def 'When a charset is provided, the resulting string is built using it'() {
         setup:
-        HttpResponse response = new HttpResponse(new HttpRequest())
+        HttpResponse response = new HttpResponse(new HttpRequest(), 200, [:], null)
         response.entity = 'åäö'.getBytes()
         response.charset = 'euc-jp'
 
@@ -19,7 +19,7 @@ class HttpResponseSpec extends Specification {
 
     def 'When no charset is provided, UTF-8 is used'() {
         setup:
-        HttpResponse response = new HttpResponse(new HttpRequest())
+        HttpResponse response = new HttpResponse(new HttpRequest(), 200, [:], null)
         response.entity = 'åäö'.getBytes()
 
         when:
@@ -33,7 +33,7 @@ class HttpResponseSpec extends Specification {
     @Unroll
     def 'When a #type charset is assigned, charset is not actually assigned'() {
         setup:
-        HttpResponse response = new HttpResponse(new HttpRequest())
+        HttpResponse response = new HttpResponse(new HttpRequest(), 200, [:], null)
 
         when:
         response.charset = charset
@@ -49,11 +49,11 @@ class HttpResponseSpec extends Specification {
 
     def 'When a null character set is assigned, the existing value is not overwritten'() {
         setup:
-        def response = new HttpResponse(new HttpRequest())
+        def response = new HttpResponse(new HttpRequest(), 200, [:], null)
         response.setCharset('ISO-8859-1')
 
         when:
-        response.setContentType(null)
+        response.setCharset(null)
 
         then:
         response.charset == 'ISO-8859-1'
@@ -61,7 +61,7 @@ class HttpResponseSpec extends Specification {
 
     def 'Verify header parsing and retrieval'() {
         setup:
-        def response = new HttpResponse(new HttpRequest())
+        def response = new HttpResponse(new HttpRequest(), 200, [:], null)
 
         when:
         response.headers = [
@@ -93,7 +93,7 @@ class HttpResponseSpec extends Specification {
         setup:
         def entity = 'Hello, world!'
         def inputStream = new ByteArrayInputStream(entity.getBytes())
-        def response = new HttpResponse(HttpRequest.build { autoBufferEntity = false })
+        def response = new HttpResponse(HttpRequest.build { autoBufferEntity = false }, 200, [:], null)
         response.inputStream = inputStream
 
         when:

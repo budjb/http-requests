@@ -25,12 +25,17 @@ class HttpResponse implements Closeable {
     /**
      * Headers of the response.
      */
-    private Map<String, List<String>> headers = [:]
+    private Map<String, List<String>> headers = new TreeMap<String, List<String>>(String.CASE_INSENSITIVE_ORDER)
 
     /**
      * Entity of the response.
      */
     private byte[] entity
+
+    /**
+     * A list of allowed HTTP methods. Typically returned from OPTIONS requests.
+     */
+    List<HttpMethod> allow = []
 
     /**
      * The character set of the response.
@@ -52,8 +57,11 @@ class HttpResponse implements Closeable {
      *
      * @param request Request properties used to configure the request that generated this response.
      */
-    HttpResponse(HttpRequest request) {
+    HttpResponse(HttpRequest request, int status, Map<String, List<String>> headers, InputStream inputStream) {
         this.request = request
+        this.status = status
+        this.headers = headers
+        this.inputStream = inputStream
     }
 
     /**
@@ -259,5 +267,57 @@ class HttpResponse implements Closeable {
      */
     boolean hasEntity() {
         return inputStream != null || entity != null
+    }
+
+    /**
+     * Returns the allowed HTTP methods returned in the response.
+     *
+     * @return Allowed HTTP methods returned in the response.
+     */
+    List<HttpMethod> getAllow() {
+        if (!allow && headers.containsKey('Allow')) {
+            allow = headers.get('Allow').collect { HttpMethod.valueOf(it) }
+        }
+
+        return allow
+    }
+
+    /**
+     * Returns the Content-Type of the response.
+     *
+     * @return Content-Type of the response.
+     */
+    String getContentType() {
+        if (!contentType && headers.containsKey('Content-Type')) {
+            contentType = headers.get('Content-Type').first()
+        }
+        return contentType
+    }
+
+    /**
+     * Returns the character set of the response.
+     *
+     * @return Character set of the response.
+     */
+    String getCharset() {
+        if (!charset && headers.containsKey('Content-Type')) {
+            String contentType = headers.get('Content-Type').first()
+
+            List<String> parameters = contentType.split(';')
+
+            if (parameters.size() > 1) {
+                parameters.remove(0)
+
+                parameters.each {
+                    List<String> parts = it.split(/\s*=\s*/)
+
+                    if (parts.size() == 2 && parts[0].equalsIgnoreCase('charset')) {
+                        charset = parts[1]
+                    }
+                }
+            }
+        }
+
+        return charset
     }
 }

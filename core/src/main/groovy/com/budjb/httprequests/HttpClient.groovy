@@ -43,12 +43,12 @@ interface HttpClient {
      * Executes an HTTP request with the given method, closure to configure the request, and request entity.
      *
      * @param method HTTP method to use with the HTTP request.
-     * @param requestClosure Closure that configures the request.
      * @param entity A byte array to send with the request.
+     * @param requestClosure Closure that configures the request.
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
-    HttpResponse execute(HttpMethod method, @DelegatesTo(HttpRequest) Closure requestClosure, byte[] entity) throws IOException
+    HttpResponse execute(HttpMethod method, byte[] entity, @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
 
     /**
      * Executes an HTTP request with the given method, request parameters, and request entity.
@@ -65,12 +65,12 @@ interface HttpClient {
      * Executes an HTTP request with the given method, closure to configure the request, and request entity.
      *
      * @param method HTTP method to use with the HTTP request.
-     * @param requestClosure Closure that configures the request.
      * @param entity A <code>String</code> to send with the request.
+     * @param requestClosure Closure that configures the request.
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
-    HttpResponse execute(HttpMethod method, @DelegatesTo(HttpRequest) Closure requestClosure, String entity) throws IOException
+    HttpResponse execute(HttpMethod method, String entity, @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
 
     /**
      * Executes an HTTP request with the given method, request parameters, and input stream.
@@ -87,12 +87,12 @@ interface HttpClient {
      * Executes an HTTP request with the given method, closure to configure the request, and input stream.
      *
      * @param method HTTP method to use with the HTTP request.
-     * @param requestClosure Closure that configures the request.
      * @param inputStream An {@link InputStream} containing the response body.
+     * @param requestClosure Closure that configures the request.
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
-    HttpResponse execute(HttpMethod method, @DelegatesTo(HttpRequest) Closure requestClosure, InputStream inputStream) throws IOException
+    HttpResponse execute(HttpMethod method, InputStream inputStream, @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
 
     /**
      * Executes an HTTP request with the given method, request parameters, and form data.
@@ -109,12 +109,12 @@ interface HttpClient {
      * Executes an HTTP request with the given method, closure to configure the request, and form data.
      *
      * @param method HTTP method to use with the HTTP request.
-     * @param requestClosure Closure that configures the request.
      * @param form Form data to send with the request.
+     * @param requestClosure Closure that configures the request.
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
-    HttpResponse execute(HttpMethod method, @DelegatesTo(HttpRequest) Closure requestClosure, FormData form) throws IOException
+    HttpResponse execute(HttpMethod method, FormData form, @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
 
     /**
      * Perform an HTTP GET request.
@@ -165,12 +165,12 @@ interface HttpClient {
     /**
      * Perform an HTTP POST request with the given request entity.
      *
-     * @param requestClosure Closure that configures the request.
      * @param entity A byte array to send with the request.
+     * @param requestClosure Closure that configures the request.
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
-    HttpResponse post(@DelegatesTo(HttpRequest) Closure requestClosure, byte[] entity) throws IOException
+    HttpResponse post(byte[] entity, @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
 
     /**
      * Perform an HTTP POST request with the given request entity.
@@ -185,12 +185,12 @@ interface HttpClient {
     /**
      * Perform an HTTP POST request with the given request entity.
      *
-     * @param requestClosure Closure that configures the request.
      * @param entity A <code>String</code> to send with the request.
+     * @param requestClosure Closure that configures the request.
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
-    HttpResponse post(@DelegatesTo(HttpRequest) Closure requestClosure, String entity) throws IOException
+    HttpResponse post(String entity, @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
 
     /**
      * Perform an HTTP POST request with the given input stream.
@@ -205,12 +205,12 @@ interface HttpClient {
     /**
      * Perform an HTTP POST request with the given input stream.
      *
-     * @param requestClosure Closure that configures the request.
      * @param inputStream An {@link InputStream} containing the response body.
+     * @param requestClosure Closure that configures the request.
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
-    HttpResponse post(@DelegatesTo(HttpRequest) Closure requestClosure, InputStream inputStream) throws IOException
+    HttpResponse post(InputStream inputStream, @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
 
     /**
      * Perform an HTTP POST request with the given form data.
@@ -225,12 +225,12 @@ interface HttpClient {
     /**
      * Perform an HTTP POST request with the given form data.
      *
-     * @param requestClosure Closure that configures the request.
      * @param form Form data to send with the request.
+     * @param requestClosure Closure that configures the request.
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
-    HttpResponse post(@DelegatesTo(HttpRequest) Closure requestClosure, FormData form) throws IOException
+    HttpResponse post(FormData form, @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
 
     /**
      * Perform an HTTP PUT request without a request entity.
@@ -263,12 +263,12 @@ interface HttpClient {
     /**
      * Perform an HTTP PUT request with the given request entity.
      *
-     * @param requestClosure Closure that configures the request.
      * @param entity A byte array to send with the request.
+     * @param requestClosure Closure that configures the request.
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
-    HttpResponse put(@DelegatesTo(HttpRequest) Closure requestClosure, byte[] entity) throws IOException
+    HttpResponse put(byte[] entity, @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
 
     /**
      * Perform an HTTP PUT request with the given request entity.
@@ -283,12 +283,12 @@ interface HttpClient {
     /**
      * Perform an HTTP PUT request with the given request entity.
      *
-     * @param requestClosure Closure that configures the request.
      * @param entity A <code>String</code> to send with the request.
+     * @param requestClosure Closure that configures the request.
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
-    HttpResponse put(@DelegatesTo(HttpRequest) Closure requestClosure, String entity) throws IOException
+    HttpResponse put(String entity, @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
 
     /**
      * Perform an HTTP PUT request with the given input stream..
@@ -303,12 +303,12 @@ interface HttpClient {
     /**
      * Perform an HTTP PUT request with the given input stream.
      *
-     * @param requestClosure Closure that configures the request.
      * @param inputStream An {@link InputStream} containing the response body.
+     * @param requestClosure Closure that configures the request.
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
-    HttpResponse put(@DelegatesTo(HttpRequest) Closure requestClosure, InputStream inputStream) throws IOException
+    HttpResponse put(InputStream inputStream, @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
 
     /**
      * Perform an HTTP PUT request with the given form data.
@@ -323,12 +323,12 @@ interface HttpClient {
     /**
      * Perform an HTTP PUT request with the given form data.
      *
-     * @param requestClosure Closure that configures the request.
      * @param form Form data to send with the request.
+     * @param requestClosure Closure that configures the request.
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
-    HttpResponse put(@DelegatesTo(HttpRequest) Closure requestClosure, FormData form) throws IOException
+    HttpResponse put(FormData form, @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
 
     /**
      * Perform an HTTP DELETE request.
@@ -379,12 +379,12 @@ interface HttpClient {
     /**
      * Perform an HTTP OPTIONS request with the given request entity.
      *
-     * @param requestClosure Closure that configures the request.
      * @param entity A byte array to send with the request.
+     * @param requestClosure Closure that configures the request.
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
-    HttpResponse options(@DelegatesTo(HttpRequest) Closure requestClosure, byte[] entity) throws IOException
+    HttpResponse options(byte[] entity, @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
 
     /**
      * Perform an HTTP OPTIONS request with the given request entity.
@@ -399,12 +399,12 @@ interface HttpClient {
     /**
      * Perform an HTTP OPTIONS request with the given request entity.
      *
-     * @param requestClosure Closure that configures the request.
      * @param entity A <code>String</code> to send with the request.
+     * @param requestClosure Closure that configures the request.
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
-    HttpResponse options(@DelegatesTo(HttpRequest) Closure requestClosure, String entity) throws IOException
+    HttpResponse options(String entity, @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
 
     /**
      * Perform an HTTP OPTIONS request with the given input stream.
@@ -419,22 +419,32 @@ interface HttpClient {
     /**
      * Perform an HTTP OPTIONS request with the given input stream.
      *
-     * @param requestClosure Closure that configures the request.
      * @param inputStream An {@link InputStream} containing the response body.
+     * @param requestClosure Closure that configures the request.
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
-    HttpResponse options(@DelegatesTo(HttpRequest) Closure requestClosure, InputStream entity) throws IOException
+    HttpResponse options(InputStream entity, @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
 
     /**
      * Perform an HTTP OPTIONS request with the given form data.
      *
-     * @param requestClosure Closure that configures the request.
+     * @param request Request properties to use with the HTTP request.
      * @param form Form data to send with the request.
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
-    HttpResponse options(@DelegatesTo(HttpRequest) Closure requestClosure, FormData form) throws IOException
+    HttpResponse options(HttpRequest request, FormData form) throws IOException
+
+    /**
+     * Perform an HTTP OPTIONS request with the given form data.
+     *
+     * @param form Form data to send with the request.
+     * @param requestClosure Closure that configures the request.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
+     * @throws IOException
+     */
+    HttpResponse options(FormData form, @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
 
     /**
      * Perform an HTTP HEAD request.

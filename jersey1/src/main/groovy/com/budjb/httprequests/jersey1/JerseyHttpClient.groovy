@@ -126,7 +126,7 @@ class JerseyHttpClient extends AbstractHttpClient {
         if (request.getContentType()) {
             String contentType = request.getContentType()
             if (request.getCharset()) {
-                contentType += ";charset=${request.getContentType()}"
+                contentType += ";charset=${request.getCharset()}"
             }
             builder = builder.type(contentType)
         }
@@ -202,20 +202,11 @@ class JerseyHttpClient extends AbstractHttpClient {
      * @return A fully configured {@HttpResponse} object representing the response of the request.
      */
     protected HttpResponse buildResponse(HttpRequest request, ClientResponse clientResponse) {
-        HttpResponse response = new HttpResponse(request)
-
-        if (clientResponse.hasEntity()) {
-            response.setInputStream(clientResponse.getEntityInputStream())
-        }
-
-        response.setStatus(clientResponse.getStatus())
-        response.setContentType(clientResponse.getType()?.toString())
-        response.setHeaders(clientResponse.getHeaders())
-
-        if (clientResponse.getType()?.getParameters()?.containsKey('charset')) {
-            response.setCharset(clientResponse.getType().getParameters().get('charset'))
-        }
-
-        return response
+        return new HttpResponse(
+            request,
+            clientResponse.getStatus(),
+            clientResponse.getHeaders(),
+            clientResponse.hasEntity() ? clientResponse.getEntityInputStream() : null
+        )
     }
 }

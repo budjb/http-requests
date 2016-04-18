@@ -331,4 +331,238 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         response.entityAsJson == [foo: ['bar']]
     }
     */
+
+    def 'Validate builder form of HEAD works'() {
+        when:
+        def response = httpClientFactory.createHttpClient().head { uri = "${baseUrl}/testBasicHead" }
+
+        then:
+        response.headers.foo == ['baz', 'bar']
+        response.headers.hi == ['there']
+        !response.hasEntity()
+    }
+
+    def 'Validate builder form of POST with no entity works'() {
+        when:
+        def response = httpClientFactory.createHttpClient().post { uri = "${baseUrl}/testBasicPost" }
+
+        then:
+        !response.hasEntity()
+    }
+
+    def 'Validate builder form of POST with a byte array entity works'() {
+        when:
+        def response = httpClientFactory.createHttpClient().post('Hello'.getBytes()) { uri = "${baseUrl}/testBasicPost" }
+
+        then:
+        response.entityAsString == 'Hello'
+    }
+
+    def 'Validate builder form of POST with a string entity works'() {
+        when:
+        def response = httpClientFactory.createHttpClient().post('Hello') { uri = "${baseUrl}/testBasicPost" }
+
+        then:
+        response.entityAsString == 'Hello'
+    }
+
+    def 'Validate builder form of POST with an input stream works'() {
+        setup:
+        def stream = new ByteArrayInputStream('Hello'.getBytes())
+
+        when:
+        def response = httpClientFactory.createHttpClient().post(stream) { uri = "${baseUrl}/testBasicPost" }
+
+        then:
+        response.entityAsString == 'Hello'
+    }
+
+    def 'Validate builder form of POST with FormData works'() {
+        setup:
+        def form = new FormData()
+        form.addField('foo', 'bar')
+        form.addField('foo', 'baz')
+        form.addField('hi', 'there')
+
+        when:
+        def response = httpClientFactory.createHttpClient().post(form) { uri = "${baseUrl}/testBasicPost" }
+
+        then:
+        response.entityAsString == 'foo=bar&foo=baz&hi=there'
+    }
+
+    def 'Validate builder form of PUT with no entity works'() {
+        when:
+        def response = httpClientFactory.createHttpClient().put { uri = "${baseUrl}/testBasicPut" }
+
+        then:
+        !response.hasEntity()
+    }
+
+    def 'Validate builder form of PUT with a byte array entity works'() {
+        when:
+        def response = httpClientFactory.createHttpClient().put('Hello'.getBytes()) { uri = "${baseUrl}/testBasicPut" }
+
+        then:
+        response.entityAsString == 'Hello'
+    }
+
+    def 'Validate builder form of PUT with a string entity works'() {
+        when:
+        def response = httpClientFactory.createHttpClient().put('Hello') { uri = "${baseUrl}/testBasicPut" }
+
+        then:
+        response.entityAsString == 'Hello'
+    }
+
+    def 'Validate builder form of PUT with an input stream works'() {
+        setup:
+        def stream = new ByteArrayInputStream('Hello'.getBytes())
+
+        when:
+        def response = httpClientFactory.createHttpClient().put(stream) { uri = "${baseUrl}/testBasicPut" }
+
+        then:
+        response.entityAsString == 'Hello'
+    }
+
+    /*
+    def 'Validate builder form of PUT with FormData works'() {
+        setup:
+        def form = new FormData()
+        form.addField('foo', 'bar')
+        form.addField('foo', 'baz')
+        form.addField('hi', 'there')
+
+        when:
+        def response = httpClientFactory.createHttpClient().put(form) { uri = "${baseUrl}/testBasicPut" }
+
+        then:
+        response.entityAsString == 'foo=bar&foo=baz&hi=there'
+    }
+    */
+
+    def 'Validate request form of POST with no entity works'() {
+        setup:
+        def request = new HttpRequest("${baseUrl}/testBasicPost")
+
+        when:
+        def response = httpClientFactory.createHttpClient().post(request)
+
+        then:
+        !response.hasEntity()
+    }
+
+    def 'Validate request form of POST with a byte array entity works'() {
+        setup:
+        def request = new HttpRequest("${baseUrl}/testBasicPost")
+
+        when:
+        def response = httpClientFactory.createHttpClient().post(request, 'Hello'.getBytes())
+
+        then:
+        response.entityAsString == 'Hello'
+    }
+
+    def 'Validate request form of POST with a string entity works'() {
+        setup:
+        def request = new HttpRequest("${baseUrl}/testBasicPost")
+
+        when:
+        def response = httpClientFactory.createHttpClient().post(request, 'Hello')
+
+        then:
+        response.entityAsString == 'Hello'
+    }
+
+    def 'Validate request form of POST with an input stream works'() {
+        setup:
+        def request = new HttpRequest("${baseUrl}/testBasicPost")
+        def stream = new ByteArrayInputStream('Hello'.getBytes())
+
+        when:
+        def response = httpClientFactory.createHttpClient().post(request, stream)
+
+        then:
+        response.entityAsString == 'Hello'
+    }
+
+    def 'Validate request form of POST with FormData works'() {
+        setup:
+        def form = new FormData()
+        form.addField('foo', 'bar')
+        form.addField('foo', 'baz')
+        form.addField('hi', 'there')
+
+        def request = new HttpRequest("${baseUrl}/testBasicPost")
+
+        when:
+        def response = httpClientFactory.createHttpClient().post(request,form)
+
+        then:
+        response.entityAsString == 'foo=bar&foo=baz&hi=there'
+    }
+
+    def 'Validate request form of PUT with no entity works'() {
+        setup:
+        def request = new HttpRequest("${baseUrl}/testBasicPut")
+
+        when:
+        def response = httpClientFactory.createHttpClient().put(request)
+
+        then:
+        !response.hasEntity()
+    }
+
+    def 'Validate request form of PUT with a byte array entity works'() {
+        setup:
+        def request = new HttpRequest("${baseUrl}/testBasicPut")
+
+        when:
+        def response = httpClientFactory.createHttpClient().put(request, 'Hello'.getBytes())
+
+        then:
+        response.entityAsString == 'Hello'
+    }
+
+    def 'Validate request form of PUT with a string entity works'() {
+        setup:
+        def request = new HttpRequest("${baseUrl}/testBasicPut")
+
+        when:
+        def response = httpClientFactory.createHttpClient().put(request, 'Hello')
+
+        then:
+        response.entityAsString == 'Hello'
+    }
+
+    def 'Validate request form of PUT with an input stream works'() {
+        setup:
+        def stream = new ByteArrayInputStream('Hello'.getBytes())
+        def request = new HttpRequest("${baseUrl}/testBasicPut")
+
+        when:
+        def response = httpClientFactory.createHttpClient().put(request, stream)
+
+        then:
+        response.entityAsString == 'Hello'
+    }
+
+    /*
+    def 'Validate request form of PUT with FormData works'() {
+        setup:
+        def form = new FormData()
+        form.addField('foo', 'bar')
+        form.addField('foo', 'baz')
+        form.addField('hi', 'there')
+
+        def request = new HttpRequest("${baseUrl}/testBasicPut")
+
+        when:
+        def response = httpClientFactory.createHttpClient().put(request, form)
+
+        then:
+        response.entityAsString == 'foo=bar&foo=baz&hi=there'
+    }
+    */
 }
