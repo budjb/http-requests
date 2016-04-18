@@ -181,9 +181,7 @@ abstract class AbstractHttpClient implements HttpClient {
      */
     @Override
     HttpResponse execute(HttpMethod method, HttpRequest request, FormData form) throws IOException {
-        if (!request.getContentType()) {
-            request.setContentType('application/x-www-form-urlencoded')
-        }
+        request.setContentType('application/x-www-form-urlencoded')
         return run(request, { doExecute(method, request, form) })
     }
 

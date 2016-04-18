@@ -60,8 +60,9 @@ class HttpResponse implements Closeable {
     HttpResponse(HttpRequest request, int status, Map<String, List<String>> headers, InputStream inputStream) {
         this.request = request
         this.status = status
-        this.headers = headers
         this.inputStream = inputStream
+
+        setHeaders(headers)
     }
 
     /**

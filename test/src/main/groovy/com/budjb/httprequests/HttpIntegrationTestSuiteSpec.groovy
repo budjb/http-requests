@@ -13,7 +13,7 @@ import spock.lang.Ignore
 abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
     def 'When a GET request is made to /testBasicGet, the proper response is received'() {
         when:
-        def response = httpClientFactory.createHttpClient().get(new HttpRequest().setUri("${baseUrl}/testBasicGet"))
+        def response = httpClientFactory.createHttpClient().get(new HttpRequest().setUri("${baseUrl}/testBasicGet").setLogConversation(true))
 
         then:
         response.getEntityAsString() == 'The quick brown fox jumps over the lazy dog.'
@@ -30,7 +30,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
     def 'When a POST request is made to /testBasicPost, the proper response is received'() {
         when:
         def response = httpClientFactory.createHttpClient().post(
-            new HttpRequest().setUri("${baseUrl}/testBasicPost"),
+            new HttpRequest().setUri("${baseUrl}/testBasicPost").setContentType('text/plain'),
             "Please don't play the repeating game!"
         )
 
@@ -41,7 +41,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
     def 'When a PUT request is made to /testBasicPut, the proper response is received'() {
         when:
         def response = httpClientFactory.createHttpClient().put(
-            new HttpRequest().setUri("${baseUrl}/testBasicPut"),
+            new HttpRequest().setUri("${baseUrl}/testBasicPut").setContentType('text/plain'),
             "Please don't play the repeating game!"
         )
 
@@ -197,7 +197,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
 
 
         when:
-        def response = httpClientFactory.createHttpClient().post(new HttpRequest().setUri("${baseUrl}/testForm"), formData)
+        def response = httpClientFactory.createHttpClient().post(new HttpRequest().setUri("${baseUrl}/testForm").setLogConversation(true), formData)
 
         then:
         response.entityAsJson == ['foo': ['bar'], 'key': ['value']]

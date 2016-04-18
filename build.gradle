@@ -181,6 +181,13 @@ project(':jersey1') {
     }
 }
 
+project(':jersey2') {
+    dependencies {
+        compile project(':core')
+        compile 'org.glassfish.jersey.core:jersey-client:2.22.2'
+    }
+}
+
 project(':spring4') {
     dependencies {
         compile project(':core')

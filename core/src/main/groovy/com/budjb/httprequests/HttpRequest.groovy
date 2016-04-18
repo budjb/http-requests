@@ -24,7 +24,7 @@ class HttpRequest {
     /**
      * Content type of the request.
      */
-    String contentType
+    String contentType = 'application/octet-stream'
 
     /**
      * Requested content type of the response.
@@ -467,5 +467,48 @@ class HttpRequest {
                 }
             }
         }
+    }
+
+    /**
+     * Returns the Content-Type of the request with the character set appended to it.
+     *
+     * If the Content-Type is not set, <code>null</code> is returned.
+     *
+     * @return Content-Type of the request with the character set appended to it.
+     */
+    String getFullContentType() {
+        if (!contentType) {
+            return null
+        }
+
+        String str = contentType
+
+        if (charset) {
+            str += ";charset=${charset}"
+        }
+
+        return str
+    }
+
+    /**
+     * Sets whether to log the HTTP conversation.
+     *
+     * @param logConversation Whether to log the HTTP conversation.
+     * @return The instance of this class the method was called with.
+     */
+    HttpRequest setLogConversation(boolean logConversation) {
+        this.logConversation = logConversation
+        return this
+    }
+
+    /**
+     * Sets whether to automatically buffer the response entity.
+     *
+     * @param autoBufferEntity Whether to automatically buffer the response entity.
+     * @return The instance of this class the method was called with.
+     */
+    HttpRequest setAutoBufferEntity(boolean autoBufferEntity) {
+        this.autoBufferEntity = autoBufferEntity
+        return this
     }
 }
