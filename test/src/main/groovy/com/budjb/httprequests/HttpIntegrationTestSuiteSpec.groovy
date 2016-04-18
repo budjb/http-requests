@@ -388,7 +388,9 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         def response = httpClientFactory.createHttpClient().post(form) { uri = "${baseUrl}/testBasicPost" }
 
         then:
-        response.entityAsString == 'foo=bar&foo=baz&hi=there'
+        response.entityAsString.contains('foo=bar')
+        response.entityAsString.contains('foo=baz')
+        response.entityAsString.contains('hi=there')
     }
 
     def 'Validate builder form of PUT with no entity works'() {
@@ -500,7 +502,9 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         def response = httpClientFactory.createHttpClient().post(request,form)
 
         then:
-        response.entityAsString == 'foo=bar&foo=baz&hi=there'
+        response.entityAsString.contains('foo=bar')
+        response.entityAsString.contains('foo=baz')
+        response.entityAsString.contains('hi=there')
     }
 
     def 'Validate request form of PUT with no entity works'() {
