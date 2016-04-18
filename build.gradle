@@ -14,7 +14,7 @@ ext {
     artifactIdBaseName = 'http-requests'
 }
 
-version = '0.1.1.BETA'
+version = '0.1.2.BETA'
 group = 'com.budjb'
 
 subprojects {
