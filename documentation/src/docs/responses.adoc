@@ -1,0 +1,36 @@
+=== Handling Responses
+
+`HttpClient` request methods return `HttpResponse` objects that contain information about the response.
+
+==== HttpResponse Properties
+
+The set of response properties is smaller than that of the request, and provides basic information about the response
+
+.HttpResponse Properties
+[grid="rows", cols=[1,1,3]
+|===
+| Property         | Type          | Description
+
+| `status`         | `Integer`     | HTTP status code of the response.
+| `contentType`    | `String`      | Content-Type of the response, if the response contains an entity.
+| `charSet`        | `String`      | Character set of the response, if the response contains an entity.
+| `inputStream`    | `InputStream` | The `InputStream` object containing the response entity, if there is one.
+| `entity`         | `byte[]`      | The response entity as a byte array.
+| `entityAsString` | `String`      | The response entity as a String. Character set is respected, if available.
+| `entityAsJson`   | _Mixed_       | The response entity, parsed as JSON. The returned object will either be a `List`\
+                                     or a `Map`.
+| `headers`        | `Map`         | Response headers.
+| `allow`          | `List`        | Contains a list of `HttpMethod` objects. Typically returned from `HTTP OPTIONS`\
+                                     requests.
+|===
+
+==== Response Entities
+
+By default, the response entity, if available, is read from the `InputStream` into the `entity` property as a byte
+array, and the `InputStream` is closed. This effectively makes the input stream unusable. If the request properties
+disabled this functionality, the input stream can be read from. However, even when the input stream is not automatically
+buffered, the first call to retrieve the entity will read the contents from the input stream and close it.
+
+IMPORTANT: It is very important that authors that use the input stream directly close the input stream when it is no
+longer needed. If it is not closed, underlying system resources may not be freed up. The `close()` method can be called
+on the `HttpResponse` to close the input stream.

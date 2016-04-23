@@ -1,0 +1,29 @@
+== Installing
+The library is split into several module libraries, which can all be found on
+https://bintray.com/bintray/jcenter[jCenter]. The library contains a core module, which contains the bulk of the code
+and logic provided by the library. There are also implementation-specific libraries that provide implementations of
+popular HTTP client libraries. The table below lists out all of the modules that exist for the HTTP Requests library
+and what their purposes are.
+
+.HTTP Requests Library Modules
+[grid="rows", cols="1,3"]
+|===
+| Module                  | Purpose
+
+| `http-requests-core`    | Contains the core logic and interfaces that implementation modules will use.
+| `http-requests-jersey1` | Provides a *Jersey 1.x* implementation of the HTTP requests library.
+| `http-requests-jersey2` | Provides a *Jersey 2.x* implementation of the HTTP requests library.
+|===
+
+When using the HTTP Requests library, the `http-requests-core` library need not be explicitly added as a project
+dependency. Instead, authors should include an implementation module, which will automatically include the core module.
+All modules are deployed under the group `com.budjb`.
+
+As an example, using gradle and opting to use the Jersey 1.x implementation, a dependency should be added like below:
+
+.build.gradle
+[source,groovy,subs="attributes"]
+dependencies {
+    compile "com.budjb:http-requests-jersey1:{version}"
+}
+

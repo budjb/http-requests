@@ -1,0 +1,17 @@
+apply plugin: 'org.asciidoctor.convert'
+
+asciidoctor {
+    sourceDir new File("$projectDir/src/docs")
+    sources {
+        include 'index.adoc'
+    }
+    attributes 'experimental': 'true',
+        'copyright': 'Apache License, Version 2.0',
+        'toc': 'left',
+        'toclevels': 3,
+        'numbered': 'true',
+        'icons': 'font',
+        'version': project.version,
+        'revnumber': project.version,
+        'source-highlighter': 'prettify'
+}

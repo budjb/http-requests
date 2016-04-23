@@ -1,0 +1,134 @@
+=== Configuring the Request
+
+The `HttpRequest` object is used to configure an HTTP request. It contains many different properties relevant to an HTTP
+request, as well as configuration properties that alter the behavior of the `HttpClient`.
+
+==== HttpRequest Properties
+
+The HTTP Request configuration properties are enumerated in the following table.
+
+.HttpRequest Properties
+[grid="rows", cols="1,1,1,5"]
+|===
+| Property                | Type      | Default Value              | Description
+
+| `uri`                   | `String`  |                            | The URI of the request, including the protocol,\
+                                                                     port, host, and path.
+| `accept`                | `String`  |                            | Content-Type the client will request from the host\
+                                                                     in its response.
+| `contentType`           | `String`  | `application/octet-stream` | Content-Type of the request. Applies when the\
+                                                                     request has an entity.
+| `charSet`               | `String`  | `UTF-8`                    | Character set of the request entity.
+| `headers`               | `Map`     |                            | Request headers. Individual header names can\
+                                                                     contain multiple values.
+| `queryParameters`       | `Map`     |                            | Query parameters of the request. Individual query\
+                                                                     parameters can contain multiple values.
+| `connectionTimeout`     | `Integer` | 0                          | The amount of time, in milliseconds, the request\
+                                                                     should wait for the connection to time out.
+| `readTimeout`           | `Integer` | 0                          | The amount of time, in milliseconds, the request\
+                                                                     should wait to time out while waiting for content.
+| `sslValidated`          | `Boolean` | `true`                     | Whether SSL certification trust chains and host\
+                                                                     names should be validated.
+| `throwStatusExceptions` | `Boolean` | `true`                     | If `true`, throw an exception specific to the HTTP\
+                                                                     status if the status is not in the `200` range.
+| `followRedirects`       | `Boolean` | `true`                     | Whether the HTTP client should follow redirect\
+                                                                     responses received from the host.
+| `logConversation`       | `Boolean` | `false`                    | If `true`, log the raw HTTP conversation. The\
+                                                                     behavior of this functionality is dependent on the\
+                                                                     HTTP client implementation.
+| `autoBufferEntity`      | `Boolean` | `true`                     | If `true`, read the entity from the response's\
+                                                                     `InputStream` and close it automatically.
+|===
+
+==== Building an HttpRequest
+
+The `HttpRequest` object can be built in a couple different ways. All properties have getters and setters defined, and
+the setter methods all return the same object to support a builder-style syntax. Additionally, Groovy closures are
+supported.
+
+Using the builder syntax, an `HttpRequest` object may be created like the following:
+
+.Builder Syntax
+[source,groovy]
+def request = new HttpRequest()
+                      .setUri('http://example.com')
+                      .setAccept('application/json')
+                      .setLogConversation(true)
+
+The same request as above can be configured using a Groovy closure, such as:
+
+.Closure Syntax
+[source,groovy]
+def request = HttpRequest.build {
+    uri = 'http://example.com'
+    accept = 'application/json'
+    logConversation = true
+}
+
+==== Behavior Modification
+
+As mentioned before, some of the `HttpRequest` properties alter the behavior of the HTTP client. This section will
+identify those properties and their behavior.
+
+===== throwStatusExceptions
+
+The `throwStatusExceptions` property modifies how the response status is treated. By default, when an HTTP status that
+is not considered successful (that is, not in the 200-299 range), an exception representing that status code is thrown.
+For example, if an `HTTP 404` is received, an `HttpNotFoundException` will be thrown.
+
+TIP: Use this functionality to create different error handling for expected error cases.
+
+If no appropriate exception exists for the HTTP status code that is received, an `HttpStatusException` is thrown
+instead. This exception is actually the superclass of all HTTP status specific exceptions.
+
+These exceptions contain the following information about the response:
+
+.HttpStatusException Properties
+[grid="rows"]
+|====
+| Property | Description
+
+| status | The HTTP status code of the response, as an `Integer`.
+| response | The `HttpResponse` object containing details about the received response.
+|====
+
+NOTE: Disabling this functionality will cause the response to return an `HttpResponse` object regardless of the HTTP
+status code that was received with the response.
+
+===== followRedirects
+
+By default, the HTTP client will follow redirect responses sent by the server by repeating the request against the new
+HTTP URI. If authors do not wish to use this behavior, it can be disabled by setting `followRedirects` to false. When
+this happens, the `HttpResponse` object will likely not contain much information other than the HTTP status code.
+
+NOTE: If the `followRedirects` property is set to `false`, the response is still subject to the behavior of
+`throwStatusExceptions`. In other words, if the server responds with `HTTP 302`, an `HttpFoundException` will be thrown
+unless `throwStatusExceptions` is set to `false`.
+
+===== autoBufferEntity
+
+When this is enabled, the response entity (if there is one) is automatically read from the HTTP connection's
+`InputStream` into a byte array stored in the `HttpResponse` object, and the stream is closed.
+
+IMPORTANT: It is very important that the response's input stream is closed by application authors if this functionality\
+is disabled, or the underlying system resources may not be freed up.
+
+===== logConversation
+
+When enabled, the raw request and response conversation will be logged. The behavior of this functionality depends on
+the implementation library being used. Some libraries allow the log output to be captured and printed in a controlled
+manner, while others make decisions about how the information should be logged. See the details for the implementation
+module for information about conversations are logged.
+
+===== sslValidated
+
+WARNING: Disabling this functionality makes HTTP requests inherently insecure and is not recommended in situations where
+host identity verification is important, such as production environments.
+
+By default, all SSL and TLS connections go through the standard validation steps, and may throw an `IOException` if
+SSL validation fails. Sometimes, authors may wish to bypass this functionality when they know SSL validation will fail
+but they still trust the remote host. When this property is set to true, SSL validation will not occur and the request
+should succeed unless there's a more serious SSL issue encountered.
+
+TIP: Disabling SSL validation is a great tool for quickly deploying development environments with self-signed
+certificates that are not stored in Java keystores.

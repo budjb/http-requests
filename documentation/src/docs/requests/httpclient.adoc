@@ -1,0 +1,123 @@
+=== Using the Client
+
+The `HttpClient` contains many methods used to initiate requests. Methods are named after the HTTP method to be used
+for the request.
+
+.Supported HTTP Methods
+* GET
+* POST
+* PUT
+* DELETE
+* TRACE
+* OPTIONS
+* HEAD
+
+==== Client Methods
+
+Every HTTP method is configured by an `HttpRequest` object. The request object can be constructed and passed to the
+client, or one of the convenience methods that take a Groovy closure can be used to create the request properties.
+
+.Using an HttpRequest Object
+[source,groovy]
+----
+def client = new JerseyHttpClientFactory().createHttpClient()
+
+def request = new HttpRequest('http://example.com/foo/bar')
+
+def response = client.get(request)
+----
+
+.Using a Groovy Closure
+[source,groovy]
+----
+def client = new JerseyHttpClientFactory().createHttpClient()
+
+def response = client.get {
+    uri = 'http://example.com/foo/bar'
+}
+----
+
+Several of the HTTP methods support request entities (or bodies). For those methods that do, there are several class
+types that are supported as the request entity.
+
+.Supported Request Entity Types
+* `byte[]`
+* `String`
+* `InputStream`
+* `FormData`
+
+NOTE: This documentation will not cover every single class method, but the API documentation can be referenced for
+a complete list of method signatures.
+
+==== Client Examples
+
+===== Basic HTTP GET Request
+
+The `HTTP GET` method is one of the most used HTTP methods used. This method does not contain a request entity
+(or body).
+
+Suppose that (for whatever reason) an application needed to retrieve the content's of Google's home page. The following
+code snippet would accomplish this.
+
+.Retrieve the google.com Page
+[source,groovy]
+def client = new JerseyHttpClientFactory().createHttpClient()
+def response = client.get { uri = 'google.com' }
+
+===== Posting an HTML Form
+
+The `FormData` object contains a multi-valued map useful to simulate submitting an HTTP form.
+
+NOTE: Submitting a `FormData` object with the request automatically sets the `Content-Type` of the request.
+
+.Submit an HTML Form
+[source,groovy]
+----
+def form = new FormData()
+form.addField('foo', 'bar')
+form.addField('hello', 'world')
+
+def request = new HttpRequest().setUri('http://example.com/foo/bar')
+
+def client = new JerseyHttpClientFactory().createHttpClient()
+def response = client.post(request, form)
+----
+
+.Submit an HTML Form with a Groovy Closure
+[source,groovy]
+----
+def form = new FormData()
+form.addField('foo', 'bar')
+form.addField('hello', 'world')
+
+def client = new JerseyHttpClientFactory().createHttpClient()
+def response = client.post(form) { uri = 'http://example.com/foo/bar' }
+----
+
+===== Making a Request with an InputStream
+
+Applications may need to submit a request with an `InputStream`, such as when the request is coming from the file
+system. The following example reads a a file from the disk and sends it in a request.
+
+.PUT a File from the Disk
+[source,groovy]
+----
+def inputStream = new FileInputStream(new File('/path/to/file'))
+def client = new JerseyHttpClientFactory().createHttpClient()
+def response = client.put(inputStream) { uri = 'http://example.com/foo/bar' }
+----
+
+===== Sending a JSON Request
+
+A common use case when working with RESTful APIs involves sending JSON encoded entities. The following example uses
+the built-in Groovy `JsonBuilder` to handle the JSON encoding.
+
+.POST a JSON Entity
+[source,groovy]
+def data = [foo: 'bar', hello: 'world']
+def encoded = new JsonBuilder(data).toString()
+def client = new JerseyHttpClientFactory().createHttpClient()
+def response = client.post(inputStream) {
+    uri = 'http://example.com/foo/bar'
+    contentType = 'application/json'
+}
