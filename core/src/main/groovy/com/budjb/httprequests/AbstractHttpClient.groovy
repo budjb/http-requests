@@ -714,6 +714,17 @@ abstract class AbstractHttpClient implements HttpClient {
     }
 
     /**
+     * Removes all registered listeners.
+     *
+     * @return The object the method was called on.
+     */
+    @Override
+    HttpClient clearListeners() {
+        listeners.clear()
+        return this
+    }
+
+    /**
      * Return a list of all registered {@link HttpClientRequestListener} instances.
      *
      * @return All registered {@link HttpClientRequestListener} instances.

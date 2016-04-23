@@ -48,7 +48,8 @@ interface HttpClient {
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
-    HttpResponse execute(HttpMethod method, byte[] entity, @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
+    HttpResponse execute(HttpMethod method, byte[] entity,
+                         @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
 
     /**
      * Executes an HTTP request with the given method, request parameters, and request entity.
@@ -70,7 +71,8 @@ interface HttpClient {
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
-    HttpResponse execute(HttpMethod method, String entity, @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
+    HttpResponse execute(HttpMethod method, String entity,
+                         @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
 
     /**
      * Executes an HTTP request with the given method, request parameters, and input stream.
@@ -92,7 +94,8 @@ interface HttpClient {
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
-    HttpResponse execute(HttpMethod method, InputStream inputStream, @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
+    HttpResponse execute(HttpMethod method, InputStream inputStream,
+                         @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
 
     /**
      * Executes an HTTP request with the given method, request parameters, and form data.
@@ -114,7 +117,8 @@ interface HttpClient {
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
-    HttpResponse execute(HttpMethod method, FormData form, @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
+    HttpResponse execute(HttpMethod method, FormData form,
+                         @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
 
     /**
      * Perform an HTTP GET request.
@@ -504,4 +508,11 @@ interface HttpClient {
      * @return The object the method was called on.
      */
     HttpClient removeListener(HttpClientListener listener)
+
+    /**
+     * Removes all registered listeners.
+     *
+     * @return The object the method was called on.
+     */
+    HttpClient clearListeners()
 }
