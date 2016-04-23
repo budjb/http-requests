@@ -198,11 +198,17 @@ class JerseyHttpClient extends AbstractHttpClient {
      * @return A fully configured {@HttpResponse} object representing the response of the request.
      */
     protected HttpResponse buildResponse(HttpRequest request, ClientResponse clientResponse) {
-        return new HttpResponse(
-            request,
-            clientResponse.getStatus(),
-            clientResponse.getHeaders(),
-            clientResponse.hasEntity() ? clientResponse.getEntityInputStream() : null
-        )
+        HttpResponse response = createResponse(request)
+
+        response.setStatus(clientResponse.getStatus())
+        response.setHeaders(clientResponse.getHeaders())
+        response.setContentType(clientResponse.getType()?.getType())
+        response.setCharset(clientResponse.getType()?.getParameters()?.get('charset'))
+
+        if (clientResponse.hasEntity()) {
+            response.setInputStream(clientResponse.getEntityInputStream())
+        }
+
+        return response
     }
 }

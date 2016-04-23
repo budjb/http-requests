@@ -1,5 +1,7 @@
 package com.budjb.httprequests
 
+import com.budjb.httprequests.converter.ConverterManager
+import com.budjb.httprequests.converter.EntityConverter
 import com.budjb.httprequests.listener.HttpClientListener
 
 /**
@@ -8,6 +10,13 @@ import com.budjb.httprequests.listener.HttpClientListener
  * Various listener classes are supported.
  */
 interface HttpClient {
+    /**
+     * Assigns the {@link ConverterManager} object to the client.
+     *
+     * @param converterManager Converter manager responsible for entity marshaling.
+     */
+    void setConverterManager(ConverterManager converterManager)
+
     /**
      * Execute an HTTP request with the given method and request parameters and without a request entity.
      *
@@ -515,4 +524,30 @@ interface HttpClient {
      * @return The object the method was called on.
      */
     HttpClient clearListeners()
+
+    /**
+     * Adds an entity converter to the factory.
+     *
+     * @param converter Converter to add to the factory.
+     */
+    void addEntityConverter(EntityConverter converter)
+
+    /**
+     * Returns the list of entity converters.
+     *
+     * @return List of entity converters.
+     */
+    List<EntityConverter> getEntityConverters()
+
+    /**
+     * Remove an entity converter.
+     *
+     * @param converter Entity converter to remove.
+     */
+    void removeEntityConverter(EntityConverter converter)
+
+    /**
+     * Remove all entity converters.
+     */
+    void clearEntityConverters()
 }

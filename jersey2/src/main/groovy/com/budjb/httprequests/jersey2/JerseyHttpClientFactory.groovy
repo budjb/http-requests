@@ -1,8 +1,7 @@
 package com.budjb.httprequests.jersey2
 
 import com.budjb.httprequests.HttpClient
-import com.budjb.httprequests.HttpClientFactory
-import com.budjb.httprequests.listener.AbstractHttpClientFactory
+import com.budjb.httprequests.AbstractHttpClientFactory
 
 class JerseyHttpClientFactory extends AbstractHttpClientFactory {
     /**

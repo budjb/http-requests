@@ -9,8 +9,6 @@ import javax.net.ssl.*
 import javax.ws.rs.ProcessingException
 import javax.ws.rs.client.*
 import javax.ws.rs.core.Form
-import javax.ws.rs.core.MultivaluedHashMap
-import javax.ws.rs.core.MultivaluedMap
 import javax.ws.rs.core.Response
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
@@ -185,12 +183,18 @@ class JerseyHttpClient extends AbstractHttpClient {
      * @return A fully configured {@HttpResponse} object representing the response of the request.
      */
     protected HttpResponse buildResponse(HttpRequest request, Response clientResponse) {
-        return new HttpResponse(
-            request,
-            clientResponse.getStatus(),
-            clientResponse.getHeaders() as Map<String, List<String>>,
-            clientResponse.hasEntity() ? clientResponse.getEntity() as InputStream: null
-        )
+        HttpResponse response = createResponse(request)
+
+        response.setStatus(clientResponse.getStatus())
+        response.setHeaders(clientResponse.getHeaders())
+        response.setContentType(clientResponse.getMediaType()?.getType())
+        response.setCharset((clientResponse.getMediaType()?.getParameters()?.get('charset')))
+
+        if (clientResponse.hasEntity()) {
+            response.setInputStream(clientResponse.getEntity() as InputStream)
+        }
+
+        return response
     }
 
     /**

@@ -1,5 +1,7 @@
 package com.budjb.httprequests
 
+import com.budjb.httprequests.converter.ConverterManager
+import com.budjb.httprequests.converter.EntityConverter
 import com.budjb.httprequests.exception.HttpStatusException
 import com.budjb.httprequests.listener.HttpClientListener
 import com.budjb.httprequests.listener.HttpClientRequestListener
@@ -12,6 +14,11 @@ import com.budjb.httprequests.listener.HttpClientRetryListener
  * Individual HTTP client library implementations should extend this class.
  */
 abstract class AbstractHttpClient implements HttpClient {
+    /**
+     * Converter manager.
+     */
+    ConverterManager converterManager
+
     /**
      * List of registered {@link HttpClientListener} objects.
      */
@@ -789,5 +796,54 @@ abstract class AbstractHttpClient implements HttpClient {
         }
 
         return response
+    }
+
+    /**
+     * Helper method for client implementations that creates an {@link HttpResponse} object.
+     *
+     * @param request The request properties used to make the request.
+     * @return A new response object populated with the request and converter manager.
+     */
+    protected createResponse(HttpRequest request) {
+        HttpResponse response = new HttpResponse()
+
+        response.setRequest(request)
+        response.setConverterManager(converterManager)
+
+        return response
+    }
+
+    /**
+     * Adds an entity converter to the factory.
+     *
+     * @param converter Converter to add to the factory.
+     */
+    void addEntityConverter(EntityConverter converter) {
+        converterManager.add(converter)
+    }
+
+    /**
+     * Returns the list of entity converters.
+     *
+     * @return List of entity converters.
+     */
+    List<EntityConverter> getEntityConverters() {
+        return converterManager.getAll()
+    }
+
+    /**
+     * Remove an entity converter.
+     *
+     * @param converter Entity converter to remove.
+     */
+    void removeEntityConverter(EntityConverter converter) {
+        converterManager.remove(converter)
+    }
+
+    /**
+     * Remove all entity converters.
+     */
+    void clearEntityConverters() {
+        converterManager.clear()
     }
 }

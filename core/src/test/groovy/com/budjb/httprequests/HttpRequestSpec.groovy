@@ -141,12 +141,13 @@ class HttpRequestSpec extends Specification {
 
     def 'When the response contains no entity, hasEntity() returns false'() {
         expect:
-        !new HttpResponse(new HttpRequest(), 200, [:], null).hasEntity()
+        !new HttpResponse().hasEntity()
     }
 
     def 'When the response contains an open input stream, hasEntity() returns true'() {
         setup:
-        def response = new HttpResponse(new HttpRequest(), 200, [:], null)
+        def response = new HttpResponse()
+        response.setRequest(new HttpRequest())
         response.setInputStream(new ByteArrayInputStream())
 
         expect:
@@ -155,7 +156,7 @@ class HttpRequestSpec extends Specification {
 
     def 'When the response contains a byte array entity, hasEntity() returns true'() {
         setup:
-        def response = new HttpResponse(new HttpRequest(), 200, [:], null)
+        def response = new HttpResponse()
         response.setEntity([1, 2, 3] as byte[])
 
         expect:

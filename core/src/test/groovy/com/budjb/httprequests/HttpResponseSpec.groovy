@@ -1,17 +1,23 @@
 package com.budjb.httprequests
 
+import com.budjb.httprequests.converter.ConverterManager
+import com.budjb.httprequests.converter.StringEntityReader
 import spock.lang.Specification
 import spock.lang.Unroll
 
 class HttpResponseSpec extends Specification {
     def 'When a charset is provided, the resulting string is built using it'() {
         setup:
-        HttpResponse response = new HttpResponse(new HttpRequest(), 200, [:], null)
+        ConverterManager converterManager = new ConverterManager()
+        converterManager.add(new StringEntityReader())
+
+        HttpResponse response = new HttpResponse()
+        response.converterManager = converterManager
         response.entity = 'åäö'.getBytes()
         response.charset = 'euc-jp'
 
         when:
-        String entity = response.getEntityAsString()
+        String entity = response.getEntity(String)
 
         then:
         entity == '奪辰旦'
@@ -19,11 +25,15 @@ class HttpResponseSpec extends Specification {
 
     def 'When no charset is provided, UTF-8 is used'() {
         setup:
-        HttpResponse response = new HttpResponse(new HttpRequest(), 200, [:], null)
+        ConverterManager converterManager = new ConverterManager()
+        converterManager.add(new StringEntityReader())
+
+        HttpResponse response = new HttpResponse()
+        response.converterManager = converterManager
         response.entity = 'åäö'.getBytes()
 
         when:
-        String entity = response.getEntityAsString()
+        String entity = response.getEntity(String)
 
         then:
         response.charset == 'UTF-8'
@@ -33,7 +43,7 @@ class HttpResponseSpec extends Specification {
     @Unroll
     def 'When a #type charset is assigned, charset is not actually assigned'() {
         setup:
-        HttpResponse response = new HttpResponse(new HttpRequest(), 200, [:], null)
+        HttpResponse response = new HttpResponse()
 
         when:
         response.charset = charset
@@ -49,7 +59,7 @@ class HttpResponseSpec extends Specification {
 
     def 'When a null character set is assigned, the existing value is not overwritten'() {
         setup:
-        def response = new HttpResponse(new HttpRequest(), 200, [:], null)
+        def response = new HttpResponse()
         response.setCharset('ISO-8859-1')
 
         when:
@@ -61,7 +71,7 @@ class HttpResponseSpec extends Specification {
 
     def 'Verify header parsing and retrieval'() {
         setup:
-        def response = new HttpResponse(new HttpRequest(), 200, [:], null)
+        def response = new HttpResponse()
 
         when:
         response.headers = [
@@ -91,13 +101,18 @@ class HttpResponseSpec extends Specification {
 
     def 'When the entity is retrieved from a streaming response, the input stream is closed'() {
         setup:
+        ConverterManager converterManager = new ConverterManager()
+        converterManager.add(new StringEntityReader())
+
         def entity = 'Hello, world!'
         def inputStream = new ByteArrayInputStream(entity.getBytes())
-        def response = new HttpResponse(HttpRequest.build { autoBufferEntity = false }, 200, [:], null)
+        def response = new HttpResponse()
+        response.converterManager = converterManager
+        response.request = HttpRequest.build { autoBufferEntity = false }
         response.inputStream = inputStream
 
         when:
-        def body = response.entityAsString
+        def body = response.getEntity(String)
 
         then:
         body == entity

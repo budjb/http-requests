@@ -1,6 +1,7 @@
 package com.budjb.httprequests
 
-import groovy.json.JsonSlurper
+import com.budjb.httprequests.converter.ConverterManager
+import com.budjb.httprequests.exception.UnsupportedConversionException
 
 /**
  * An object that represents the response of an HTTP request.
@@ -25,12 +26,12 @@ class HttpResponse implements Closeable {
     /**
      * Headers of the response.
      */
-    private Map<String, List<String>> headers = new TreeMap<String, List<String>>(String.CASE_INSENSITIVE_ORDER)
+    Map<String, List<String>> headers = new TreeMap<String, List<String>>(String.CASE_INSENSITIVE_ORDER)
 
     /**
      * Entity of the response.
      */
-    private byte[] entity
+    byte[] entity
 
     /**
      * A list of allowed HTTP methods. Typically returned from OPTIONS requests.
@@ -53,17 +54,9 @@ class HttpResponse implements Closeable {
     HttpRequest request
 
     /**
-     * Constructor.
-     *
-     * @param request Request properties used to configure the request that generated this response.
+     * Converter manager.
      */
-    HttpResponse(HttpRequest request, int status, Map<String, List<String>> headers, InputStream inputStream) {
-        this.request = request
-        this.status = status
-        this.inputStream = inputStream
-
-        setHeaders(headers)
-    }
+    ConverterManager converterManager
 
     /**
      * Sets the character set of the response.
@@ -74,24 +67,6 @@ class HttpResponse implements Closeable {
         if (charset) {
             this.charset = charset
         }
-    }
-
-    /**
-     * Return the entity of the response as a <code>String</code>.
-     *
-     * @return The entity of the response converted to a <code>String</code>.
-     */
-    String getEntityAsString() {
-        return new String(getEntity(), charset)
-    }
-
-    /**
-     * Parses the entity of the response as JSON and returns the resulting object.
-     *
-     * @return The entity of the response parsed as JSON.
-     */
-    Object getEntityAsJson() {
-        return new JsonSlurper().parse(getEntity(), charset)
     }
 
     /**
@@ -196,6 +171,17 @@ class HttpResponse implements Closeable {
         }
 
         return entity
+    }
+
+    /**
+     * Returns the entity, converted to the given class type.
+     *
+     * @param type Class type to convert the entity to.
+     * @return The converted entity.
+     * @throws UnsupportedConversionException when no converter is found to convert the entity.
+     */
+    public <T> T getEntity(Class<T> type) throws UnsupportedConversionException {
+        return converterManager.read(type, getEntity(), getContentType(), getCharset())
     }
 
     /**

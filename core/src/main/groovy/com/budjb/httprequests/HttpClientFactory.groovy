@@ -1,5 +1,6 @@
 package com.budjb.httprequests
 
+import com.budjb.httprequests.converter.EntityConverter
 import com.budjb.httprequests.listener.HttpClientListener
 
 /**
@@ -43,4 +44,30 @@ interface HttpClientFactory {
      * Removes all registered listeners.
      */
     void clearListeners()
+
+    /**
+     * Adds an entity converter to the factory.
+     *
+     * @param converter Converter to add to the factory.
+     */
+    void addEntityConverter(EntityConverter converter)
+
+    /**
+     * Returns the list of entity converters.
+     *
+     * @return List of entity converters.
+     */
+    List<EntityConverter> getEntityConverters()
+
+    /**
+     * Remove an entity converter.
+     *
+     * @param converter Entity converter to remove.
+     */
+    void removeEntityConverter(EntityConverter converter)
+
+    /**
+     * Remove all entity converters.
+     */
+    void clearEntityConverters()
 }
