@@ -28,6 +28,11 @@ class StringEntityReader implements EntityReader {
      */
     @Override
     Object read(byte[] entity, String contentType, String charset) throws Exception {
-        return new String(entity, charset)
+        if (charset) {
+            return new String(entity, charset)
+        }
+        else {
+            return new String(entity)
+        }
     }
 }

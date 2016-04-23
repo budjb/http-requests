@@ -379,6 +379,30 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         response.getEntity(String) == 'Hello'
     }
 
+    def 'Validate that a request can be made with a Map'() {
+        when:
+        def response = httpClientFactory.createHttpClient().post([foo: ['bar', 'baz']]) {
+            uri = "${baseUrl}/testBasicPost"
+        }
+
+        then:
+        response.getEntity(Map) == [foo: ['bar', 'baz']]
+        response.getEntity(String) == '{"foo":["bar","baz"]}'
+    }
+
+    def 'Validate that a request can be made with a GString'() {
+        setup:
+        String val = "friend"
+
+        when:
+        def response = httpClientFactory.createHttpClient().post("Hello, ${val}!") {
+            uri = "${baseUrl}/testBasicPost"
+        }
+
+        then:
+        response.getEntity(String) == 'Hello, friend!'
+    }
+
     def 'Validate builder form of POST with FormData works'() {
         setup:
         def form = new FormData()
@@ -571,4 +595,25 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         response.entityAsString == 'foo=bar&foo=baz&hi=there'
     }
     */
+
+    def 'When a content type is already set, it will not be overwritten by a converter'() {
+        when:
+        def response = httpClientFactory.createHttpClient().post('hi!') {
+            uri = "${baseUrl}/printContentType"
+            contentType = 'foo/bar'
+        }
+
+        then:
+        response.getEntity(String) == 'foo/bar;charset=UTF-8'
+    }
+
+    def 'When no content type is set, it will be set by the converter'() {
+        when:
+        def response = httpClientFactory.createHttpClient().post('hi!') {
+            uri = "${baseUrl}/printContentType"
+        }
+
+        then:
+        response.getEntity(String) == 'text/plain;charset=UTF-8'
+    }
 }

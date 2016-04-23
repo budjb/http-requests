@@ -30,6 +30,11 @@ class JsonEntityReader implements EntityReader {
      */
     @Override
     Object read(byte[] entity, String contentType, String charset) throws Exception {
-        return new JsonSlurper().parse(entity, charset)
+        if (charset) {
+            return new JsonSlurper().parse(entity, charset)
+        }
+        else {
+            return new JsonSlurper().parse(entity)
+        }
     }
 }

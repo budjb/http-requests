@@ -138,4 +138,9 @@ class TestApp {
     String testForm(@RequestBody MultiValueMap<String,String> formData) {
         return new JsonBuilder(formData).toString()
     }
+
+    @RequestMapping(value = '/printContentType', produces = 'text/plain')
+    String printContentType(@RequestHeader(value = 'Content-Type') String contentType) {
+        return contentType
+    }
 }

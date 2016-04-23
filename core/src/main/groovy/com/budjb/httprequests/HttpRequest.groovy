@@ -24,7 +24,7 @@ class HttpRequest {
     /**
      * Content type of the request.
      */
-    String contentType = 'application/octet-stream'
+    String contentType
 
     /**
      * Requested content type of the response.
@@ -477,17 +477,17 @@ class HttpRequest {
      * @return Content-Type of the request with the character set appended to it.
      */
     String getFullContentType() {
-        if (!contentType) {
-            return null
-        }
+        String contentType = this.contentType
 
-        String str = contentType
+        if (!contentType) {
+            contentType = 'application/octet-stream'
+        }
 
         if (charset) {
-            str += ";charset=${charset}"
+            contentType += ";charset=${charset}"
         }
 
-        return str
+        return contentType
     }
 
     /**

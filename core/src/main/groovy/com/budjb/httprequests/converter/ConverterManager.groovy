@@ -106,9 +106,12 @@ class ConverterManager {
                         continue
                     }
 
-                    String contentType = writer.getContentType()
-                    if (contentType) {
-                        request.setContentType(contentType)
+                    if (request.getContentType() == null) {
+                        String contentType = writer.getContentType()
+                        if (contentType) {
+                            log.trace("applying Content-Type '${contentType}' to the request")
+                            request.setContentType(contentType)
+                        }
                     }
                     return bytes
                 }

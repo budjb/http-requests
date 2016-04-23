@@ -1,12 +1,6 @@
 package com.budjb.httprequests
 
-import com.budjb.httprequests.converter.ConverterManager
-import com.budjb.httprequests.converter.EntityConverter
-import com.budjb.httprequests.converter.GStringEntityWriter
-import com.budjb.httprequests.converter.JsonEntityReader
-import com.budjb.httprequests.converter.JsonEntityWriter
-import com.budjb.httprequests.converter.StringEntityReader
-import com.budjb.httprequests.converter.StringEntityWriter
+import com.budjb.httprequests.converter.*
 import com.budjb.httprequests.listener.HttpClientListener
 
 abstract class AbstractHttpClientFactory implements HttpClientFactory {
