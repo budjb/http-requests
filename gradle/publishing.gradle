@@ -32,27 +32,34 @@ publishing {
             }
 
             pom.withXml {
-                def xml = asNode()
+                asNode().children().last() + {
+                    def builder = delegate
 
-                xml.appendNode 'name', project.name
-                xml.appendNode 'description', projectDescription
-                xml.appendNode 'url', 'https://github.com/budjb/http-requests'
+                    builder.name "${artifactIdBaseName}-${project.name}"
+                    builder.description projectDescription
+                    builder.url 'https://github.com/budjb/http-requests'
 
-                def licenses = xml.appendNode 'licenses'
-                def license = licenses.appendNode 'license'
-                license.appendNode 'name', 'The Apache Software License, Version 2.0'
-                license.appendNode 'url', 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                license.appendNode 'distribution', 'repo'
+                    builder.licenses {
+                        builder.license {
+                            builder.name 'The Apache Software License, Version 2.0'
+                            builder.url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                            builder.distribution 'repo'
+                        }
+                    }
 
-                def scm = xml.appendNode 'scm'
-                scm.appendNode 'url', 'scm:git@github.com:budjb/http-requests.git'
-                scm.appendNode 'connection', 'git@github.com:budjb/http-requests.git'
-                scm.appendNode 'developerConnection', 'git@github.com:budjb/http-requests.git'
+                    builder.scm {
+                        builder.url 'scm:git@github.com:budjb/http-requests.git'
+                        builder.connection 'git@github.com:budjb/http-requests.git'
+                        builder.developerConnection 'git@github.com:budjb/http-requests.git'
+                    }
 
-                def developers = xml.appendNode 'developers'
-                def developer = developers.appendNode 'developer'
-                developer.appendNode 'id', 'budjb'
-                developer.appendNode 'name', 'Bud Byrd'
+                    builder.developers {
+                        builder.developer {
+                            builder.id 'budjb'
+                            builder.name 'Bud Byrd'
+                        }
+                    }
+                }
             }
         }
     }
