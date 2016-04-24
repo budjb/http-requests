@@ -5,6 +5,7 @@ import com.budjb.httprequests.converter.EntityConverter
 import com.budjb.httprequests.converter.EntityWriter
 import com.budjb.httprequests.exception.UnsupportedConversionException
 import com.budjb.httprequests.listener.HttpClientListener
+import com.budjb.httprequests.listener.ListenerManager
 
 /**
  * An interface that describes the common structure and methods of an HTTP client.
@@ -18,6 +19,13 @@ interface HttpClient {
      * @param converterManager Converter manager responsible for entity marshaling.
      */
     void setConverterManager(ConverterManager converterManager)
+
+    /**
+     * Assigns the {@link ListenerManager} object to the client.
+     *
+     * @param listenerManager Listener manager instance.
+     */
+    void setListenerManager(ListenerManager listenerManager)
 
     /**
      * Execute an HTTP request with the given method and request parameters and without a request entity.

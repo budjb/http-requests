@@ -2,6 +2,7 @@ package com.budjb.httprequests
 
 import com.budjb.httprequests.converter.*
 import com.budjb.httprequests.listener.HttpClientListener
+import com.budjb.httprequests.listener.ListenerManager
 
 abstract class AbstractHttpClientFactory implements HttpClientFactory {
     /**
@@ -10,9 +11,9 @@ abstract class AbstractHttpClientFactory implements HttpClientFactory {
     ConverterManager converterManager = new ConverterManager()
 
     /**
-     * List of registered {@link com.budjb.httprequests.listener.HttpClientListener} objects.
+     * Listener manager.
      */
-    private final List<HttpClientListener> listeners = []
+    ListenerManager listenerManager = new ListenerManager()
 
     /**
      * Implementation factories should implement this method to create a concrete {@link HttpClient} instance specific
@@ -50,6 +51,7 @@ abstract class AbstractHttpClientFactory implements HttpClientFactory {
         HttpClient client = createClientImplementation()
 
         client.setConverterManager(new ConverterManager(converterManager))
+        client.setListenerManager(new ListenerManager(listenerManager))
 
         getListeners().each {
             client.addListener(it)
@@ -68,7 +70,7 @@ abstract class AbstractHttpClientFactory implements HttpClientFactory {
      */
     @Override
     void addListener(HttpClientListener listener) {
-        listeners.add(listener)
+        listenerManager.add(listener)
     }
 
     /**
@@ -78,7 +80,7 @@ abstract class AbstractHttpClientFactory implements HttpClientFactory {
      */
     @Override
     List<HttpClientListener> getListeners() {
-        return listeners
+        return listenerManager.getAll()
     }
 
     /**
@@ -89,14 +91,14 @@ abstract class AbstractHttpClientFactory implements HttpClientFactory {
      */
     @Override
     void removeListener(HttpClientListener listener) {
-        listeners.remove(listener)
+        listenerManager.remove(listener)
     }
 
     /**
      * Removes all registered listeners.
      */
     void clearListeners() {
-        listeners.clear()
+        listenerManager.clear()
     }
 
     /**

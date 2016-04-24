@@ -604,7 +604,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         }
 
         then:
-        response.getEntity(String) == 'foo/bar;charset=UTF-8'
+        response.getEntity(String).startsWith('foo/bar')
     }
 
     def 'When no content type is set, it will be set by the converter'() {
@@ -614,6 +614,6 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         }
 
         then:
-        response.getEntity(String) == 'text/plain;charset=UTF-8'
+        response.getEntity(String).startsWith('text/plain')
     }
 }

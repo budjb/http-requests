@@ -6,9 +6,8 @@ import com.budjb.httprequests.converter.EntityWriter
 import com.budjb.httprequests.exception.HttpStatusException
 import com.budjb.httprequests.exception.UnsupportedConversionException
 import com.budjb.httprequests.listener.HttpClientListener
-import com.budjb.httprequests.listener.HttpClientRequestListener
-import com.budjb.httprequests.listener.HttpClientResponseListener
 import com.budjb.httprequests.listener.HttpClientRetryListener
+import com.budjb.httprequests.listener.ListenerManager
 
 /**
  * A base class for HTTP clients that implements most of the functionality of the {@link HttpClient} interface.
@@ -22,9 +21,9 @@ abstract class AbstractHttpClient implements HttpClient {
     ConverterManager converterManager
 
     /**
-     * List of registered {@link HttpClientListener} objects.
+     * Listener manager.
      */
-    private List<HttpClientListener> listeners = []
+    ListenerManager listenerManager
 
     /**
      * Implements the logic to make an actual request with an HTTP client library.
@@ -736,7 +735,7 @@ abstract class AbstractHttpClient implements HttpClient {
      */
     @Override
     HttpClient addListener(HttpClientListener listener) {
-        listeners.add(listener)
+        listenerManager.add(listener)
         return this
     }
 
@@ -748,7 +747,7 @@ abstract class AbstractHttpClient implements HttpClient {
      */
     @Override
     HttpClient removeListener(HttpClientListener listener) {
-        listeners.remove(listener)
+        listenerManager.remove(listener)
         return this
     }
 
@@ -759,7 +758,7 @@ abstract class AbstractHttpClient implements HttpClient {
      */
     @Override
     List<HttpClientListener> getListeners() {
-        return listeners
+        return listenerManager.getAll()
     }
 
     /**
@@ -769,35 +768,8 @@ abstract class AbstractHttpClient implements HttpClient {
      */
     @Override
     HttpClient clearListeners() {
-        listeners.clear()
+        listenerManager.clear()
         return this
-    }
-
-    /**
-     * Return a list of all registered {@link HttpClientRequestListener} instances.
-     *
-     * @return All registered {@link HttpClientRequestListener} instances.
-     */
-    protected List<HttpClientRequestListener> getRequestListeners() {
-        return getListeners().findAll { it instanceof HttpClientRequestListener } as List<HttpClientRequestListener>
-    }
-
-    /**
-     * Return a list of all registered {@link HttpClientResponseListener} instances.
-     *
-     * @return A list of all registered {@link HttpClientResponseListener} instances.
-     */
-    protected List<HttpClientResponseListener> getResponseListeners() {
-        return getListeners().findAll { it instanceof HttpClientResponseListener } as List<HttpClientResponseListener>
-    }
-
-    /**
-     * Return a list of all registered {@link HttpClientRetryListener} instances.
-     *
-     * @return A list of all registered {@link HttpClientRetryListener} instances.
-     */
-    protected List<HttpClientRetryListener> getRetryListeners() {
-        return getListeners().findAll { it instanceof HttpClientRetryListener } as List<HttpClientRetryListener>
     }
 
     /**
@@ -809,14 +781,14 @@ abstract class AbstractHttpClient implements HttpClient {
      * @return A {@link HttpResponse} object containing the properties of the server response.
      */
     protected HttpResponse run(HttpRequest request, Closure action) {
-        getRequestListeners()*.doWithRequest(request)
+        listenerManager.getRequestListeners()*.doWithRequest(request)
 
         HttpResponse response
         int retries = 0
         while (true) {
             response = action.call() as HttpResponse
 
-            List<HttpClientRetryListener> requestRetry = getRetryListeners().findAll {
+            List<HttpClientRetryListener> requestRetry = listenerManager.getRetryListeners().findAll {
                 it.shouldRetry(request, response, retries)
             }
 
@@ -831,7 +803,7 @@ abstract class AbstractHttpClient implements HttpClient {
             retries++
         }
 
-        getResponseListeners()*.doWithResponse(request, response)
+        listenerManager.getResponseListeners()*.doWithResponse(request, response)
 
         if (request.isThrowStatusExceptions() && response.getStatus() >= 300) {
             throw HttpStatusException.build(response)
