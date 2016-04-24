@@ -1,6 +1,6 @@
 == Introduction
-The HTTP Requests library is a wrapper around popular HTTP client libraries that provides a simplified interface
-to make HTTP requests.
+The HTTP Requests library is a wrapper around popular HTTP client libraries that provides a clean and simplified
+interface to make HTTP requests.
 
 === Features
 The library allows authors to easily create and submit HTTP requests. At a high level, the library provides the

@@ -1,4 +1,4 @@
-=== Listeners
+== Listeners
 
 The `HttpClient` supports the use of listener objects so that applications can react to certain events in the lifecycle
 of an HTTP request.
@@ -7,7 +7,7 @@ Listeners can be added to the `HttpClientFactory` or to the `HttpClient` directl
 `HttpClientFactory` will automatically be assigned to any `HttpClient` instance the factory creates. For both objects,
 use the `addListener` method to register a listener.
 
-==== Request Listener
+=== Request Listener
 
 Applications may need to intercept an HTTP request directly before the request is actually made to modify the request
 parameters. Any request listener that is registered with the `HttpClient` will be called directly before the request
@@ -28,7 +28,7 @@ just before the request is actually made.
 NOTE: This listener is only called once before the request is made. If retries are automatically attempted, request
 listeners will not be called again.
 
-==== Response Listener
+=== Response Listener
 
 The response listener is called after the HTTP request has completed, just before the `HttpResponse` object is passed
 back to the caller. Listeners that need to use this functionality should implement the `HttpClientResponseListener`.
@@ -36,7 +36,7 @@ back to the caller. Listeners that need to use this functionality should impleme
 NOTE: This listener is only called once after the request is completed. If retries are attempted, response listeners
 are called only after all retry attempts have completed.
 
-==== Retry Listener
+=== Retry Listener
 
 The retry listener allows applications to determine if a request should be retried based on some criteria. If any
 one retry listener determines that the request should be retried, the request will be submitted again until no more

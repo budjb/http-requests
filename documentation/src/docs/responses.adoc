@@ -1,8 +1,8 @@
-=== Handling Responses
+== Handling Responses
 
 `HttpClient` request methods return `HttpResponse` objects that contain information about the response.
 
-==== HttpResponse Properties
+=== HttpResponse Properties
 
 The set of response properties is smaller than that of the request, and provides basic information about the response
 
@@ -21,7 +21,7 @@ The set of response properties is smaller than that of the request, and provides
                                      requests.
 |===
 
-==== Response Entities
+=== Response Entities
 
 By default, the response entity, if available, is read from the `InputStream` into the `entity` property as a byte
 array, and the `InputStream` is closed. This effectively makes the input stream unusable. If the request properties
