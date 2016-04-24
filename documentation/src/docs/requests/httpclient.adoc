@@ -37,14 +37,25 @@ def response = client.get {
 }
 ----
 
-Several of the HTTP methods support request entities (or bodies). For those methods that do, there are several class
-types that are supported as the request entity.
+Several of the HTTP methods support request entities (or bodies). For those methods that do, there are several
+class types that are supported without the need for conversion.
 
 .Supported Request Entity Types
 * `byte[]`
-* `String`
 * `InputStream`
 * `FormData`
+
+With the entity conversion system, entity readers or writers can be created and registered with the `HttpClientFactory`
+or `HttpClient` that will handle conversion to and from custom class types. `HttpClientFactory` implementations
+automatically include several built-in entity converters.
+
+.Built-in Entity Converters
+* `String` reader and writer.
+* `Map` reader and writer.
+* `List` reader and writer.
+* `GString` writer.
+
+More information about entity converters can be found in the entity converters section.
 
 NOTE: This documentation will not cover every single class method, but the API documentation can be referenced for
 a complete list of method signatures.
@@ -109,15 +120,14 @@ def response = client.put(inputStream) { uri = 'http://example.com/foo/bar' }
 
 ===== Sending a JSON Request
 
-A common use case when working with RESTful APIs involves sending JSON encoded entities. The following example uses
-the built-in Groovy `JsonBuilder` to handle the JSON encoding.
+A common use case when working with RESTful APIs involves sending JSON encoded entities.
 
 .POST a JSON Entity
 [source,groovy]
-def data = [foo: 'bar', hello: 'world']
-def encoded = new JsonBuilder(data).toString()
+----
 def client = new JerseyHttpClientFactory().createHttpClient()
-def response = client.post(inputStream) {
+def response = client.post([foo: 'bar', hello: 'world']) {
     uri = 'http://example.com/foo/bar'
     contentType = 'application/json'
 }
+----

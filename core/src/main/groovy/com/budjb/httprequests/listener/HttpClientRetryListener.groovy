@@ -10,6 +10,9 @@ interface HttpClientRetryListener extends HttpClientListener {
     /**
      * Returns whether this listener requests a retry of the HTTP request.
      *
+     * This method should not alter the request or response objects. They are only made available so that the listener
+     * has all the information it needs to determine if a retry should be attempted.
+     *
      * Note that this listener will receive a call to {@link #onRetry(HttpRequest, HttpResponse)} only if this method
      * returns true, even if a retry is otherwise attempted.
      *
