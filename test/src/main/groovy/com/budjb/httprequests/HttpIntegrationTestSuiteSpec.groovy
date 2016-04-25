@@ -631,4 +631,15 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         then:
         thrown IOException
     }
+
+    def 'When the response is buffered, the entity can be retrieved multiple times'() {
+        setup:
+        def response = httpClientFactory.createHttpClient().post([foo: ['bar', 'baz']]) {
+            uri = "${baseUrl}/testBasicPost"
+        }
+        response.getEntity(Map) == [foo: ['bar', 'baz']]
+
+        expect:
+        response.getEntity(String) == '{"foo":["bar","baz"]}'
+    }
 }

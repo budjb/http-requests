@@ -98,4 +98,13 @@ class HttpResponseSpec extends Specification {
         response.getHeader('hi') == 'there'
         response.getHeader('peek') == 'boo'
     }
+
+    def 'Ensure the Allow header is parsed properly'() {
+        setup:
+        HttpResponse response = new HttpResponse()
+        response.setHeaders(['Allow': 'GET,POST,PUT'])
+
+        expect:
+        response.getAllow() == [HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT]
+    }
 }
