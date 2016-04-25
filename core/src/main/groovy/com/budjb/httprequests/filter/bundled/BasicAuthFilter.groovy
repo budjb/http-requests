@@ -1,6 +1,7 @@
-package com.budjb.httprequests.filter
+package com.budjb.httprequests.filter.bundled
 
 import com.budjb.httprequests.HttpRequest
+import com.budjb.httprequests.filter.HttpClientRequestFilter
 
 /**
  * An {@link HttpClientFilter} that provides Basic Authentication support.
