@@ -212,7 +212,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
 
 
         when:
-        def response = httpClientFactory.createHttpClient().post(new HttpRequest().setUri("${baseUrl}/testForm"), formData)
+        def response = httpClientFactory.createHttpClient().post(new HttpRequest().setUri("${baseUrl}/testForm").setLogConversation(true), formData)
 
         then:
         response.getEntity(Map) == ['foo': ['bar', 'baz'], 'key': ['value']]

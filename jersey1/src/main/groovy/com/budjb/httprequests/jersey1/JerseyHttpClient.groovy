@@ -8,7 +8,6 @@ import com.sun.jersey.api.client.WebResource
 import com.sun.jersey.api.client.config.ClientConfig
 import com.sun.jersey.api.client.config.DefaultClientConfig
 import com.sun.jersey.api.client.filter.LoggingFilter
-import com.sun.jersey.api.representation.Form
 import com.sun.jersey.client.urlconnection.HTTPSProperties
 import groovy.util.logging.Slf4j
 
@@ -59,20 +58,6 @@ class JerseyHttpClient extends AbstractHttpClient {
     @Override
     protected HttpResponse doExecute(HttpMethod method, HttpRequest request, InputStream inputStream) throws IOException {
         return performRequest(method, request, inputStream)
-    }
-
-    /**
-     * Implements the logic to make an actual request with an HTTP client library.
-     *
-     * @param method HTTP method to use with the HTTP request.
-     * @param request Request properties to use with the HTTP request.
-     * @param form Form data to send with the request.
-     * @return A {@link HttpResponse} object containing the properties of the server response.
-     * @throws IOException
-     */
-    @Override
-    protected HttpResponse doExecute(HttpMethod method, HttpRequest request, FormData form) throws IOException {
-        return performRequest(method, request, form.getFields() as Form)
     }
 
     /**

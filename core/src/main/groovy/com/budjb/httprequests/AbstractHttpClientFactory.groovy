@@ -24,21 +24,33 @@ abstract class AbstractHttpClientFactory implements HttpClientFactory {
     abstract protected HttpClient createClientImplementation()
 
     /**
-     * Constructor.
+     * Base constructor that automatically registers the default set of entity converters.
      */
     AbstractHttpClientFactory() {
-        registerDefaultEntityConverters()
+        this(true)
+    }
+
+    /**
+     * Constructor that can optionally register the default set of entity converters.
+     *
+     * @param registerDefaultConverters Whether to register the default set of entity converters.
+     */
+    AbstractHttpClientFactory(boolean registerDefaultConverters) {
+        if (registerDefaultConverters) {
+            registerDefaultEntityConverters()
+        }
     }
 
     /**
      * Add a default set of entity converters for commonly used types.
      */
-    protected void registerDefaultEntityConverters() {
+    void registerDefaultEntityConverters() {
         addEntityConverter(new StringEntityReader())
         addEntityConverter(new StringEntityWriter())
         addEntityConverter(new GStringEntityWriter())
         addEntityConverter(new JsonEntityReader())
         addEntityConverter(new JsonEntityWriter())
+        addEntityConverter(new FormDataEntityWriter())
     }
 
     /**

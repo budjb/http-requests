@@ -1,6 +1,9 @@
 package com.budjb.httprequests.jersey2
 
-import com.budjb.httprequests.*
+import com.budjb.httprequests.AbstractHttpClient
+import com.budjb.httprequests.HttpMethod
+import com.budjb.httprequests.HttpRequest
+import com.budjb.httprequests.HttpResponse
 import org.glassfish.jersey.client.ClientConfig
 import org.glassfish.jersey.client.ClientProperties
 import org.glassfish.jersey.filter.LoggingFilter
@@ -8,7 +11,6 @@ import org.glassfish.jersey.filter.LoggingFilter
 import javax.net.ssl.*
 import javax.ws.rs.ProcessingException
 import javax.ws.rs.client.*
-import javax.ws.rs.core.Form
 import javax.ws.rs.core.Response
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
@@ -54,20 +56,6 @@ class JerseyHttpClient extends AbstractHttpClient {
     @Override
     protected HttpResponse doExecute(HttpMethod method, HttpRequest request, InputStream inputStream) throws IOException {
         return performRequest(method, request, Entity.entity(inputStream, request.getFullContentType()))
-    }
-
-    /**
-     * Implements the logic to make an actual request with an HTTP client library.
-     *
-     * @param method HTTP method to use with the HTTP request.
-     * @param request Request properties to use with the HTTP request.
-     * @param form Form data to send with the request.
-     * @return A {@link HttpResponse} object containing the properties of the server response.
-     * @throws IOException
-     */
-    @Override
-    protected HttpResponse doExecute(HttpMethod method, HttpRequest request, FormData form) throws IOException {
-        return performRequest(method, request, Entity.form(buildForm(form)))
     }
 
     /**
@@ -195,23 +183,5 @@ class JerseyHttpClient extends AbstractHttpClient {
         }
 
         return response
-    }
-
-    /**
-     * Create a {@link Form} object from the given {@link FormData} object.
-     *
-     * @param formData Form data to convert.
-     * @return Converted form data.
-     */
-    protected Form buildForm(FormData formData) {
-        Form form = new Form()
-
-        formData.getFields().each { key, values ->
-            values.each { value ->
-                form.param(key, value)
-            }
-        }
-
-        return form
     }
 }

@@ -33,11 +33,12 @@ class StringEntityWriter implements EntityWriter {
      * If an error occurs, null may be returned so that another converter may attempt conversion.
      *
      * @param entity Entity object to convert into a byte array.
+     * @param characterSet The character set of the request.
      * @return The converted object, or null if an error occurs.
      * @throws Exception when an unexpected error occurs.
      */
     @Override
-    byte[] write(Object entity) throws Exception {
-        return ((String)entity).getBytes()
+    byte[] write(Object entity, String characterSet) throws Exception {
+        return ((String) entity).getBytes(characterSet)
     }
 }

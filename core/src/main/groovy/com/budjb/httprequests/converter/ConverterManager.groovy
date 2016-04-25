@@ -100,7 +100,7 @@ class ConverterManager {
         for (EntityWriter writer : getEntityWriters()) {
             if (writer.supports(type)) {
                 try {
-                    byte[] bytes = writer.write(entity)
+                    byte[] bytes = writer.write(entity, request.getCharset())
 
                     if (bytes == null) {
                         continue

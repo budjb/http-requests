@@ -94,29 +94,6 @@ interface HttpClient {
                          @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
 
     /**
-     * Executes an HTTP request with the given method, request parameters, and form data.
-     *
-     * @param method HTTP method to use with the HTTP request.
-     * @param request Request properties to use with the HTTP request.
-     * @param form Form data to send with the request.
-     * @return A {@link HttpResponse} object containing the properties of the server response.
-     * @throws IOException
-     */
-    HttpResponse execute(HttpMethod method, HttpRequest request, FormData form) throws IOException
-
-    /**
-     * Executes an HTTP request with the given method, closure to configure the request, and form data.
-     *
-     * @param method HTTP method to use with the HTTP request.
-     * @param form Form data to send with the request.
-     * @param requestClosure Closure that configures the request.
-     * @return A {@link HttpResponse} object containing the properties of the server response.
-     * @throws IOException
-     */
-    HttpResponse execute(HttpMethod method, FormData form,
-                         @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
-
-    /**
      * Executes an HTTP request with the given method, request parameters, and entity.
      *
      * The entity will be converted if an appropriate {@link EntityWriter} can be found. If no
@@ -224,26 +201,6 @@ interface HttpClient {
     HttpResponse post(InputStream inputStream, @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
 
     /**
-     * Perform an HTTP POST request with the given form data.
-     *
-     * @param request Request properties to use with the HTTP request.
-     * @param form Form data to send with the request.
-     * @return A {@link HttpResponse} object containing the properties of the server response.
-     * @throws IOException
-     */
-    HttpResponse post(HttpRequest request, FormData form) throws IOException
-
-    /**
-     * Perform an HTTP POST request with the given form data.
-     *
-     * @param form Form data to send with the request.
-     * @param requestClosure Closure that configures the request.
-     * @return A {@link HttpResponse} object containing the properties of the server response.
-     * @throws IOException
-     */
-    HttpResponse post(FormData form, @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
-
-    /**
      * Perform an HTTP POST request with the given entity.
      *
      * The entity will be converted if an appropriate {@link EntityWriter} can be found. If no
@@ -329,26 +286,6 @@ interface HttpClient {
      * @throws IOException
      */
     HttpResponse put(InputStream inputStream, @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
-
-    /**
-     * Perform an HTTP PUT request with the given form data.
-     *
-     * @param request Request properties to use with the HTTP request.
-     * @param form Form data to send with the request.
-     * @return A {@link HttpResponse} object containing the properties of the server response.
-     * @throws IOException
-     */
-    HttpResponse put(HttpRequest request, FormData form) throws IOException
-
-    /**
-     * Perform an HTTP PUT request with the given form data.
-     *
-     * @param form Form data to send with the request.
-     * @param requestClosure Closure that configures the request.
-     * @return A {@link HttpResponse} object containing the properties of the server response.
-     * @throws IOException
-     */
-    HttpResponse put(FormData form, @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
 
     /**
      * Perform an HTTP PUT request with the given entity.
@@ -454,26 +391,6 @@ interface HttpClient {
      * @throws IOException
      */
     HttpResponse options(InputStream entity, @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
-
-    /**
-     * Perform an HTTP OPTIONS request with the given form data.
-     *
-     * @param request Request properties to use with the HTTP request.
-     * @param form Form data to send with the request.
-     * @return A {@link HttpResponse} object containing the properties of the server response.
-     * @throws IOException
-     */
-    HttpResponse options(HttpRequest request, FormData form) throws IOException
-
-    /**
-     * Perform an HTTP OPTIONS request with the given form data.
-     *
-     * @param form Form data to send with the request.
-     * @param requestClosure Closure that configures the request.
-     * @return A {@link HttpResponse} object containing the properties of the server response.
-     * @throws IOException
-     */
-    HttpResponse options(FormData form, @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
 
     /**
      * Perform an HTTP OPTIONS request with the given entity.

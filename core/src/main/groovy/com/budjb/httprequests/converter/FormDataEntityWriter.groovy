@@ -1,9 +1,11 @@
 package com.budjb.httprequests.converter
 
+import com.budjb.httprequests.FormData
+
 /**
- * An entity writer that will convert a GString into a byte array.
+ * An entity writer that formats form data.
  */
-class GStringEntityWriter implements EntityWriter {
+class FormDataEntityWriter implements EntityWriter {
     /**
      * Returns a Content-Type of the converted object that will be set in the HTTP request.
      *
@@ -13,7 +15,7 @@ class GStringEntityWriter implements EntityWriter {
      */
     @Override
     String getContentType() {
-        return 'text/plain'
+        return 'application/x-www-form-urlencoded'
     }
 
     /**
@@ -24,7 +26,7 @@ class GStringEntityWriter implements EntityWriter {
      */
     @Override
     boolean supports(Class<?> type) {
-        return GString.isAssignableFrom(type)
+        return FormData.isAssignableFrom(type)
     }
 
     /**
@@ -39,6 +41,25 @@ class GStringEntityWriter implements EntityWriter {
      */
     @Override
     byte[] write(Object entity, String characterSet) throws Exception {
-        return entity.toString().getBytes(characterSet)
+        if (!(entity instanceof FormData)) {
+            return null
+        }
+
+        List<String> parts = []
+
+        entity.getFields().each { name, values ->
+            name = URLEncoder.encode(name, characterSet)
+
+            if (values instanceof Collection) {
+                values.each { value ->
+                    parts << "${name}=${URLEncoder.encode(value.toString(), characterSet)}"
+                }
+            }
+            else {
+                parts << "${name}=${URLEncoder.encode(values.toString(), characterSet)}"
+            }
+        }
+
+        return parts.join('&').getBytes(characterSet)
     }
 }
