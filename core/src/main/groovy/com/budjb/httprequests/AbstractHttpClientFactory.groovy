@@ -45,6 +45,8 @@ abstract class AbstractHttpClientFactory implements HttpClientFactory {
      * Add a default set of entity converters for commonly used types.
      */
     void registerDefaultEntityConverters() {
+        addEntityConverter(new ByteArrayEntityReader())
+        addEntityConverter(new ByteArrayEntityWriter())
         addEntityConverter(new StringEntityReader())
         addEntityConverter(new StringEntityWriter())
         addEntityConverter(new GStringEntityWriter())

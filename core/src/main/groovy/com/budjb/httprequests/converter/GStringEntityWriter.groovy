@@ -1,7 +1,7 @@
 package com.budjb.httprequests.converter
 
 /**
- * An entity writer that will convert a GString into a byte array.
+ * An entity writer that will convert a GString.
  */
 class GStringEntityWriter implements EntityWriter {
     /**
@@ -34,11 +34,11 @@ class GStringEntityWriter implements EntityWriter {
      *
      * @param entity Entity object to convert into a byte array.
      * @param characterSet The character set of the request.
-     * @return The converted object, or null if an error occurs.
+     * @return An {@link InputStream} containing the converted entity.
      * @throws Exception when an unexpected error occurs.
      */
     @Override
-    byte[] write(Object entity, String characterSet) throws Exception {
-        return entity.toString().getBytes(characterSet)
+    InputStream write(Object entity, String characterSet) throws Exception {
+        return new ByteArrayInputStream(entity.toString().getBytes(characterSet))
     }
 }

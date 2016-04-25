@@ -3,7 +3,7 @@ package com.budjb.httprequests.converter
 import groovy.json.JsonBuilder
 
 /**
- * An entity writer that converts a <code>List</code> or <code>Map</code> into JSON as a byte array.
+ * An entity writer that converts a <code>List</code> or <code>Map</code> into JSON.
  */
 class JsonEntityWriter implements EntityWriter {
     /**
@@ -36,11 +36,11 @@ class JsonEntityWriter implements EntityWriter {
      *
      * @param entity Entity object to convert into a byte array.
      * @param characterSet The character set of the request.
-     * @return The converted object, or null if an error occurs.
+     * @return An {@link InputStream} containing the converted entity.
      * @throws Exception when an unexpected error occurs.
      */
     @Override
-    byte[] write(Object entity, String characterSet) throws Exception {
-        return new JsonBuilder(entity).toString().getBytes(characterSet)
+    InputStream write(Object entity, String characterSet) throws Exception {
+        return new ByteArrayInputStream(new JsonBuilder(entity).toString().getBytes(characterSet))
     }
 }

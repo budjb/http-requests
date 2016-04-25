@@ -33,7 +33,7 @@ class ConverterSpec extends Specification {
         ConverterManager converterManager = new ConverterManager()
 
         when:
-        converterManager.read(String, [1, 2, 3] as byte[], null, null)
+        converterManager.read(String, new ByteArrayInputStream([1, 2, 3] as byte[]), null, null)
 
         then:
         thrown UnsupportedConversionException

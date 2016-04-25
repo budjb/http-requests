@@ -34,13 +34,13 @@ class FormDataEntityWriter implements EntityWriter {
      *
      * If an error occurs, null may be returned so that another converter may attempt conversion.
      *
-     * @param entity Entity object to convert into a byte array.
+     * @param entity Entity as an {@link InputStream}.
      * @param characterSet The character set of the request.
      * @return The converted object, or null if an error occurs.
      * @throws Exception when an unexpected error occurs.
      */
     @Override
-    byte[] write(Object entity, String characterSet) throws Exception {
+    InputStream write(Object entity, String characterSet) throws Exception {
         if (!(entity instanceof FormData)) {
             return null
         }
@@ -60,6 +60,6 @@ class FormDataEntityWriter implements EntityWriter {
             }
         }
 
-        return parts.join('&').getBytes(characterSet)
+        return new ByteArrayInputStream(parts.join('&').getBytes(characterSet))
     }
 }

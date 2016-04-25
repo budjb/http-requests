@@ -40,17 +40,6 @@ abstract class AbstractHttpClient implements HttpClient {
      *
      * @param method HTTP method to use with the HTTP request.
      * @param request Request properties to use with the HTTP request.
-     * @param entity A byte array to send with the request.
-     * @return A {@link HttpResponse} object containing the properties of the server response.
-     * @throws IOException
-     */
-    protected abstract HttpResponse doExecute(HttpMethod method, HttpRequest request, byte[] entity) throws IOException
-
-    /**
-     * Implements the logic to make an actual request with an HTTP client library.
-     *
-     * @param method HTTP method to use with the HTTP request.
-     * @param request Request properties to use with the HTTP request.
      * @param inputStream An {@link InputStream} containing the response body.
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
@@ -82,35 +71,6 @@ abstract class AbstractHttpClient implements HttpClient {
     @Override
     HttpResponse execute(HttpMethod method, @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException {
         return execute(method, HttpRequest.build(requestClosure))
-    }
-
-    /**
-     * Executes an HTTP request with the given method, request parameters, and request entity.
-     *
-     * @param method HTTP method to use with the HTTP request.
-     * @param request Request properties to use with the HTTP request.
-     * @param entity A byte array to send with the request.
-     * @return A {@link HttpResponse} object containing the properties of the server response.
-     * @throws IOException
-     */
-    @Override
-    HttpResponse execute(HttpMethod method, HttpRequest request, byte[] entity) throws IOException {
-        return run(request, { doExecute(method, request, entity) })
-    }
-
-    /**
-     * Executes an HTTP request with the given method, closure to configure the request, and request entity.
-     *
-     * @param method HTTP method to use with the HTTP request.
-     * @param entity A byte array to send with the request.
-     * @param requestClosure Closure that configures the request.
-     * @return A {@link HttpResponse} object containing the properties of the server response.
-     * @throws IOException
-     */
-    @Override
-    HttpResponse execute(HttpMethod method, byte[] entity,
-                         @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException {
-        return execute(method, HttpRequest.build(requestClosure), entity)
     }
 
     /**
@@ -228,32 +188,6 @@ abstract class AbstractHttpClient implements HttpClient {
     }
 
     /**
-     * Perform an HTTP POST request with the given request entity.
-     *
-     * @param request Request properties to use with the HTTP request.
-     * @param entity A byte array to send with the request.
-     * @return A {@link HttpResponse} object containing the properties of the server response.
-     * @throws IOException
-     */
-    @Override
-    HttpResponse post(HttpRequest request, byte[] entity) throws IOException {
-        return execute(HttpMethod.POST, request, entity)
-    }
-
-    /**
-     * Perform an HTTP POST request with the given request entity.
-     *
-     * @param entity A byte array to send with the request.
-     * @param requestClosure Closure that configures the request.
-     * @return A {@link HttpResponse} object containing the properties of the server response.
-     * @throws IOException
-     */
-    @Override
-    HttpResponse post(byte[] entity, @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException {
-        return execute(HttpMethod.POST, entity, requestClosure)
-    }
-
-    /**
      * Perform an HTTP POST request with the given input stream.
      *
      * @param request Request properties to use with the HTTP request.
@@ -336,32 +270,6 @@ abstract class AbstractHttpClient implements HttpClient {
     @Override
     HttpResponse put(@DelegatesTo(HttpRequest) Closure requestClosure) throws IOException {
         return execute(HttpMethod.PUT, requestClosure)
-    }
-
-    /**
-     * Perform an HTTP PUT request with the given request entity.
-     *
-     * @param request Request properties to use with the HTTP request.
-     * @param entity A byte array to send with the request.
-     * @return A {@link HttpResponse} object containing the properties of the server response.
-     * @throws IOException
-     */
-    @Override
-    HttpResponse put(HttpRequest request, byte[] entity) throws IOException {
-        return execute(HttpMethod.PUT, request, entity)
-    }
-
-    /**
-     * Perform an HTTP PUT request with the given request entity.
-     *
-     * @param entity A byte array to send with the request.
-     * @param requestClosure Closure that configures the request.
-     * @return A {@link HttpResponse} object containing the properties of the server response.
-     * @throws IOException
-     */
-    @Override
-    HttpResponse put(byte[] entity, @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException {
-        return execute(HttpMethod.PUT, entity, requestClosure)
     }
 
     /**
@@ -471,32 +379,6 @@ abstract class AbstractHttpClient implements HttpClient {
     @Override
     HttpResponse options(@DelegatesTo(HttpRequest) Closure requestClosure) throws IOException {
         return execute(HttpMethod.OPTIONS, requestClosure)
-    }
-
-    /**
-     * Perform an HTTP OPTIONS request with the given request entity.
-     *
-     * @param request Request properties to use with the HTTP request.
-     * @param entity A byte array to send with the request.
-     * @return A {@link HttpResponse} object containing the properties of the server response.
-     * @throws IOException
-     */
-    @Override
-    HttpResponse options(HttpRequest request, byte[] entity) throws IOException {
-        return execute(HttpMethod.OPTIONS, request, entity)
-    }
-
-    /**
-     * Perform an HTTP OPTIONS request with the given request entity.
-     *
-     * @param entity A byte array to send with the request.
-     * @param requestClosure Closure that configures the request.
-     * @return A {@link HttpResponse} object containing the properties of the server response.
-     * @throws IOException
-     */
-    @Override
-    HttpResponse options(byte[] entity, @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException {
-        return execute(HttpMethod.OPTIONS, entity, requestClosure)
     }
 
     /**

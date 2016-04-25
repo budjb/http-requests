@@ -1,9 +1,6 @@
 package com.budjb.httprequests.converter
 
-/**
- * An entity writer that converts a String.
- */
-class StringEntityWriter implements EntityWriter {
+class ByteArrayEntityWriter implements EntityWriter {
     /**
      * Returns a Content-Type of the converted object that will be set in the HTTP request.
      *
@@ -13,7 +10,7 @@ class StringEntityWriter implements EntityWriter {
      */
     @Override
     String getContentType() {
-        return 'text/plain'
+        return 'application/octet-stream'
     }
 
     /**
@@ -24,7 +21,7 @@ class StringEntityWriter implements EntityWriter {
      */
     @Override
     boolean supports(Class<?> type) {
-        return String.isAssignableFrom(type)
+        return type.isArray() && byte.isAssignableFrom(type.getComponentType())
     }
 
     /**
@@ -39,6 +36,6 @@ class StringEntityWriter implements EntityWriter {
      */
     @Override
     InputStream write(Object entity, String characterSet) throws Exception {
-        return new ByteArrayInputStream(((String) entity).getBytes(characterSet))
+        return new ByteArrayInputStream(entity as byte[])
     }
 }

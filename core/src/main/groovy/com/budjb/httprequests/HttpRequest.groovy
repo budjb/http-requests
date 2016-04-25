@@ -69,10 +69,10 @@ class HttpRequest {
     boolean logConversation = false
 
     /**
-     * Whether to automatically buffer the response entity in this object as a byte array. When <code>true</code>,
-     * the {@link HttpResponse#inputStream} is automatically closed.
+     * Whether to buffer the response entity in the {@link HttpResponse} object so that it can be
+     * ready multiple times.
      */
-    boolean autoBufferEntity = true
+    boolean bufferResponseEntity = true
 
     /**
      * Construct a new {@link HttpRequest} object, configured with the given closure.
@@ -504,11 +504,11 @@ class HttpRequest {
     /**
      * Sets whether to automatically buffer the response entity.
      *
-     * @param autoBufferEntity Whether to automatically buffer the response entity.
+     * @param bufferEntity Whether to automatically buffer the response entity.
      * @return The instance of this class the method was called with.
      */
-    HttpRequest setAutoBufferEntity(boolean autoBufferEntity) {
-        this.autoBufferEntity = autoBufferEntity
+    HttpRequest setBufferResponseEntity(boolean bufferEntity) {
+        this.bufferResponseEntity = bufferEntity
         return this
     }
 }

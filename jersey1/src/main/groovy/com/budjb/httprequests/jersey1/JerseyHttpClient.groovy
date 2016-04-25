@@ -12,6 +12,7 @@ import com.sun.jersey.client.urlconnection.HTTPSProperties
 import groovy.util.logging.Slf4j
 
 import javax.net.ssl.*
+import javax.ws.rs.core.MediaType
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
 
@@ -30,20 +31,6 @@ class JerseyHttpClient extends AbstractHttpClient {
      */
     protected HttpResponse doExecute(HttpMethod method, HttpRequest request) throws IOException {
         return performRequest(method, request, null)
-    }
-
-    /**
-     * Implements the logic to make an actual request with an HTTP client library.
-     *
-     * @param method HTTP method to use with the HTTP request.
-     * @param request Request properties to use with the HTTP request.
-     * @param entity A byte array to send with the request.
-     * @return A {@link HttpResponse} object containing the properties of the server response.
-     * @throws IOException
-     */
-    @Override
-    protected HttpResponse doExecute(HttpMethod method, HttpRequest request, byte[] entity) throws IOException {
-        return performRequest(method, request, entity)
     }
 
     /**
@@ -187,11 +174,16 @@ class JerseyHttpClient extends AbstractHttpClient {
 
         response.setStatus(clientResponse.getStatus())
         response.setHeaders(clientResponse.getHeaders())
-        response.setContentType(clientResponse.getType()?.getType())
-        response.setCharset(clientResponse.getType()?.getParameters()?.get('charset'))
+
+        if (clientResponse.getType()) {
+            MediaType type = clientResponse.getType()
+            String contentType = type.toString()
+            response.setContentType(contentType.substring(0, contentType.indexOf(';')))
+            response.setCharset(type.getParameters()?.get('charset'))
+        }
 
         if (clientResponse.hasEntity()) {
-            response.setInputStream(clientResponse.getEntityInputStream())
+            response.setEntity(clientResponse.getEntityInputStream())
         }
 
         return response

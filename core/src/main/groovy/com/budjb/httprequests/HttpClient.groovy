@@ -48,29 +48,6 @@ interface HttpClient {
     HttpResponse execute(HttpMethod method, @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
 
     /**
-     * Executes an HTTP request with the given method, request parameters, and request entity.
-     *
-     * @param method HTTP method to use with the HTTP request.
-     * @param request Request properties to use with the HTTP request.
-     * @param entity A byte array to send with the request.
-     * @return A {@link HttpResponse} object containing the properties of the server response.
-     * @throws IOException
-     */
-    HttpResponse execute(HttpMethod method, HttpRequest request, byte[] entity) throws IOException
-
-    /**
-     * Executes an HTTP request with the given method, closure to configure the request, and request entity.
-     *
-     * @param method HTTP method to use with the HTTP request.
-     * @param entity A byte array to send with the request.
-     * @param requestClosure Closure that configures the request.
-     * @return A {@link HttpResponse} object containing the properties of the server response.
-     * @throws IOException
-     */
-    HttpResponse execute(HttpMethod method, byte[] entity,
-                         @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
-
-    /**
      * Executes an HTTP request with the given method, request parameters, and input stream.
      *
      * @param method HTTP method to use with the HTTP request.
@@ -161,26 +138,6 @@ interface HttpClient {
     HttpResponse post(@DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
 
     /**
-     * Perform an HTTP POST request with the given request entity.
-     *
-     * @param request Request properties to use with the HTTP request.
-     * @param entity A byte array to send with the request.
-     * @return A {@link HttpResponse} object containing the properties of the server response.
-     * @throws IOException
-     */
-    HttpResponse post(HttpRequest request, byte[] entity) throws IOException
-
-    /**
-     * Perform an HTTP POST request with the given request entity.
-     *
-     * @param entity A byte array to send with the request.
-     * @param requestClosure Closure that configures the request.
-     * @return A {@link HttpResponse} object containing the properties of the server response.
-     * @throws IOException
-     */
-    HttpResponse post(byte[] entity, @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
-
-    /**
      * Perform an HTTP POST request with the given input stream.
      *
      * @param request Request properties to use with the HTTP request.
@@ -246,26 +203,6 @@ interface HttpClient {
      * @throws IOException
      */
     HttpResponse put(@DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
-
-    /**
-     * Perform an HTTP PUT request with the given request entity.
-     *
-     * @param request Request properties to use with the HTTP request.
-     * @param entity A byte array to send with the request.
-     * @return A {@link HttpResponse} object containing the properties of the server response.
-     * @throws IOException
-     */
-    HttpResponse put(HttpRequest request, byte[] entity) throws IOException
-
-    /**
-     * Perform an HTTP PUT request with the given request entity.
-     *
-     * @param entity A byte array to send with the request.
-     * @param requestClosure Closure that configures the request.
-     * @return A {@link HttpResponse} object containing the properties of the server response.
-     * @throws IOException
-     */
-    HttpResponse put(byte[] entity, @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
 
     /**
      * Perform an HTTP PUT request with the given input stream..
@@ -351,26 +288,6 @@ interface HttpClient {
      * @throws IOException
      */
     HttpResponse options(@DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
-
-    /**
-     * Perform an HTTP OPTIONS request with the given request entity.
-     *
-     * @param request Request properties to use with the HTTP request.
-     * @param entity A byte array to send with the request.
-     * @return A {@link HttpResponse} object containing the properties of the server response.
-     * @throws IOException
-     */
-    HttpResponse options(HttpRequest request, byte[] entity) throws IOException
-
-    /**
-     * Perform an HTTP OPTIONS request with the given request entity.
-     *
-     * @param entity A byte array to send with the request.
-     * @param requestClosure Closure that configures the request.
-     * @return A {@link HttpResponse} object containing the properties of the server response.
-     * @throws IOException
-     */
-    HttpResponse options(byte[] entity, @DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
 
     /**
      * Perform an HTTP OPTIONS request with the given input stream.

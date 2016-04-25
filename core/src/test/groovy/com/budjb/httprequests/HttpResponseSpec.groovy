@@ -13,7 +13,7 @@ class HttpResponseSpec extends Specification {
 
         HttpResponse response = new HttpResponse()
         response.converterManager = converterManager
-        response.entity = 'åäö'.getBytes()
+        response.entity = new ByteArrayInputStream('åäö'.getBytes())
         response.charset = 'euc-jp'
 
         when:
@@ -30,7 +30,7 @@ class HttpResponseSpec extends Specification {
 
         HttpResponse response = new HttpResponse()
         response.converterManager = converterManager
-        response.entity = 'åäö'.getBytes()
+        response.entity = new ByteArrayInputStream('åäö'.getBytes())
 
         when:
         String entity = response.getEntity(String)
@@ -97,27 +97,5 @@ class HttpResponseSpec extends Specification {
         response.getHeader('foo') == 'bar'
         response.getHeader('hi') == 'there'
         response.getHeader('peek') == 'boo'
-    }
-
-    def 'When the entity is retrieved from a streaming response, the input stream is closed'() {
-        setup:
-        ConverterManager converterManager = new ConverterManager()
-        converterManager.add(new StringEntityReader())
-
-        def entity = 'Hello, world!'
-        def inputStream = new ByteArrayInputStream(entity.getBytes())
-        def response = new HttpResponse()
-        response.converterManager = converterManager
-        response.request = HttpRequest.build { autoBufferEntity = false }
-        response.inputStream = inputStream
-
-        when:
-        def body = response.getEntity(String)
-
-        then:
-        body == entity
-
-        expect:
-        response.inputStream.read() == -1
     }
 }

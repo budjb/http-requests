@@ -86,23 +86,23 @@ class ConverterManager {
     }
 
     /**
-     * Attempts to convert the given entity into a byte array. If an entity writer is successful,
+     * Attempts to convert the given entity into an {@link InputStream}. If an entity writer is successful,
      * the content type for the conversion is set in the request, if a content type is available.
      *
      * @param request HTTP request properties.
      * @param entity Entity object to convert.
-     * @return Converted entity as a byte array.
+     * @return Converted entity as an InputStream.
      * @throws UnsupportedConversionException when there are no entity writers that support the object type.
      */
-    byte[] write(HttpRequest request, Object entity) throws UnsupportedConversionException {
+    InputStream write(HttpRequest request, Object entity) throws UnsupportedConversionException {
         Class<?> type = entity.getClass()
 
         for (EntityWriter writer : getEntityWriters()) {
             if (writer.supports(type)) {
                 try {
-                    byte[] bytes = writer.write(entity, request.getCharset())
+                    InputStream inputStream = writer.write(entity, request.getCharset())
 
-                    if (bytes == null) {
+                    if (inputStream == null) {
                         continue
                     }
 
@@ -113,7 +113,7 @@ class ConverterManager {
                             request.setContentType(contentType)
                         }
                     }
-                    return bytes
+                    return inputStream
                 }
                 catch (Exception e) {
                     log.trace("error occurred during conversion with EntityWriter ${writer.getClass()}", e)
@@ -125,17 +125,18 @@ class ConverterManager {
     }
 
     /**
+     * Reads an object from the given entity {@link InputStream}.
      *
-     * @param type
-     * @param entity
-     * @param contentType
-     * @param charset
-     * @return
-     * @throws UnsupportedConversionException
+     * @param type Object type to attempt conversion to.
+     * @param entity Entity input stream.
+     * @param contentType Content Type of the entity.
+     * @param charset Character set of the entity.
+     * @return The converted object.
+     * @throws UnsupportedConversionException when there are no entity writers that support the object type.
      */
-    public <T> T read(Class<?> type, byte[] entity, String contentType, String charset) throws UnsupportedConversionException {
+    public <T> T read(Class<?> type, InputStream entity, String contentType, String charset) throws UnsupportedConversionException {
         for (EntityReader reader : getEntityReaders()) {
-            if (reader.support(type)) {
+            if (reader.supports(type)) {
                 try {
                     T object = reader.read(entity, contentType, charset) as T
 

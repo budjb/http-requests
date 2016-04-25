@@ -11,6 +11,7 @@ import org.glassfish.jersey.filter.LoggingFilter
 import javax.net.ssl.*
 import javax.ws.rs.ProcessingException
 import javax.ws.rs.client.*
+import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
@@ -28,20 +29,6 @@ class JerseyHttpClient extends AbstractHttpClient {
     @Override
     protected HttpResponse doExecute(HttpMethod method, HttpRequest request) throws IOException {
         return performRequest(method, request, null)
-    }
-
-    /**
-     * Implements the logic to make an actual request with an HTTP client library.
-     *
-     * @param method HTTP method to use with the HTTP request.
-     * @param request Request properties to use with the HTTP request.
-     * @param entity A byte array to send with the request.
-     * @return A {@link HttpResponse} object containing the properties of the server response.
-     * @throws IOException
-     */
-    @Override
-    protected HttpResponse doExecute(HttpMethod method, HttpRequest request, byte[] entity) throws IOException {
-        return performRequest(method, request, Entity.entity(entity, request.getFullContentType()))
     }
 
     /**
@@ -175,11 +162,16 @@ class JerseyHttpClient extends AbstractHttpClient {
 
         response.setStatus(clientResponse.getStatus())
         response.setHeaders(clientResponse.getHeaders())
-        response.setContentType(clientResponse.getMediaType()?.getType())
-        response.setCharset((clientResponse.getMediaType()?.getParameters()?.get('charset')))
+
+        if (clientResponse.getMediaType()) {
+            MediaType type = clientResponse.getMediaType()
+            String contentType = type.toString()
+            response.setContentType(contentType.substring(0, contentType.indexOf(';')))
+            response.setCharset(type.getParameters()?.get('charset'))
+        }
 
         if (clientResponse.hasEntity()) {
-            response.setInputStream(clientResponse.getEntity() as InputStream)
+            response.setEntity(clientResponse.getEntity() as InputStream)
         }
 
         return response

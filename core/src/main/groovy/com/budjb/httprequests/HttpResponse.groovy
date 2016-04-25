@@ -5,12 +5,6 @@ import com.budjb.httprequests.exception.UnsupportedConversionException
 
 /**
  * An object that represents the response of an HTTP request.
- *
- * If the response contains an entity, and {@link HttpRequest#autoBufferEntity} is <code>true</code>, the response
- * entity is read from the response and the {@link #inputStream} is automatically closed. If
- * {@link HttpRequest#autoBufferEntity} is <code>false</code>, the {@link #inputStream} can be used to read the
- * response entity. In the latter case, it is important to call {@link #close} so that the underlying resources
- * can be freed up.
  */
 class HttpResponse implements Closeable {
     /**
@@ -29,11 +23,6 @@ class HttpResponse implements Closeable {
     Map<String, List<String>> headers = new TreeMap<String, List<String>>(String.CASE_INSENSITIVE_ORDER)
 
     /**
-     * Entity of the response.
-     */
-    byte[] entity
-
-    /**
      * A list of allowed HTTP methods. Typically returned from OPTIONS requests.
      */
     List<HttpMethod> allow = []
@@ -44,9 +33,9 @@ class HttpResponse implements Closeable {
     String charset = 'UTF-8'
 
     /**
-     * Input stream of the response.
+     * Response entity.
      */
-    InputStream inputStream
+    InputStream entity
 
     /**
      * Request properties used to configure the request that generated this response.
@@ -57,6 +46,12 @@ class HttpResponse implements Closeable {
      * Converter manager.
      */
     ConverterManager converterManager
+
+    /**
+     * A byte array that contains the entire entity as a buffer. This is only filled when
+     * {@link HttpRequest#bufferResponseEntity} is <code>true</code>.
+     */
+    private byte[] entityBuffer
 
     /**
      * Sets the character set of the response.
@@ -161,15 +156,32 @@ class HttpResponse implements Closeable {
     }
 
     /**
-     * Returns the entity as a byte array. Note that calling this method will automatically close the input stream.
+     * Sets the entity.
      *
-     * @return The entity of the response as a byte array.
+     * @param inputStream
      */
-    byte[] getEntity() {
-        if (entity == null) {
-            bufferEntity()
-        }
+    void setEntity(InputStream inputStream) {
+        entity = inputStream
 
+        if (!request || request.isBufferResponseEntity()) {
+            entityBuffer = StreamUtils.readBytes(inputStream)
+            inputStream.close()
+        }
+    }
+
+    /**
+     * Returns the entity.
+     *
+     * If the entity was buffered, calling this method will always return a new InputStream.
+     * Otherwise, the original InputStream will be returned. Note that if the entity is not
+     * buffered and it was already read once, subsequent reading will likely fail.
+     *
+     * @return The response entity.
+     */
+    InputStream getEntity() {
+        if (entityBuffer) {
+            return new ByteArrayInputStream(entityBuffer)
+        }
         return entity
     }
 
@@ -185,36 +197,7 @@ class HttpResponse implements Closeable {
     }
 
     /**
-     * Sets the byte array entity of the response.
-     *
-     * Note that setting the byte array entity directly will close the input stream (if it was open) and thus discard
-     * the stream's contents.
-     *
-     * @param entity Byte array entity to store in the response.
-     */
-    void setEntity(byte[] entity) {
-        close()
-        this.entity = entity
-    }
-
-    /**
-     * Sets the input stream of the entity of the response.
-     *
-     * If {@link HttpRequest#autoBufferEntity} is <code>true</code>, the input stream is read and closed,
-     * with its contents stored in {@link #entity} as a byte array.
-     *
-     * @param inputStream Input stream from the HTTP client response.
-     */
-    void setInputStream(InputStream inputStream) {
-        this.inputStream = inputStream
-
-        if (request.getAutoBufferEntity()) {
-            bufferEntity()
-        }
-    }
-
-    /**
-     * Closes the input stream and releases any system resources associated
+     * Closes the entity and releases any system resources associated
      * with it. If the stream is already closed then invoking this
      * method has no effect.
      *
@@ -222,29 +205,7 @@ class HttpResponse implements Closeable {
      */
     @Override
     void close() throws IOException {
-        inputStream?.close()
-    }
-
-    /**
-     * Reads the contents of the entity from the input stream and stores it as a byte array.
-     */
-    protected void bufferEntity() {
-        if (!inputStream) {
-            return
-        }
-
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream()
-
-        int read
-        byte[] tmp = new byte[8192]
-
-        while ((read = inputStream.read(tmp, 0, 1892)) != -1) {
-            outputStream.write(tmp, 0, read)
-        }
-
-        outputStream.flush()
-        entity = outputStream.toByteArray()
-        inputStream.close()
+        entity?.close()
     }
 
     /**
@@ -253,7 +214,7 @@ class HttpResponse implements Closeable {
      * @return Whether the response contains an entity.
      */
     boolean hasEntity() {
-        return inputStream != null || entity != null
+        return entity != null
     }
 
     /**

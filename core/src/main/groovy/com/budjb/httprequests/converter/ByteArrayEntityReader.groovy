@@ -1,13 +1,18 @@
 package com.budjb.httprequests.converter
 
-interface EntityReader extends EntityConverter {
+import com.budjb.httprequests.StreamUtils
+
+class ByteArrayEntityReader implements EntityReader {
     /**
      * Determines if the reader supports converting an entity to the given class type.
      *
      * @param type Type to convert to.
      * @return Whether the type is supported.
      */
-    boolean supports(Class<?> type)
+    @Override
+    boolean supports(Class<?> type) {
+        return type.isArray() && byte.isAssignableFrom(type.getComponentType())
+    }
 
     /**
      * Convert the given entity.
@@ -20,5 +25,8 @@ interface EntityReader extends EntityConverter {
      * @return The converted entity.
      * @throws Exception when an unexpected error occurs during conversion.
      */
-    Object read(InputStream entity, String contentType, String charset) throws Exception
+    @Override
+    Object read(InputStream entity, String contentType, String charset) throws Exception {
+        return StreamUtils.readBytes(entity)
+    }
 }
