@@ -32,7 +32,7 @@ class BasicAuthListener implements HttpClientRequestListener {
      * @param request Request object that will be used to make the HTTP request.
      */
     @Override
-    void doWithRequest(HttpRequest request) {
+    void filterRequest(HttpRequest request) {
         request.setHeader(HEADER, credentials)
     }
 }

@@ -662,7 +662,7 @@ abstract class AbstractHttpClient implements HttpClient {
      * @return A {@link HttpResponse} object containing the properties of the server response.
      */
     protected HttpResponse run(HttpRequest request, Closure action) {
-        listenerManager.getRequestListeners()*.doWithRequest(request)
+        listenerManager.getRequestListeners()*.filterRequest(request)
 
         HttpResponse response
         int retries = 0
@@ -684,7 +684,7 @@ abstract class AbstractHttpClient implements HttpClient {
             retries++
         }
 
-        listenerManager.getResponseListeners()*.doWithResponse(request, response)
+        listenerManager.getResponseListeners()*.filterResponse(request, response)
 
         if (request.isThrowStatusExceptions() && response.getStatus() >= 300) {
             throw HttpStatusException.build(response)

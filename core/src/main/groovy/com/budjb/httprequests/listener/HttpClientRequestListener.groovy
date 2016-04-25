@@ -12,5 +12,5 @@ interface HttpClientRequestListener extends HttpClientListener {
      *
      * @param request Request object that will be used to make the HTTP request.
      */
-    void doWithRequest(HttpRequest request)
+    void filterRequest(HttpRequest request)
 }
