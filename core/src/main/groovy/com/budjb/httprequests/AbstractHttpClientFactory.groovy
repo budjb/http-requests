@@ -1,8 +1,8 @@
 package com.budjb.httprequests
 
 import com.budjb.httprequests.converter.*
-import com.budjb.httprequests.listener.HttpClientListener
-import com.budjb.httprequests.listener.ListenerManager
+import com.budjb.httprequests.filter.HttpClientFilter
+import com.budjb.httprequests.filter.FilterManager
 
 abstract class AbstractHttpClientFactory implements HttpClientFactory {
     /**
@@ -11,9 +11,9 @@ abstract class AbstractHttpClientFactory implements HttpClientFactory {
     ConverterManager converterManager = new ConverterManager()
 
     /**
-     * Listener manager.
+     * Filter manager.
      */
-    ListenerManager listenerManager = new ListenerManager()
+    FilterManager filterManager = new FilterManager()
 
     /**
      * Implementation factories should implement this method to create a concrete {@link HttpClient} instance specific
@@ -65,54 +65,54 @@ abstract class AbstractHttpClientFactory implements HttpClientFactory {
         HttpClient client = createClientImplementation()
 
         client.setConverterManager(new ConverterManager(converterManager))
-        client.setListenerManager(new ListenerManager(listenerManager))
+        client.setFilterManager(new FilterManager(filterManager))
 
-        getListeners().each {
-            client.addListener(it)
+        getFilters().each {
+            client.addFilter(it)
         }
 
         return client
     }
 
     /**
-     * Adds a {@link com.budjb.httprequests.listener.HttpClientListener} to the HTTP client factory.
+     * Adds a {@link HttpClientFilter} to the HTTP client factory.
      *
-     * Listeners that are added to the factory are added to {@link HttpClient} objects that the factory creates.
+     * Filters that are added to the factory are added to {@link HttpClient} objects that the factory creates.
      *
-     * @param listener Listener instance to register with the client.
+     * @param filter Filter instance to register with the client.
      * @return The object the method was called on.
      */
     @Override
-    void addListener(HttpClientListener listener) {
-        listenerManager.add(listener)
+    void addFilter(HttpClientFilter filter) {
+        filterManager.add(filter)
     }
 
     /**
-     * Returns the list of all registered {@link HttpClientListener} instances.
+     * Returns the list of all registered {@link HttpClientFilter} instances.
      *
-     * @return The list of registered listener instances.
+     * @return The list of registered filter instances.
      */
     @Override
-    List<HttpClientListener> getListeners() {
-        return listenerManager.getAll()
+    List<HttpClientFilter> getFilters() {
+        return filterManager.getAll()
     }
 
     /**
-     * Unregisters a {@link HttpClientListener} from the HTTP client.
+     * Unregisters a {@link HttpClientFilter} from the HTTP client.
      *
-     * @param listener Listener instance to remove from the client.
+     * @param filter Filter instance to remove from the client.
      * @return The object the method was called on.
      */
     @Override
-    void removeListener(HttpClientListener listener) {
-        listenerManager.remove(listener)
+    void removeFilter(HttpClientFilter filter) {
+        filterManager.remove(filter)
     }
 
     /**
-     * Removes all registered listeners.
+     * Removes all registered filters.
      */
-    void clearListeners() {
-        listenerManager.clear()
+    void clearFilters() {
+        filterManager.clear()
     }
 
     /**

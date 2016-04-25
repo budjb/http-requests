@@ -1,12 +1,12 @@
-package com.budjb.httprequests.listener
+package com.budjb.httprequests.filter
 
 import com.budjb.httprequests.HttpRequest
 
 /**
- * An HTTP client listener that allows modification of the request entity before it is
+ * An HTTP client filter that allows modification of the request entity before it is
  * transmitted with the request.
  */
-interface HttpClientEntityListener extends HttpClientListener {
+interface HttpClientEntityFilter extends HttpClientFilter {
     /**
      * Filters a request entity in {@link InputStream} form.
      *

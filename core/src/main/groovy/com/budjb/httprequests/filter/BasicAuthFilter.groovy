@@ -1,11 +1,11 @@
-package com.budjb.httprequests.listener
+package com.budjb.httprequests.filter
 
 import com.budjb.httprequests.HttpRequest
 
 /**
- * An {@link HttpClientListener} that provides Basic Authentication support.
+ * An {@link HttpClientFilter} that provides Basic Authentication support.
  */
-class BasicAuthListener implements HttpClientRequestListener {
+class BasicAuthFilter implements HttpClientRequestFilter {
     /**
      * Name of the header for basic authentication.
      */
@@ -22,7 +22,7 @@ class BasicAuthListener implements HttpClientRequestListener {
      * @param username User name to authentication with.
      * @param password Password to authenticate with.
      */
-    BasicAuthListener(String username, String password) {
+    BasicAuthFilter(String username, String password) {
         credentials = "$username:$password".getBytes().encodeBase64()
     }
 

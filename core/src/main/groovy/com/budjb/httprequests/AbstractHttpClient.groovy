@@ -5,9 +5,9 @@ import com.budjb.httprequests.converter.EntityConverter
 import com.budjb.httprequests.converter.EntityWriter
 import com.budjb.httprequests.exception.HttpStatusException
 import com.budjb.httprequests.exception.UnsupportedConversionException
-import com.budjb.httprequests.listener.HttpClientListener
-import com.budjb.httprequests.listener.HttpClientRetryListener
-import com.budjb.httprequests.listener.ListenerManager
+import com.budjb.httprequests.filter.HttpClientFilter
+import com.budjb.httprequests.filter.HttpClientRetryFilter
+import com.budjb.httprequests.filter.FilterManager
 
 /**
  * A base class for HTTP clients that implements most of the functionality of the {@link HttpClient} interface.
@@ -21,9 +21,9 @@ abstract class AbstractHttpClient implements HttpClient {
     ConverterManager converterManager
 
     /**
-     * Listener manager.
+     * Filter manager.
      */
-    ListenerManager listenerManager
+    FilterManager filterManager
 
     /**
      * Implements the logic to make an actual request with an HTTP client library.
@@ -481,52 +481,52 @@ abstract class AbstractHttpClient implements HttpClient {
     }
 
     /**
-     * Adds a {@link HttpClientListener} to the HTTP client.
+     * Adds a {@link HttpClientFilter} to the HTTP client.
      *
-     * @param listener Listener instance to register with the client.
+     * @param filter Filter instance to register with the client.
      * @return The object the method was called on.
      */
     @Override
-    HttpClient addListener(HttpClientListener listener) {
-        listenerManager.add(listener)
+    HttpClient addFilter(HttpClientFilter filter) {
+        filterManager.add(filter)
         return this
     }
 
     /**
-     * Unregisters a {@link HttpClientListener} from the HTTP client.
+     * Unregisters a {@link HttpClientFilter} from the HTTP client.
      *
-     * @param listener Listener instance to remove from the client.
+     * @param filter Filter instance to remove from the client.
      * @return The object the method was called on.
      */
     @Override
-    HttpClient removeListener(HttpClientListener listener) {
-        listenerManager.remove(listener)
+    HttpClient removeFilter(HttpClientFilter filter) {
+        filterManager.remove(filter)
         return this
     }
 
     /**
-     * Returns the list of all registered {@link HttpClientListener} instances.
+     * Returns the list of all registered {@link HttpClientFilter} instances.
      *
-     * @return The list of registered listener instances.
+     * @return The list of registered filter instances.
      */
     @Override
-    List<HttpClientListener> getListeners() {
-        return listenerManager.getAll()
+    List<HttpClientFilter> getFilters() {
+        return filterManager.getAll()
     }
 
     /**
-     * Removes all registered listeners.
+     * Removes all registered filters.
      *
      * @return The object the method was called on.
      */
     @Override
-    HttpClient clearListeners() {
-        listenerManager.clear()
+    HttpClient clearFilters() {
+        filterManager.clear()
         return this
     }
 
     /**
-     * Orchestrates making the HTTP request. Fires appropriate listener events and hands off to the implementation
+     * Orchestrates making the HTTP request. Fires appropriate filter events and hands off to the implementation
      * to perform the actual HTTP request.
      *
      * @param method HTTP request method.
@@ -535,15 +535,15 @@ abstract class AbstractHttpClient implements HttpClient {
      * @return A {@link HttpResponse} object containing the properties of the server response.
      */
     protected HttpResponse run(HttpMethod method, HttpRequest request, InputStream entity) {
-        listenerManager.getRequestListeners()*.filterRequest(request)
-        listenerManager.getEntityListeners()*.filterEntity(request, entity)
+        filterManager.getRequestFilters()*.filterRequest(request)
+        filterManager.getEntityFilters()*.filterEntity(request, entity)
 
         HttpResponse response
         int retries = 0
         while (true) {
             response = doExecute(method, request, entity)
 
-            List<HttpClientRetryListener> requestRetry = listenerManager.getRetryListeners().findAll {
+            List<HttpClientRetryFilter> requestRetry = filterManager.getRetryFilters().findAll {
                 it.shouldRetry(request, response, retries)
             }
 
@@ -558,7 +558,7 @@ abstract class AbstractHttpClient implements HttpClient {
             retries++
         }
 
-        listenerManager.getResponseListeners()*.filterResponse(request, response)
+        filterManager.getResponseFilters()*.filterResponse(request, response)
 
         if (request.isThrowStatusExceptions() && response.getStatus() >= 300) {
             throw HttpStatusException.build(response)

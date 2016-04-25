@@ -1,12 +1,12 @@
-package com.budjb.httprequests.listener
+package com.budjb.httprequests.filter
 
 import com.budjb.httprequests.HttpRequest
 
 /**
- * An {@link HttpClientListener} that allows modification of the {@link HttpRequest} instance before
+ * An {@link HttpClientFilter} that allows modification of the {@link HttpRequest} instance before
  * the request is transmitted.
  */
-interface HttpClientRequestListener extends HttpClientListener {
+interface HttpClientRequestFilter extends HttpClientFilter {
     /**
      * Provides an opportunity to modify the {@link HttpRequest} before it is transmitted.
      *

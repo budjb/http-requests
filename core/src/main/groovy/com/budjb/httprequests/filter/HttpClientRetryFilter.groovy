@@ -1,19 +1,19 @@
-package com.budjb.httprequests.listener
+package com.budjb.httprequests.filter
 
 import com.budjb.httprequests.HttpRequest
 import com.budjb.httprequests.HttpResponse
 
 /**
- * An {@link HttpClientListener} that supports retrying HTTP requests.
+ * An {@link HttpClientFilter} that supports retrying HTTP requests.
  */
-interface HttpClientRetryListener extends HttpClientListener {
+interface HttpClientRetryFilter extends HttpClientFilter {
     /**
-     * Returns whether this listener requests a retry of the HTTP request.
+     * Returns whether this filter requests a retry of the HTTP request.
      *
-     * This method should not alter the request or response objects. They are only made available so that the listener
+     * This method should not alter the request or response objects. They are only made available so that the filter
      * has all the information it needs to determine if a retry should be attempted.
      *
-     * Note that this listener will receive a call to {@link #onRetry(HttpRequest, HttpResponse)} only if this method
+     * Note that this filter will receive a call to {@link #onRetry(HttpRequest, HttpResponse)} only if this method
      * returns true, even if a retry is otherwise attempted.
      *
      * @param request Configuration of the request.

@@ -4,13 +4,13 @@ import com.budjb.httprequests.converter.ConverterManager
 import com.budjb.httprequests.converter.EntityConverter
 import com.budjb.httprequests.converter.EntityWriter
 import com.budjb.httprequests.exception.UnsupportedConversionException
-import com.budjb.httprequests.listener.HttpClientListener
-import com.budjb.httprequests.listener.ListenerManager
+import com.budjb.httprequests.filter.HttpClientFilter
+import com.budjb.httprequests.filter.FilterManager
 
 /**
  * An interface that describes the common structure and methods of an HTTP client.
  *
- * Various listener classes are supported.
+ * Various filter classes are supported.
  */
 interface HttpClient {
     /**
@@ -21,11 +21,11 @@ interface HttpClient {
     void setConverterManager(ConverterManager converterManager)
 
     /**
-     * Assigns the {@link ListenerManager} object to the client.
+     * Assigns the {@link FilterManager} object to the client.
      *
-     * @param listenerManager Listener manager instance.
+     * @param filterManager Filter manager instance.
      */
-    void setListenerManager(ListenerManager listenerManager)
+    void setFilterManager(FilterManager filterManager)
 
     /**
      * Execute an HTTP request with the given method and request parameters and without a request entity.
@@ -375,34 +375,34 @@ interface HttpClient {
     HttpResponse trace(@DelegatesTo(HttpRequest) Closure requestClosure) throws IOException
 
     /**
-     * Adds a {@link HttpClientListener} to the HTTP client.
+     * Adds a {@link HttpClientFilter} to the HTTP client.
      *
-     * @param listener Listener instance to register with the client.
+     * @param filter Filter instance to register with the client.
      * @return The object the method was called on.
      */
-    HttpClient addListener(HttpClientListener listener)
+    HttpClient addFilter(HttpClientFilter filter)
 
     /**
-     * Returns the list of all registered {@link HttpClientListener} instances.
+     * Returns the list of all registered {@link HttpClientFilter} instances.
      *
-     * @return The list of registered listener instances.
+     * @return The list of registered filter instances.
      */
-    List<HttpClientListener> getListeners()
+    List<HttpClientFilter> getFilters()
 
     /**
-     * Unregisters a {@link HttpClientListener} from the HTTP client.
+     * Unregisters a {@link HttpClientFilter} from the HTTP client.
      *
-     * @param listener Listener instance to remove from the client.
+     * @param filter Filter instance to remove from the client.
      * @return The object the method was called on.
      */
-    HttpClient removeListener(HttpClientListener listener)
+    HttpClient removeFilter(HttpClientFilter filter)
 
     /**
-     * Removes all registered listeners.
+     * Removes all registered filters.
      *
      * @return The object the method was called on.
      */
-    HttpClient clearListeners()
+    HttpClient clearFilters()
 
     /**
      * Adds an entity converter to the factory.

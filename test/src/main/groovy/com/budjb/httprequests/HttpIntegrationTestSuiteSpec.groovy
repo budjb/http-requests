@@ -4,9 +4,9 @@ import com.budjb.httprequests.exception.HttpFoundException
 import com.budjb.httprequests.exception.HttpInternalServerErrorException
 import com.budjb.httprequests.exception.HttpNotAcceptableException
 import com.budjb.httprequests.exception.HttpUnauthorizedException
-import com.budjb.httprequests.listener.BasicAuthListener
-import com.budjb.httprequests.listener.HttpClientListener
-import com.budjb.httprequests.listener.HttpClientRetryListener
+import com.budjb.httprequests.filter.BasicAuthFilter
+import com.budjb.httprequests.filter.HttpClientFilter
+import com.budjb.httprequests.filter.HttpClientRetryFilter
 import spock.lang.Ignore
 
 @Ignore
@@ -230,16 +230,16 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         when:
         def response = httpClientFactory
             .createHttpClient()
-            .addListener(new BasicAuthListener('foo', 'bar'))
+            .addFilter(new BasicAuthFilter('foo', 'bar'))
             .get(new HttpRequest().setUri("${baseUrl}/testAuth"))
 
         then:
         response.getEntity(String) == 'welcome'
     }
 
-    def 'If a retry listener requests a retry, ensure its proper operations'() {
+    def 'If a retry filter requests a retry, ensure its proper operations'() {
         setup:
-        HttpClientRetryListener listener = new HttpClientRetryListener() {
+        HttpClientRetryFilter filter = new HttpClientRetryFilter() {
             @Override
             boolean shouldRetry(HttpRequest request, HttpResponse response, int retries) {
                 return retries == 0
@@ -252,7 +252,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         }
 
         when:
-        def response = httpClientFactory.createHttpClient().addListener(listener).get(
+        def response = httpClientFactory.createHttpClient().addFilter(filter).get(
             new HttpRequest().setUri("${baseUrl}/testHeaders")
         )
 
@@ -260,9 +260,9 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         response.getEntity(Map).foo == ['bar']
     }
 
-    def 'If a retry listener requests a retry and another does, not, ensure the non-requester is not called'() {
+    def 'If a retry filter requests a retry and another does, not, ensure the non-requester is not called'() {
         setup:
-        HttpClientRetryListener listener1 = new HttpClientRetryListener() {
+        HttpClientRetryFilter filter1 = new HttpClientRetryFilter() {
             @Override
             boolean shouldRetry(HttpRequest request, HttpResponse response, int retries) {
                 return retries == 0
@@ -274,7 +274,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
             }
         }
 
-        HttpClientListener listener2 = new HttpClientRetryListener() {
+        HttpClientFilter filter2 = new HttpClientRetryFilter() {
             @Override
             boolean shouldRetry(HttpRequest request, HttpResponse response, int retries) {
                 return false
@@ -289,8 +289,8 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         when:
         def response = httpClientFactory
             .createHttpClient()
-            .addListener(listener1)
-            .addListener(listener2)
+            .addFilter(filter1)
+            .addFilter(filter2)
             .get(new HttpRequest().setUri("${baseUrl}/testHeaders"))
 
         then:

@@ -1,7 +1,7 @@
 package com.budjb.httprequests
 
 import com.budjb.httprequests.converter.EntityConverter
-import com.budjb.httprequests.listener.HttpClientListener
+import com.budjb.httprequests.filter.HttpClientFilter
 
 /**
  * Describes a factory class that creates an {@link HttpClient} instance. Individual HTTP client libraries
@@ -18,32 +18,32 @@ interface HttpClientFactory {
     HttpClient createHttpClient()
 
     /**
-     * Adds a {@link com.budjb.httprequests.listener.HttpClientListener}.
+     * Adds a {@link HttpClientFilter}.
      *
-     * Listeners that are added to the factory are added to {@link HttpClient} objects that the factory creates.
+     * Filters that are added to the factory are added to {@link HttpClient} objects that the factory creates.
      *
-     * @param listener Listener instance to register.
+     * @param filter Filter instance to register.
      */
-    void addListener(HttpClientListener listener)
+    void addFilter(HttpClientFilter filter)
 
     /**
-     * Returns the list of all registered {@link HttpClientListener} instances.
+     * Returns the list of all registered {@link HttpClientFilter} instances.
      *
-     * @return The list of registered listener instances.
+     * @return The list of registered filter instances.
      */
-    List<HttpClientListener> getListeners()
+    List<HttpClientFilter> getFilters()
 
     /**
-     * Unregisters a {@link HttpClientListener}.
+     * Unregisters a {@link HttpClientFilter}.
      *
-     * @param listener Listener instance to remove.
+     * @param filter Filter instance to remove.
      */
-    void removeListener(HttpClientListener listener)
+    void removeFilter(HttpClientFilter filter)
 
     /**
-     * Removes all registered listeners.
+     * Removes all registered filters.
      */
-    void clearListeners()
+    void clearFilters()
 
     /**
      * Adds an entity converter to the factory.
