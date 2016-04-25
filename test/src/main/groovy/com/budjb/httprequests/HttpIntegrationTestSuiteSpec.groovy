@@ -616,4 +616,19 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         then:
         response.getEntity(String).startsWith('text/plain')
     }
+
+    def 'When the response is not buffered, the entity can only be retrieved once'() {
+        setup:
+        def response = httpClientFactory.createHttpClient().post([foo: ['bar', 'baz']]) {
+            uri = "${baseUrl}/testBasicPost"
+            bufferResponseEntity = false
+        }
+        response.getEntity(Map) == [foo: ['bar', 'baz']]
+
+        when:
+        response.getEntity(String)
+
+        then:
+        thrown IOException
+    }
 }

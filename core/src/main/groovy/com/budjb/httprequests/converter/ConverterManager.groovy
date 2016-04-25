@@ -1,5 +1,6 @@
 package com.budjb.httprequests.converter
 
+import com.budjb.httprequests.EntityInputStream
 import com.budjb.httprequests.HttpRequest
 import com.budjb.httprequests.exception.UnsupportedConversionException
 import groovy.util.logging.Slf4j
@@ -134,7 +135,11 @@ class ConverterManager {
      * @return The converted object.
      * @throws UnsupportedConversionException when there are no entity writers that support the object type.
      */
-    public <T> T read(Class<?> type, InputStream entity, String contentType, String charset) throws UnsupportedConversionException {
+    public <T> T read(Class<?> type, InputStream entity, String contentType, String charset) throws UnsupportedConversionException, IOException {
+        if (entity instanceof EntityInputStream && entity.isClosed()) {
+            throw new IOException("entity stream is closed")
+        }
+
         for (EntityReader reader : getEntityReaders()) {
             if (reader.supports(type)) {
                 try {

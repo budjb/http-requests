@@ -161,11 +161,11 @@ class HttpResponse implements Closeable {
      * @param inputStream
      */
     void setEntity(InputStream inputStream) {
-        entity = inputStream
+        entity = new EntityInputStream(inputStream)
 
         if (!request || request.isBufferResponseEntity()) {
-            entityBuffer = StreamUtils.readBytes(inputStream)
-            inputStream.close()
+            entityBuffer = StreamUtils.readBytes(entity)
+            entity.close()
         }
     }
 
@@ -180,7 +180,7 @@ class HttpResponse implements Closeable {
      */
     InputStream getEntity() {
         if (entityBuffer) {
-            return new ByteArrayInputStream(entityBuffer)
+            return new EntityInputStream(new ByteArrayInputStream(entityBuffer))
         }
         return entity
     }
@@ -192,8 +192,12 @@ class HttpResponse implements Closeable {
      * @return The converted entity.
      * @throws UnsupportedConversionException when no converter is found to convert the entity.
      */
-    public <T> T getEntity(Class<T> type) throws UnsupportedConversionException {
-        return converterManager.read(type, getEntity(), getContentType(), getCharset())
+    public <T> T getEntity(Class<T> type) throws UnsupportedConversionException, IOException {
+        InputStream entity = getEntity()
+        T object = converterManager.read(type, entity, getContentType(), getCharset())
+        entity.close()
+
+        return object
     }
 
     /**
