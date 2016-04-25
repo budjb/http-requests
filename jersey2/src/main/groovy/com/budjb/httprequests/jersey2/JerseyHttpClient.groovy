@@ -23,26 +23,68 @@ class JerseyHttpClient extends AbstractHttpClient {
      *
      * @param method HTTP method to use with the HTTP request.
      * @param request Request properties to use with the HTTP request.
-     * @return A {@link HttpResponse} object containing the properties of the server response.
-     * @throws IOException
-     */
-    @Override
-    protected HttpResponse doExecute(HttpMethod method, HttpRequest request) throws IOException {
-        return performRequest(method, request, null)
-    }
-
-    /**
-     * Implements the logic to make an actual request with an HTTP client library.
-     *
-     * @param method HTTP method to use with the HTTP request.
-     * @param request Request properties to use with the HTTP request.
-     * @param inputStream An {@link InputStream} containing the response body.
+     * @param inputStream An {@link InputStream} containing the response body. May be <code>null</code>.
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
     @Override
     protected HttpResponse doExecute(HttpMethod method, HttpRequest request, InputStream inputStream) throws IOException {
-        return performRequest(method, request, Entity.entity(inputStream, request.getFullContentType()))
+        Client client = createClient(request)
+
+        client = client.property(ClientProperties.CONNECT_TIMEOUT, request.getConnectionTimeout())
+        client = client.property(ClientProperties.READ_TIMEOUT, request.getReadTimeout())
+        client = client.property(ClientProperties.FOLLOW_REDIRECTS, request.isFollowRedirects())
+        client = client.property(ClientProperties.SUPPRESS_HTTP_COMPLIANCE_VALIDATION, true)
+
+        WebTarget target = client.target(request.getUri())
+
+        request.getQueryParameters().each { name, values ->
+            if (values instanceof Collection) {
+                values.each { value ->
+                    target = target.queryParam(name, value.toString())
+                }
+            }
+            else {
+                target = target.queryParam(name, values.toString())
+            }
+        }
+
+        Invocation.Builder builder = target.request()
+
+        request.getHeaders().each { name, values ->
+            if (values instanceof Collection) {
+                values.each { value ->
+                    builder = builder.header(name, value.toString())
+                }
+            }
+            else {
+                builder = builder.header(name, values.toString())
+            }
+        }
+
+        if (request.getAccept()) {
+            builder = builder.accept(request.getAccept())
+        }
+
+        Entity<InputStream> entity = Entity.entity(inputStream, request.getFullContentType())
+
+        Response clientResponse
+        try {
+            if (entity != null) {
+                clientResponse = builder.method(method.toString(), entity, Response)
+            }
+            else {
+                clientResponse = builder.method(method.toString(), Response)
+            }
+        }
+        catch (ProcessingException e) {
+            if (e.getCause() && e.getCause() instanceof IOException) {
+                throw e.getCause()
+            }
+            throw e
+        }
+
+        return buildResponse(request, clientResponse)
     }
 
     /**
@@ -85,71 +127,6 @@ class JerseyHttpClient extends AbstractHttpClient {
         return builder.withConfig(clientConfig).build()
     }
 
-    /**
-     * Performs the actual HTTP request.
-     *
-     * @param method HTTP method to use with the HTTP request.
-     * @param request Request properties to use with the HTTP request.
-     * @param entity Entity of the request. Can be null if there is no entity.
-     * @return A {@link HttpResponse} object containing the properties of the server response.
-     * @throws IOException
-     */
-    protected HttpResponse performRequest(HttpMethod method, HttpRequest request, Entity<?> entity) throws IOException {
-        Client client = createClient(request)
-
-        client = client.property(ClientProperties.CONNECT_TIMEOUT, request.getConnectionTimeout())
-        client = client.property(ClientProperties.READ_TIMEOUT, request.getReadTimeout())
-        client = client.property(ClientProperties.FOLLOW_REDIRECTS, request.isFollowRedirects())
-        client = client.property(ClientProperties.SUPPRESS_HTTP_COMPLIANCE_VALIDATION, true)
-
-        WebTarget target = client.target(request.getUri())
-
-        request.getQueryParameters().each { name, values ->
-            if (values instanceof Collection) {
-                values.each { value ->
-                    target = target.queryParam(name, value.toString())
-                }
-            }
-            else {
-                target = target.queryParam(name, values.toString())
-            }
-        }
-
-        Invocation.Builder builder = target.request()
-
-        request.getHeaders().each { name, values ->
-            if (values instanceof Collection) {
-                values.each { value ->
-                    builder = builder.header(name, value.toString())
-                }
-            }
-            else {
-                builder = builder.header(name, values.toString())
-            }
-        }
-
-        if (request.getAccept()) {
-            builder = builder.accept(request.getAccept())
-        }
-
-        Response clientResponse
-        try {
-            if (entity != null) {
-                clientResponse = builder.method(method.toString(), entity, Response)
-            }
-            else {
-                clientResponse = builder.method(method.toString(), Response)
-            }
-        }
-        catch (ProcessingException e) {
-            if (e.getCause() && e.getCause() instanceof IOException) {
-                throw e.getCause()
-            }
-            throw e
-        }
-
-        return buildResponse(request, clientResponse)
-    }
     /**
      * Builds an {@link HttpResponse} object from Jersey's {@link Response}.
      *

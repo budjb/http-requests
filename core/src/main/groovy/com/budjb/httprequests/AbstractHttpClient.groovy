@@ -30,17 +30,7 @@ abstract class AbstractHttpClient implements HttpClient {
      *
      * @param method HTTP method to use with the HTTP request.
      * @param request Request properties to use with the HTTP request.
-     * @return A {@link HttpResponse} object containing the properties of the server response.
-     * @throws IOException
-     */
-    protected abstract HttpResponse doExecute(HttpMethod method, HttpRequest request) throws IOException
-
-    /**
-     * Implements the logic to make an actual request with an HTTP client library.
-     *
-     * @param method HTTP method to use with the HTTP request.
-     * @param request Request properties to use with the HTTP request.
-     * @param inputStream An {@link InputStream} containing the response body.
+     * @param inputStream An {@link InputStream} containing the response body. May be <code>null</code>.
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
@@ -57,7 +47,7 @@ abstract class AbstractHttpClient implements HttpClient {
      */
     @Override
     HttpResponse execute(HttpMethod method, HttpRequest request) throws IOException {
-        return run(request, { doExecute(method, request) })
+        return run(method, request, null)
     }
 
     /**
@@ -84,7 +74,7 @@ abstract class AbstractHttpClient implements HttpClient {
      */
     @Override
     HttpResponse execute(HttpMethod method, HttpRequest request, InputStream inputStream) throws IOException {
-        return run(request, { doExecute(method, request, inputStream) })
+        return run(method, request, inputStream)
     }
 
     /**
@@ -539,17 +529,19 @@ abstract class AbstractHttpClient implements HttpClient {
      * Orchestrates making the HTTP request. Fires appropriate listener events and hands off to the implementation
      * to perform the actual HTTP request.
      *
+     * @param method HTTP request method.
      * @param request {@link HttpRequest} object to configure the request.
-     * @param action A closure containing the logic to run against the HTTP client implementation.
+     * @param entity Request entity.
      * @return A {@link HttpResponse} object containing the properties of the server response.
      */
-    protected HttpResponse run(HttpRequest request, Closure action) {
+    protected HttpResponse run(HttpMethod method, HttpRequest request, InputStream entity) {
         listenerManager.getRequestListeners()*.filterRequest(request)
+        listenerManager.getEntityListeners()*.filterEntity(request, entity)
 
         HttpResponse response
         int retries = 0
         while (true) {
-            response = action.call() as HttpResponse
+            response = doExecute(method, request, entity)
 
             List<HttpClientRetryListener> requestRetry = listenerManager.getRetryListeners().findAll {
                 it.shouldRetry(request, response, retries)

@@ -18,20 +18,7 @@ class NullHttpClient extends AbstractHttpClient {
      *
      * @param method HTTP method to use with the HTTP request.
      * @param request Request properties to use with the HTTP request.
-     * @return A {@link HttpResponse} object containing the properties of the server response.
-     * @throws IOException
-     */
-    @Override
-    protected HttpResponse doExecute(HttpMethod method, HttpRequest request) throws IOException {
-        return response
-    }
-
-    /**
-     * Implements the logic to make an actual request with an HTTP client library.
-     *
-     * @param method HTTP method to use with the HTTP request.
-     * @param request Request properties to use with the HTTP request.
-     * @param inputStream An {@link InputStream} containing the response body.
+     * @param inputStream An {@link InputStream} containing the response body. May be <code>null</code>.
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */

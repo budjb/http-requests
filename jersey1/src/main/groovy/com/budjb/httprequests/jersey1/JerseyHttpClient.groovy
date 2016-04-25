@@ -26,37 +26,12 @@ class JerseyHttpClient extends AbstractHttpClient {
      *
      * @param method HTTP method to use with the HTTP request.
      * @param request Request properties to use with the HTTP request.
-     * @return A {@link HttpResponse} object containing the properties of the server response.
-     * @throws IOException
-     */
-    protected HttpResponse doExecute(HttpMethod method, HttpRequest request) throws IOException {
-        return performRequest(method, request, null)
-    }
-
-    /**
-     * Implements the logic to make an actual request with an HTTP client library.
-     *
-     * @param method HTTP method to use with the HTTP request.
-     * @param request Request properties to use with the HTTP request.
-     * @param inputStream An {@link InputStream} containing the response body.
+     * @param inputStream An {@link InputStream} containing the response body. May be <code>null</code>.
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
     @Override
     protected HttpResponse doExecute(HttpMethod method, HttpRequest request, InputStream inputStream) throws IOException {
-        return performRequest(method, request, inputStream)
-    }
-
-    /**
-     * Perform the request.
-     *
-     * @param method HTTP method to use with the HTTP request.
-     * @param request Request properties to use with the HTTP request.
-     * @param entity Entity of the request. Can be null if there is no entity.
-     * @return A {@link HttpResponse} object containing the properties of the server response.
-     * @throws IOException
-     */
-    protected HttpResponse performRequest(HttpMethod method, HttpRequest request, Object entity) throws IOException {
         Client client = createClient(request)
 
         ByteArrayOutputStream logStream = null
@@ -105,8 +80,8 @@ class JerseyHttpClient extends AbstractHttpClient {
 
         ClientResponse response
         try {
-            if (entity != null) {
-                response = builder.method(method.toString(), ClientResponse, entity)
+            if (inputStream != null) {
+                response = builder.method(method.toString(), ClientResponse, inputStream)
             }
             else {
                 response = builder.method(method.toString(), ClientResponse)

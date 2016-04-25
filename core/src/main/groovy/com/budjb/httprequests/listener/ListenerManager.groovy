@@ -88,4 +88,13 @@ class ListenerManager {
     List<HttpClientRetryListener> getRetryListeners() {
         return listeners.findAll { it instanceof HttpClientRetryListener } as List<HttpClientRetryListener>
     }
+
+    /**
+     * Return a list of all registered {@link HttpClientEntityListener} instances.
+     *
+     * @return A list of all registered {@link HttpClientEntityListener} instances.
+     */
+    List<HttpClientEntityListener> getEntityListeners() {
+        return listeners.findAll { it instanceof HttpClientEntityListener } as List<HttpClientEntityListener>
+    }
 }

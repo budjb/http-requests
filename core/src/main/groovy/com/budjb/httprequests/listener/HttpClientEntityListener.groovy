@@ -8,15 +8,6 @@ import com.budjb.httprequests.HttpRequest
  */
 interface HttpClientEntityListener extends HttpClientListener {
     /**
-     * Filters a request entity in byte array form.
-     *
-     * @param request HTTP request properties.
-     * @param entity Request entity.
-     * @return Filtered request entity.
-     */
-    byte[] filterEntity(HttpRequest request, byte[] entity)
-
-    /**
      * Filters a request entity in {@link InputStream} form.
      *
      * @param request HTTP request properties.
