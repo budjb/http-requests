@@ -2,8 +2,8 @@ package com.budjb.httprequests
 
 import com.budjb.httprequests.converter.ConverterManager
 import com.budjb.httprequests.converter.EntityConverter
-import com.budjb.httprequests.converter.StringEntityReader
-import com.budjb.httprequests.converter.StringEntityWriter
+import com.budjb.httprequests.converter.bundled.StringEntityReader
+import com.budjb.httprequests.converter.bundled.StringEntityWriter
 import com.budjb.httprequests.exception.UnsupportedConversionException
 import com.budjb.httprequests.support.NullHttpClient
 import spock.lang.Specification

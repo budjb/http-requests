@@ -1,13 +1,9 @@
-package com.budjb.httprequests.converter
+package com.budjb.httprequests.converter.bundled
 
 import com.budjb.httprequests.StreamUtils
+import com.budjb.httprequests.converter.EntityReader
 
-import java.nio.charset.Charset
-
-/**
- * An entity reader that converts an entity into a String. The character set of the entity is respected.
- */
-class StringEntityReader implements EntityReader {
+class ByteArrayEntityReader implements EntityReader {
     /**
      * Determines if the reader supports converting an entity to the given class type.
      *
@@ -16,7 +12,7 @@ class StringEntityReader implements EntityReader {
      */
     @Override
     boolean supports(Class<?> type) {
-        return String.isAssignableFrom(type)
+        return type.isArray() && byte.isAssignableFrom(type.getComponentType())
     }
 
     /**
@@ -32,11 +28,6 @@ class StringEntityReader implements EntityReader {
      */
     @Override
     Object read(InputStream entity, String contentType, String charset) throws Exception {
-        if (charset) {
-            return StreamUtils.readString(entity, charset)
-        }
-        else {
-            return StreamUtils.readString(entity, Charset.defaultCharset().toString())
-        }
+        return StreamUtils.readBytes(entity)
     }
 }

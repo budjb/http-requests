@@ -1,11 +1,14 @@
-package com.budjb.httprequests.converter
+package com.budjb.httprequests.converter.bundled
 
-import groovy.json.JsonSlurper
+import com.budjb.httprequests.StreamUtils
+import com.budjb.httprequests.converter.EntityReader
+
+import java.nio.charset.Charset
 
 /**
- * An entity reader that parses an entity as JSON and returns a <code>List</code> or <code>Map</code>.
+ * An entity reader that converts an entity into a String. The character set of the entity is respected.
  */
-class JsonEntityReader implements EntityReader {
+class StringEntityReader implements EntityReader {
     /**
      * Determines if the reader supports converting an entity to the given class type.
      *
@@ -14,7 +17,7 @@ class JsonEntityReader implements EntityReader {
      */
     @Override
     boolean supports(Class<?> type) {
-        return List.isAssignableFrom(type) || Map.isAssignableFrom(type)
+        return String.isAssignableFrom(type)
     }
 
     /**
@@ -31,10 +34,10 @@ class JsonEntityReader implements EntityReader {
     @Override
     Object read(InputStream entity, String contentType, String charset) throws Exception {
         if (charset) {
-            return new JsonSlurper().parse(entity, charset)
+            return StreamUtils.readString(entity, charset)
         }
         else {
-            return new JsonSlurper().parse(entity)
+            return StreamUtils.readString(entity, Charset.defaultCharset().toString())
         }
     }
 }

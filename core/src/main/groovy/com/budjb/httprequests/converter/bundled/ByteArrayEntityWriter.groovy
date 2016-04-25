@@ -1,9 +1,8 @@
-package com.budjb.httprequests.converter
+package com.budjb.httprequests.converter.bundled
 
-/**
- * An entity writer that will convert a GString.
- */
-class GStringEntityWriter implements EntityWriter {
+import com.budjb.httprequests.converter.EntityWriter
+
+class ByteArrayEntityWriter implements EntityWriter {
     /**
      * Returns a Content-Type of the converted object that will be set in the HTTP request.
      *
@@ -13,7 +12,7 @@ class GStringEntityWriter implements EntityWriter {
      */
     @Override
     String getContentType() {
-        return 'text/plain'
+        return 'application/octet-stream'
     }
 
     /**
@@ -24,7 +23,7 @@ class GStringEntityWriter implements EntityWriter {
      */
     @Override
     boolean supports(Class<?> type) {
-        return GString.isAssignableFrom(type)
+        return type.isArray() && byte.isAssignableFrom(type.getComponentType())
     }
 
     /**
@@ -39,6 +38,6 @@ class GStringEntityWriter implements EntityWriter {
      */
     @Override
     InputStream write(Object entity, String characterSet) throws Exception {
-        return new ByteArrayInputStream(entity.toString().getBytes(characterSet))
+        return new ByteArrayInputStream(entity as byte[])
     }
 }

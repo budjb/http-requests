@@ -1,6 +1,14 @@
 package com.budjb.httprequests
 
 import com.budjb.httprequests.converter.*
+import com.budjb.httprequests.converter.bundled.ByteArrayEntityReader
+import com.budjb.httprequests.converter.bundled.ByteArrayEntityWriter
+import com.budjb.httprequests.converter.bundled.FormDataEntityWriter
+import com.budjb.httprequests.converter.bundled.GStringEntityWriter
+import com.budjb.httprequests.converter.bundled.JsonEntityReader
+import com.budjb.httprequests.converter.bundled.JsonEntityWriter
+import com.budjb.httprequests.converter.bundled.StringEntityReader
+import com.budjb.httprequests.converter.bundled.StringEntityWriter
 import com.budjb.httprequests.filter.HttpClientFilter
 import com.budjb.httprequests.filter.FilterManager
 

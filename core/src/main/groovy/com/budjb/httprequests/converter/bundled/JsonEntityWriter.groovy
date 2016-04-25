@@ -1,5 +1,6 @@
-package com.budjb.httprequests.converter
+package com.budjb.httprequests.converter.bundled
 
+import com.budjb.httprequests.converter.EntityWriter
 import groovy.json.JsonBuilder
 
 /**

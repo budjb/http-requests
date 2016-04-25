@@ -1,8 +1,12 @@
-package com.budjb.httprequests.converter
+package com.budjb.httprequests.converter.bundled
 
-import com.budjb.httprequests.StreamUtils
+import com.budjb.httprequests.converter.EntityReader
+import groovy.json.JsonSlurper
 
-class ByteArrayEntityReader implements EntityReader {
+/**
+ * An entity reader that parses an entity as JSON and returns a <code>List</code> or <code>Map</code>.
+ */
+class JsonEntityReader implements EntityReader {
     /**
      * Determines if the reader supports converting an entity to the given class type.
      *
@@ -11,7 +15,7 @@ class ByteArrayEntityReader implements EntityReader {
      */
     @Override
     boolean supports(Class<?> type) {
-        return type.isArray() && byte.isAssignableFrom(type.getComponentType())
+        return List.isAssignableFrom(type) || Map.isAssignableFrom(type)
     }
 
     /**
@@ -27,6 +31,11 @@ class ByteArrayEntityReader implements EntityReader {
      */
     @Override
     Object read(InputStream entity, String contentType, String charset) throws Exception {
-        return StreamUtils.readBytes(entity)
+        if (charset) {
+            return new JsonSlurper().parse(entity, charset)
+        }
+        else {
+            return new JsonSlurper().parse(entity)
+        }
     }
 }

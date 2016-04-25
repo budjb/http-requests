@@ -1,4 +1,6 @@
-package com.budjb.httprequests.converter
+package com.budjb.httprequests.converter.bundled
+
+import com.budjb.httprequests.converter.EntityWriter
 
 /**
  * An entity writer that converts a String.

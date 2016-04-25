@@ -1,7 +1,7 @@
 package com.budjb.httprequests
 
 import com.budjb.httprequests.converter.ConverterManager
-import com.budjb.httprequests.converter.StringEntityReader
+import com.budjb.httprequests.converter.bundled.StringEntityReader
 import spock.lang.Specification
 import spock.lang.Unroll
 
