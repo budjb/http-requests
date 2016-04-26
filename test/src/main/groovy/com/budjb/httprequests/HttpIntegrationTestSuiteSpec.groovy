@@ -1,5 +1,6 @@
 package com.budjb.httprequests
 
+import ch.qos.logback.core.pattern.ConverterUtil
 import com.budjb.httprequests.exception.HttpFoundException
 import com.budjb.httprequests.exception.HttpInternalServerErrorException
 import com.budjb.httprequests.exception.HttpNotAcceptableException
@@ -7,7 +8,10 @@ import com.budjb.httprequests.exception.HttpUnauthorizedException
 import com.budjb.httprequests.filter.HttpClientFilter
 import com.budjb.httprequests.filter.HttpClientRetryFilter
 import com.budjb.httprequests.filter.bundled.BasicAuthFilter
+import com.budjb.httprequests.filter.bundled.GZIPFilter
 import spock.lang.Ignore
+
+import java.util.zip.GZIPInputStream
 
 @Ignore
 abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
@@ -641,5 +645,20 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
 
         expect:
         response.getEntity(String) == '{"foo":["bar","baz"]}'
+    }
+
+    def 'When a GZIPFilter is applied to the request, the request is compressed'() {
+        setup:
+        httpClientFactory.addFilter(new GZIPFilter())
+        def request = HttpRequest.build {
+            uri = "${baseUrl}/echo"
+        }
+
+        when:
+        def response = httpClientFactory.createHttpClient().post(request, 'Hello, world!')
+
+        then:
+        request.getHeaders().get('Content-Encoding') == ['gzip']
+        StreamUtils.readString(new GZIPInputStream(response.getEntity()), 'UTF-8') == 'Hello, world!'
     }
 }

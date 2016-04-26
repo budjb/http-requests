@@ -10,9 +10,12 @@ import org.glassfish.jersey.filter.LoggingFilter
 
 import javax.net.ssl.*
 import javax.ws.rs.ProcessingException
+import javax.ws.rs.WebApplicationException
 import javax.ws.rs.client.*
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
+import javax.ws.rs.ext.WriterInterceptor
+import javax.ws.rs.ext.WriterInterceptorContext
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
 import java.util.logging.Logger
@@ -30,6 +33,8 @@ class JerseyHttpClient extends AbstractHttpClient {
     @Override
     protected HttpResponse doExecute(HttpMethod method, HttpRequest request, InputStream inputStream) throws IOException {
         Client client = createClient(request)
+
+        client = client.register(createWriterInterceptor())
 
         client = client.property(ClientProperties.CONNECT_TIMEOUT, request.getConnectionTimeout())
         client = client.property(ClientProperties.READ_TIMEOUT, request.getReadTimeout())
@@ -152,5 +157,20 @@ class JerseyHttpClient extends AbstractHttpClient {
         }
 
         return response
+    }
+
+    /**
+     * Creates a writer interceptor so that the {@link OutputStream} can be filtered.
+     *
+     * @return A new writer interceptor.
+     */
+    protected WriterInterceptor createWriterInterceptor() {
+        return new WriterInterceptor() {
+            @Override
+            void aroundWriteTo(WriterInterceptorContext context) throws IOException, WebApplicationException {
+                context.setOutputStream(filterOutputStream(context.getOutputStream()))
+                context.proceed()
+            }
+        }
     }
 }

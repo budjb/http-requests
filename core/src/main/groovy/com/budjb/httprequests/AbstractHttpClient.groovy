@@ -5,9 +5,9 @@ import com.budjb.httprequests.converter.EntityConverter
 import com.budjb.httprequests.converter.EntityWriter
 import com.budjb.httprequests.exception.HttpStatusException
 import com.budjb.httprequests.exception.UnsupportedConversionException
+import com.budjb.httprequests.filter.FilterManager
 import com.budjb.httprequests.filter.HttpClientFilter
 import com.budjb.httprequests.filter.HttpClientRetryFilter
-import com.budjb.httprequests.filter.FilterManager
 
 /**
  * A base class for HTTP clients that implements most of the functionality of the {@link HttpClient} interface.
@@ -536,7 +536,6 @@ abstract class AbstractHttpClient implements HttpClient {
      */
     protected HttpResponse run(HttpMethod method, HttpRequest request, InputStream entity) {
         filterManager.getRequestFilters()*.filterRequest(request)
-        filterManager.getEntityFilters()*.filterEntity(request, entity)
 
         HttpResponse response
         int retries = 0
@@ -565,6 +564,19 @@ abstract class AbstractHttpClient implements HttpClient {
         }
 
         return response
+    }
+
+    /**
+     * Filter the output stream.
+     *
+     * @param outputStream Output stream of the request.
+     */
+    protected OutputStream filterOutputStream(OutputStream outputStream) {
+        filterManager.getEntityFilters().each {
+            outputStream = it.filterEntity(outputStream)
+        }
+
+        return outputStream
     }
 
     /**
@@ -615,4 +627,6 @@ abstract class AbstractHttpClient implements HttpClient {
     void clearEntityConverters() {
         converterManager.clear()
     }
+
+
 }

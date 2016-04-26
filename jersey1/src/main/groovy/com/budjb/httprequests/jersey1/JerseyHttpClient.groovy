@@ -1,12 +1,10 @@
 package com.budjb.httprequests.jersey1
 
 import com.budjb.httprequests.*
-import com.sun.jersey.api.client.Client
-import com.sun.jersey.api.client.ClientHandlerException
-import com.sun.jersey.api.client.ClientResponse
-import com.sun.jersey.api.client.WebResource
+import com.sun.jersey.api.client.*
 import com.sun.jersey.api.client.config.ClientConfig
 import com.sun.jersey.api.client.config.DefaultClientConfig
+import com.sun.jersey.api.client.filter.ClientFilter
 import com.sun.jersey.api.client.filter.LoggingFilter
 import com.sun.jersey.client.urlconnection.HTTPSProperties
 import groovy.util.logging.Slf4j
@@ -33,6 +31,8 @@ class JerseyHttpClient extends AbstractHttpClient {
     @Override
     protected HttpResponse doExecute(HttpMethod method, HttpRequest request, InputStream inputStream) throws IOException {
         Client client = createClient(request)
+
+        client.addFilter(createClientFilter())
 
         ByteArrayOutputStream logStream = null
         if (request.isLogConversation()) {
@@ -162,5 +162,36 @@ class JerseyHttpClient extends AbstractHttpClient {
         }
 
         return response
+    }
+
+    /**
+     * Creates the client filter that allows the request {@link OutputStream} to be filtered.
+     *
+     * @return A new client filter.
+     */
+    protected ClientFilter createClientFilter() {
+        return new ClientFilter() {
+            @Override
+            ClientResponse handle(ClientRequest clientRequest) throws ClientHandlerException {
+                if (clientRequest.getEntity()) {
+                    clientRequest.setAdapter(new AbstractClientRequestAdapter(clientRequest.getAdapter()) {
+                        /**
+                         * Adapt the output stream of the client request.
+                         *
+                         * @param rq the client request
+                         * @param out the output stream to write the request entity.
+                         * @return the adapted output stream to write the request entity.
+                         * @throws java.io.IOException
+                         */
+                        @Override
+                        OutputStream adapt(ClientRequest rq, OutputStream out) throws IOException {
+                            return filterOutputStream(out)
+                        }
+                    })
+                }
+
+                return getNext().handle(clientRequest)
+            }
+        }
     }
 }

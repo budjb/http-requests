@@ -143,4 +143,9 @@ class TestApp {
     String printContentType(@RequestHeader(value = 'Content-Type') String contentType) {
         return contentType
     }
+
+    @RequestMapping(value = '/echo')
+    byte[] echo(@RequestBody byte[] body) {
+        return body
+    }
 }
