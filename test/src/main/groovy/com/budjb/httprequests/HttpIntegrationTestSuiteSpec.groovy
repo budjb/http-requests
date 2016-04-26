@@ -4,9 +4,9 @@ import com.budjb.httprequests.exception.HttpFoundException
 import com.budjb.httprequests.exception.HttpInternalServerErrorException
 import com.budjb.httprequests.exception.HttpNotAcceptableException
 import com.budjb.httprequests.exception.HttpUnauthorizedException
-import com.budjb.httprequests.filter.BasicAuthFilter
 import com.budjb.httprequests.filter.HttpClientFilter
 import com.budjb.httprequests.filter.HttpClientRetryFilter
+import com.budjb.httprequests.filter.bundled.BasicAuthFilter
 import spock.lang.Ignore
 
 @Ignore
