@@ -4,22 +4,21 @@ import com.budjb.httprequests.HttpRequest
 import com.budjb.httprequests.filter.HttpClientEntityFilter
 import com.budjb.httprequests.filter.HttpClientRequestFilter
 
-import java.util.zip.GZIPOutputStream
+import java.util.zip.DeflaterOutputStream
 
 /**
- * A filter that compresses the entity with the GZIP algorithm.
+ * A filter that compresses the entity with the deflate algorithm.
  */
-class GZIPFilter implements HttpClientEntityFilter, HttpClientRequestFilter {
+class DeflateFilter implements HttpClientEntityFilter, HttpClientRequestFilter {
     /**
      * Filters a request entity in {@link OutputStream} form.
      *
-     * @param request HTTP request properties.
      * @param outputStream Output stream of the request.
      * @return Filtered request input stream.
      */
     @Override
     OutputStream filterEntity(OutputStream outputStream) {
-        return new GZIPOutputStream(outputStream)
+        return new DeflaterOutputStream(outputStream)
     }
 
     /**
@@ -29,6 +28,6 @@ class GZIPFilter implements HttpClientEntityFilter, HttpClientRequestFilter {
      */
     @Override
     void filterRequest(HttpRequest request) {
-        request.setHeader('Content-Encoding', 'gzip')
+        request.setHeader('Content-Encoding', 'deflate')
     }
 }
