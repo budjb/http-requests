@@ -1,6 +1,6 @@
 package com.budjb.httprequests
 
-import com.budjb.httprequests.converter.ConverterManager
+import com.budjb.httprequests.converter.EntityConverterManager
 import com.budjb.httprequests.converter.EntityConverter
 import com.budjb.httprequests.converter.bundled.StringEntityReader
 import com.budjb.httprequests.converter.bundled.StringEntityWriter
@@ -13,12 +13,12 @@ class ConverterSpec extends Specification {
         setup:
         EntityConverter converter = new StringEntityReader()
 
-        ConverterManager converterManager = new ConverterManager()
+        EntityConverterManager converterManager = new EntityConverterManager()
         converterManager.add(converter)
         converterManager.add(new StringEntityWriter())
 
         HttpClient httpClient = new NullHttpClient() {}
-        httpClient.converterManager = new ConverterManager(converterManager)
+        httpClient.converterManager = new EntityConverterManager(converterManager)
 
         when:
         httpClient.removeEntityConverter(converter)
@@ -30,7 +30,7 @@ class ConverterSpec extends Specification {
 
     def 'When no reader is available to perform conversion, an UnsupportedConversionException is thrown'() {
         setup:
-        ConverterManager converterManager = new ConverterManager()
+        EntityConverterManager converterManager = new EntityConverterManager()
 
         when:
         converterManager.read(String, new ByteArrayInputStream([1, 2, 3] as byte[]), null, null)
@@ -41,7 +41,7 @@ class ConverterSpec extends Specification {
 
     def 'When no writer is available to perform conversion, an UnsupportedConversionException is thrown'() {
         setup:
-        ConverterManager converterManager = new ConverterManager()
+        EntityConverterManager converterManager = new EntityConverterManager()
 
         when:
         converterManager.write(null, 'Hello!')

@@ -1,6 +1,6 @@
 package com.budjb.httprequests
 
-import com.budjb.httprequests.converter.ConverterManager
+import com.budjb.httprequests.converter.EntityConverterManager
 import com.budjb.httprequests.converter.bundled.StringEntityReader
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -8,7 +8,7 @@ import spock.lang.Unroll
 class HttpResponseSpec extends Specification {
     def 'When a charset is provided, the resulting string is built using it'() {
         setup:
-        ConverterManager converterManager = new ConverterManager()
+        EntityConverterManager converterManager = new EntityConverterManager()
         converterManager.add(new StringEntityReader())
 
         HttpResponse response = new HttpResponse()
@@ -25,7 +25,7 @@ class HttpResponseSpec extends Specification {
 
     def 'When no charset is provided, UTF-8 is used'() {
         setup:
-        ConverterManager converterManager = new ConverterManager()
+        EntityConverterManager converterManager = new EntityConverterManager()
         converterManager.add(new StringEntityReader())
 
         HttpResponse response = new HttpResponse()

@@ -1,6 +1,6 @@
 package com.budjb.httprequests
 
-import com.budjb.httprequests.converter.ConverterManager
+import com.budjb.httprequests.converter.EntityConverterManager
 import com.budjb.httprequests.exception.UnsupportedConversionException
 
 /**
@@ -45,7 +45,7 @@ class HttpResponse implements Closeable {
     /**
      * Converter manager.
      */
-    ConverterManager converterManager
+    EntityConverterManager converterManager
 
     /**
      * A byte array that contains the entire entity as a buffer. This is only filled when

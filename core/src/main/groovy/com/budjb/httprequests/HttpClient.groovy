@@ -1,11 +1,11 @@
 package com.budjb.httprequests
 
-import com.budjb.httprequests.converter.ConverterManager
+import com.budjb.httprequests.converter.EntityConverterManager
 import com.budjb.httprequests.converter.EntityConverter
 import com.budjb.httprequests.converter.EntityWriter
 import com.budjb.httprequests.exception.UnsupportedConversionException
 import com.budjb.httprequests.filter.HttpClientFilter
-import com.budjb.httprequests.filter.FilterManager
+import com.budjb.httprequests.filter.HttpClientFilterManager
 
 /**
  * An interface that describes the common structure and methods of an HTTP client.
@@ -14,18 +14,18 @@ import com.budjb.httprequests.filter.FilterManager
  */
 interface HttpClient {
     /**
-     * Assigns the {@link ConverterManager} object to the client.
+     * Assigns the {@link EntityConverterManager} object to the client.
      *
      * @param converterManager Converter manager responsible for entity marshaling.
      */
-    void setConverterManager(ConverterManager converterManager)
+    void setConverterManager(EntityConverterManager converterManager)
 
     /**
-     * Assigns the {@link FilterManager} object to the client.
+     * Assigns the {@link HttpClientFilterManager} object to the client.
      *
      * @param filterManager Filter manager instance.
      */
-    void setFilterManager(FilterManager filterManager)
+    void setFilterManager(HttpClientFilterManager filterManager)
 
     /**
      * Execute an HTTP request with the given method and request parameters and without a request entity.

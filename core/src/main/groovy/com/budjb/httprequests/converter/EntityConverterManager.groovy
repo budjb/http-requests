@@ -6,7 +6,7 @@ import com.budjb.httprequests.exception.UnsupportedConversionException
 import groovy.util.logging.Slf4j
 
 @Slf4j
-class ConverterManager {
+class EntityConverterManager {
     /**
      * List of registered entity converters.
      */
@@ -15,7 +15,7 @@ class ConverterManager {
     /**
      * Base constructor.
      */
-    ConverterManager() {
+    EntityConverterManager() {
         converters = []
     }
 
@@ -24,7 +24,7 @@ class ConverterManager {
      *
      * @param other Other converter manager to make a copy of.
      */
-    ConverterManager(ConverterManager other) {
+    EntityConverterManager(EntityConverterManager other) {
         converters = []
 
         other.getAll().each {

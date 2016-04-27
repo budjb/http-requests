@@ -1,11 +1,11 @@
 package com.budjb.httprequests
 
-import com.budjb.httprequests.converter.ConverterManager
+import com.budjb.httprequests.converter.EntityConverterManager
 import com.budjb.httprequests.converter.EntityConverter
 import com.budjb.httprequests.converter.EntityWriter
 import com.budjb.httprequests.exception.HttpStatusException
 import com.budjb.httprequests.exception.UnsupportedConversionException
-import com.budjb.httprequests.filter.FilterManager
+import com.budjb.httprequests.filter.HttpClientFilterManager
 import com.budjb.httprequests.filter.HttpClientFilter
 import com.budjb.httprequests.filter.HttpClientRetryFilter
 
@@ -18,12 +18,12 @@ abstract class AbstractHttpClient implements HttpClient {
     /**
      * Converter manager.
      */
-    ConverterManager converterManager
+    EntityConverterManager converterManager
 
     /**
      * Filter manager.
      */
-    FilterManager filterManager
+    HttpClientFilterManager filterManager
 
     /**
      * Implements the logic to make an actual request with an HTTP client library.

@@ -10,18 +10,18 @@ import com.budjb.httprequests.converter.bundled.JsonEntityWriter
 import com.budjb.httprequests.converter.bundled.StringEntityReader
 import com.budjb.httprequests.converter.bundled.StringEntityWriter
 import com.budjb.httprequests.filter.HttpClientFilter
-import com.budjb.httprequests.filter.FilterManager
+import com.budjb.httprequests.filter.HttpClientFilterManager
 
 abstract class AbstractHttpClientFactory implements HttpClientFactory {
     /**
-     * Instance of {@link ConverterManager} which will be used by the {@link HttpClient} and {@link HttpResponse}..
+     * Instance of {@link EntityConverterManager} which will be used by the {@link HttpClient} and {@link HttpResponse}..
      */
-    ConverterManager converterManager = new ConverterManager()
+    EntityConverterManager converterManager = new EntityConverterManager()
 
     /**
      * Filter manager.
      */
-    FilterManager filterManager = new FilterManager()
+    HttpClientFilterManager filterManager = new HttpClientFilterManager()
 
     /**
      * Implementation factories should implement this method to create a concrete {@link HttpClient} instance specific
@@ -72,8 +72,8 @@ abstract class AbstractHttpClientFactory implements HttpClientFactory {
     HttpClient createHttpClient() {
         HttpClient client = createClientImplementation()
 
-        client.setConverterManager(new ConverterManager(converterManager))
-        client.setFilterManager(new FilterManager(filterManager))
+        client.setConverterManager(new EntityConverterManager(converterManager))
+        client.setFilterManager(new HttpClientFilterManager(filterManager))
 
         getFilters().each {
             client.addFilter(it)

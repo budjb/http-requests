@@ -1,6 +1,6 @@
 package com.budjb.httprequests.filter
 
-class FilterManager {
+class HttpClientFilterManager {
     /**
      * List of registered filters.
      */
@@ -9,7 +9,7 @@ class FilterManager {
     /**
      * Base constructor.
      */
-    FilterManager() {
+    HttpClientFilterManager() {
         filters = []
     }
 
@@ -18,7 +18,7 @@ class FilterManager {
      *
      * @param other Other filter manager to make a copy of.
      */
-    FilterManager(FilterManager other) {
+    HttpClientFilterManager(HttpClientFilterManager other) {
         filters = []
 
         other.getAll().each {
