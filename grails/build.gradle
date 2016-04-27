@@ -52,6 +52,7 @@ dependencies {
     testRuntime "net.sourceforge.htmlunit:htmlunit:2.18"
 
     compile project(':core')
+    compile project(':jersey1')
 }
 
 grailsPublish {

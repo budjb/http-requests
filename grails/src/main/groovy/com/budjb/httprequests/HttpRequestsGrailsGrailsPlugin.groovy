@@ -5,9 +5,11 @@ import com.budjb.httprequests.artefact.HttpClientFilterArtefactHandler
 import com.budjb.httprequests.converter.EntityConverter
 import com.budjb.httprequests.filter.HttpClientFilter
 import grails.plugins.Plugin
-import groovy.util.logging.Log4j
+import groovy.util.logging.Slf4j
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider
+import org.springframework.core.type.filter.AssignableTypeFilter
 
-@Log4j
+@Slf4j
 class HttpRequestsGrailsGrailsPlugin extends Plugin {
     /**
      * Grails version the plugin's intended for.
@@ -63,13 +65,13 @@ class HttpRequestsGrailsGrailsPlugin extends Plugin {
     Closure doWithSpring() {
         { ->
             if (config.httprequests.autoLoadProvider != false) {
-                httpClientFactory(ProviderScanner.scanClasspathForProvider()) { bean ->
+                httpClientFactory(scanClasspathForProvider()) { bean ->
                     bean.autowire = true
                 }
             }
             else {
-                log.debug("not attempting to automatically load the httpClientFactory bean due to this feature being " +
-                    "disabled in the application configuration")
+                log.debug("Not attempting to automatically load the httpClientFactory bean due to this feature being " +
+                    "disabled in the application configuration.")
             }
 
             grailsApplication.getArtefacts(HttpClientFilterArtefactHandler.TYPE).each {
@@ -90,11 +92,44 @@ class HttpRequestsGrailsGrailsPlugin extends Plugin {
         HttpClientFactory httpClientFactory = applicationContext.getBean('httpClientFactory', HttpClientFactory)
 
         grailsApplication.getArtefacts(HttpClientFilterArtefactHandler.TYPE).each {
+            log.debug("Adding HttpClientFilter '${it.getClazz().getSimpleName()}'")
             httpClientFactory.addFilter(applicationContext.getBean(it.getClazz().getName(), HttpClientFilter))
         }
 
         grailsApplication.getArtefacts(EntityConverterArtefactHandler.TYPE).each {
+            log.debug("Adding EntityConverter '${it.getClazz().getSimpleName()}'")
             httpClientFactory.addEntityConverter(applicationContext.getBean(it.getClazz().getName(), EntityConverter))
         }
+    }
+
+    private Class<? extends HttpClientFactory> scanClasspathForProvider() throws IllegalStateException {
+        List<String> packages = ['com.budjb.httprequests']
+
+        if (config.httprequests.scanPackages instanceof List) {
+            packages.addAll(config.httprequests.scanPackages)
+        }
+
+        ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(false)
+        provider.addIncludeFilter(new AssignableTypeFilter(HttpClientFactory))
+
+        List<Class<? extends HttpClientFactory>> candidates = []
+
+        for (String pkg : packages) {
+            provider.findCandidateComponents(pkg).each {
+                log.debug("Located HttpClientFactory provider: ${it.getBeanClassName()}")
+                candidates.add(Class.forName(it.getBeanClassName()) as Class<? extends HttpClientFactory>)
+            }
+        }
+
+        if (candidates.size() == 0) {
+            throw new IllegalStateException("no provider with type 'com.budjb.httprequests.HttpClientFactory' found on the classpath")
+        }
+        else if (candidates.size() > 1) {
+            throw new IllegalStateException("multiple providers with type 'com.budjb.httprequests.HttpClientFactory' found on the classpath: ${candidates*.simpleName.join(', ')}")
+        }
+
+        Class<? extends HttpClientFactory> clazz = candidates.get(0)
+        log.debug("Registering HttpClientFactory provider: ${clazz.getName()}")
+        return clazz
     }
 }
