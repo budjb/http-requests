@@ -1,3 +1,4 @@
 ---
 httprequests:
-    autoLoadProvider: true
+    autoLoadFactory: true
+    autoLoadConverters: true

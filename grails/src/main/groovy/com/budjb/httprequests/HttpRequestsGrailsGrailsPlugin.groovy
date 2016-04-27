@@ -64,8 +64,8 @@ class HttpRequestsGrailsGrailsPlugin extends Plugin {
      */
     Closure doWithSpring() {
         { ->
-            if (config.httprequests.autoLoadProvider != false) {
-                httpClientFactory(scanClasspathForProvider()) { bean ->
+            if (autoLoadFactory()) {
+                httpClientFactory(scanClasspathForProvider(), autoLoadConverters()) { bean ->
                     bean.autowire = true
                 }
             }
@@ -104,10 +104,7 @@ class HttpRequestsGrailsGrailsPlugin extends Plugin {
 
     private Class<? extends HttpClientFactory> scanClasspathForProvider() throws IllegalStateException {
         List<String> packages = ['com.budjb.httprequests']
-
-        if (config.httprequests.scanPackages instanceof List) {
-            packages.addAll(config.httprequests.scanPackages)
-        }
+        packages.addAll(getAdditionalPackages())
 
         ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(false)
         provider.addIncludeFilter(new AssignableTypeFilter(HttpClientFactory))
@@ -131,5 +128,36 @@ class HttpRequestsGrailsGrailsPlugin extends Plugin {
         Class<? extends HttpClientFactory> clazz = candidates.get(0)
         log.debug("Registering HttpClientFactory provider: ${clazz.getName()}")
         return clazz
+    }
+
+    /**
+     * Returns whether to automatically load the built-in converters.
+     *
+     * @return
+     */
+    boolean autoLoadConverters() {
+        return config.httprequests.autoLoadConverters != false
+    }
+
+    /**
+     * Returns whether to automatically load an {@link HttpClientFactory} from the classpath.
+     *
+     * @return
+     */
+    boolean autoLoadFactory() {
+        return config.httprequests.autoLoadFactory != false
+    }
+
+    /**
+     * Return the list of additional classpath packages to scan for {@link HttpClientFactory}
+     * implementations.
+     *
+     * @return
+     */
+    List<String> getAdditionalPackages() {
+        if (config.httprequests.scanPackages instanceof List) {
+            return config.httprequests.scanPackages
+        }
+        return []
     }
 }
