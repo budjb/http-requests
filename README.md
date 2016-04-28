@@ -2,3 +2,5 @@
 [![License](http://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 
 # HTTP Requests Library
+
+See the documentation at https://budjb.github.io/http-requests/latest.

@@ -80,7 +80,7 @@ bintray {
     publish = true
     pkg {
         repo = 'maven'
-        name = artifactIdBaseName
+        name = 'http-requests'
         desc = projectDescription
         websiteUrl = 'https://github.com/budjb/http-requests'
         issueTrackerUrl = 'https://github.com/budjb/http-requests/issues'

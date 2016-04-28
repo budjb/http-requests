@@ -19,7 +19,7 @@ artifacts {
 publishing {
     publications {
         maven(MavenPublication) {
-            artifactId "${artifactIdBaseName}-${project.name}"
+            artifactId project.name
 
             from components.java
 
