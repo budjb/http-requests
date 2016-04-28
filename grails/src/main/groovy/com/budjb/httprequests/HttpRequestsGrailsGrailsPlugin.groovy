@@ -1,3 +1,18 @@
+/*
+ * Copyright 2016 Bud Byrd
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.budjb.httprequests
 
 import com.budjb.httprequests.artefact.EntityConverterArtefactHandler
@@ -39,7 +54,7 @@ class HttpRequestsGrailsGrailsPlugin extends Plugin {
     /**
      * Plugin documentation.
      */
-    def documentation = "https://budjb.github.io/http-requests/TODO"
+    def documentation = "https://budjb.github.io/http-requests/latest"
 
     /**
      * Plugin license.
@@ -102,6 +117,15 @@ class HttpRequestsGrailsGrailsPlugin extends Plugin {
         }
     }
 
+    /**
+     * Scans the classpath for instances of {@link HttpClientFactory}. If only one is found, it is returned.
+     * Otherwise, an {@link IllegalStateException} is thrown. By default, the <code>com.budjb.httprequests</code>
+     * package and subpackages are scanned, but additional packages can be configured with the application
+     * configuration key <code>httprequests.scanPackages</code>, which should be a list.
+     *
+     * @return The {@link HttpClientFactory} to register as a bean iff only one is found.
+     * @throws IllegalStateException when 0 or more than 1 {@link HttpClientFactory} implementations are found.
+     */
     private Class<? extends HttpClientFactory> scanClasspathForProvider() throws IllegalStateException {
         List<String> packages = ['com.budjb.httprequests']
         packages.addAll(getAdditionalPackages())
@@ -133,7 +157,7 @@ class HttpRequestsGrailsGrailsPlugin extends Plugin {
     /**
      * Returns whether to automatically load the built-in converters.
      *
-     * @return
+     * @return Whether to automatically load the built-in converters.
      */
     boolean autoLoadConverters() {
         return config.httprequests.autoLoadConverters != false
@@ -152,7 +176,7 @@ class HttpRequestsGrailsGrailsPlugin extends Plugin {
      * Return the list of additional classpath packages to scan for {@link HttpClientFactory}
      * implementations.
      *
-     * @return
+     * @return The list of additional classpath packages to scan.
      */
     List<String> getAdditionalPackages() {
         if (config.httprequests.scanPackages instanceof List) {
