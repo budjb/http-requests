@@ -35,7 +35,7 @@ publishing {
                 asNode().children().last() + {
                     def builder = delegate
 
-                    builder.name "${artifactIdBaseName}-${project.name}"
+                    builder.name project.name
                     builder.description projectDescription
                     builder.url 'https://github.com/budjb/http-requests'
 
@@ -72,7 +72,7 @@ bintray {
     publish = true
     pkg {
         repo = 'maven'
-        name = "${artifactIdBaseName}-${project.name}"
+        name = project.name
         desc = projectDescription
         websiteUrl = 'https://github.com/budjb/http-requests'
         issueTrackerUrl = 'https://github.com/budjb/http-requests/issues'

@@ -51,21 +51,16 @@ dependencies {
     testRuntime "org.seleniumhq.selenium:selenium-htmlunit-driver:2.47.1"
     testRuntime "net.sourceforge.htmlunit:htmlunit:2.18"
 
-    compile project(':core')
-    compile project(':jersey1')
+    compile project(':http-requests-core')
 }
 
 grailsPublish {
-    // TODO: Provide values here
-    user = 'user'
-    key = 'key'
-    githubSlug = 'foo/bar'
+    githubSlug = 'budjb/http-requests'
+    repo = 'grails-plugins'
     license {
         name = 'Apache-2.0'
     }
-    title = "My Plugin"
-    desc = "Full plugin description"
-    developers = [johndoe:"John Doe"]
-    portalUser = ""
-    portalPassword = ""    
+    title = "HTTP Requests Plugin"
+    desc = "The HTTP Requests Plugin provides the http-requests library and artefacts for filters and converters."
+    developers = [budjb: "Bud Byrd"]
 }

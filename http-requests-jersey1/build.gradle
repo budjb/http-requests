@@ -3,6 +3,6 @@ apply from: "${rootProject.projectDir}/gradle/publishing.gradle"
 apply from: "${rootProject.projectDir}/gradle/integrationTest.gradle"
 
 dependencies {
-    compile project(':core')
-    compile 'org.glassfish.jersey.core:jersey-client:2.22.2'
+    compile project(':http-requests-core')
+    compile 'com.sun.jersey:jersey-client:1.19'
 }

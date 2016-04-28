@@ -29,5 +29,5 @@ task(type: Test, 'integrationTest') {
 check.dependsOn integrationTest
 
 dependencies {
-    integrationTestCompile project(':test')
+    integrationTestCompile project(':http-requests-test')
 }

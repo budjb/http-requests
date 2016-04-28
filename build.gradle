@@ -55,13 +55,13 @@ publishing {
                     builder.dependencyManagement {
                         builder.dependencies {
                             for (sub in subprojects) {
-                                if (sub.name in ['test', 'documentation']) {
+                                if (sub.name in ['documentation']) {
                                     continue
                                 }
 
                                 builder.dependency {
                                     builder.groupId sub.group
-                                    builder.artifactId "${artifactIdBaseName}-${sub.name}"
+                                    builder.artifactId sub.name
                                     builder.version sub.version
                                 }
                             }
@@ -81,7 +81,7 @@ bintray {
     pkg {
         repo = 'maven'
         name = artifactIdBaseName
-        desc = 'TODO: changeme'
+        desc = projectDescription
         websiteUrl = 'https://github.com/budjb/http-requests'
         issueTrackerUrl = 'https://github.com/budjb/http-requests/issues'
         vcsUrl = 'https://github.com/budjb/http-requests.git'
