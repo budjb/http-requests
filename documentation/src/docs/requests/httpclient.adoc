@@ -37,25 +37,9 @@ def response = client.get {
 }
 ----
 
-Several of the HTTP methods support request entities (or bodies). For those methods that do, there are several
-class types that are supported without the need for conversion.
-
-.Supported Request Entity Types
-* `byte[]`
-* `InputStream`
-* `FormData`
-
-With the entity conversion system, entity readers or writers can be created and registered with the `HttpClientFactory`
-or `HttpClient` that will handle conversion to and from custom class types. `HttpClientFactory` implementations
-automatically include several built-in entity converters.
-
-.Built-in Entity Converters
-* `String` reader and writer.
-* `Map` reader and writer.
-* `List` reader and writer.
-* `GString` writer.
-
-More information about entity converters can be found in the entity converters section.
+Several of the HTTP methods support request entities (or bodies). For those methods that do, applications can either
+pass an `InputStream` that will be sent directly with the HTTP request, or an object that has a valid
+<<Entity Converters,entity converter>> registered with the `HttpClient`.
 
 NOTE: This documentation will not cover every single class method, but the API documentation can be referenced for
 a complete list of method signatures.

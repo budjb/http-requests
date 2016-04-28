@@ -23,14 +23,14 @@ The set of response properties is smaller than that of the request, and provides
 
 === Response Entities
 
-By default, the response entity, if available, is read from the `InputStream` into the `entity` property as a byte
-array, and the `InputStream` is closed. This effectively makes the input stream unusable. If the request properties
-disabled this functionality, the input stream can be read from. However, even when the input stream is not automatically
-buffered, the first call to retrieve the entity will read the contents from the input stream and close it.
+By default, the response entity, if available, buffered in the `HttpResponse` and the response's `InputStream` is
+closed. Subsequent calls to retrieve the response entity will reproduce the entity and unlimited amount of times. If the
+request properties disabled this functionality, the response's entity can be read only once, but it does not require
+the memory space to buffer the entity in the `HttpResponse` object.
 
-IMPORTANT: It is very important that authors that use the input stream directly close the input stream when it is no
+IMPORTANT: It is very important that that access a response entity's `InputStream` close the it when it is no
 longer needed. If it is not closed, underlying system resources may not be freed up. The `close()` method can be called
 on the `HttpResponse` to close the input stream.
 
-The `HttpResponse` supports entity conversion using the `getEntity(Class<?> type)` method. If an entity reader is
-registered that supports the requested type, it will be converted and returned.
+The `HttpResponse` supports <<Entity Converters,entity conversion>> using the `getEntity(Class<?> type)` method. If an
+entity reader is registered that supports the requested type, it will be converted and returned.

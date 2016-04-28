@@ -10,9 +10,12 @@ and what their purposes are.
 |===
 | Module                  | Purpose
 
+| `http-requests`         | A bill-of-materials POM for all libraries.
 | `http-requests-core`    | Contains the core logic and interfaces that implementation modules will use.
 | `http-requests-jersey1` | Provides a *Jersey 1.x* implementation of the HTTP requests library.
 | `http-requests-jersey2` | Provides a *Jersey 2.x* implementation of the HTTP requests library.
+| `http-requests-test`    | Contains the functional test cases that validate the functionality of an implementation library.
+| `http-requests-grails`  | A *Grails 3.x* plugin that sets up and exposes an `HttpClientFactory` bean.
 |===
 
 When using the HTTP Requests library, the `http-requests-core` library need not be explicitly added as a project
@@ -27,3 +30,5 @@ dependencies {
     compile "com.budjb:http-requests-jersey1:{version}"
 }
 
+Additionally, the bill-of-materials POM is available to keep dependencies in sync. The BOM can be used by using the
+artifact.

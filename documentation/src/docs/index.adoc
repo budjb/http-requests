@@ -9,6 +9,12 @@ include::requests.adoc[]
 
 include::responses.adoc[]
 
-include::listeners.adoc[]
+include::filters.adoc[]
 
 include::converters.adoc[]
+
+include::providers.adoc[]
+
+include::grails.adoc[]
+
+include::changelog.adoc[]

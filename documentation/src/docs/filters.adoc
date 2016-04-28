@@ -1,0 +1,67 @@
+== Filters
+
+The `HttpClient` supports the use of filter objects so that applications can react to certain events in the lifecycle
+of an HTTP request.
+
+Filters can be added to the `HttpClientFactory` or to the `HttpClient` directly. Any filters registered with the
+`HttpClientFactory` will automatically be assigned to any `HttpClient` instance the factory creates. For both objects,
+use the `addFilter` method to register a filter.
+
+=== Request Filter
+
+Applications may need to intercept an HTTP request directly before the request is actually made to modify the request
+parameters. Any request filter that is registered with the `HttpClient` will be called directly before the request
+is made.
+
+A great example of a use of this filter is the built-in `BasicAuthFilter`, which is an implementation of
+`HttpClientRequestFilter`.
+
+[source,groovy]
+----
+// given a client has been created...
+client.addFilter(new BasicAuthFilter('username', 'password'))
+----
+
+The `BasicAuthFilter` is built with the credentials for the request, and the request is updated with that information
+just before the request is actually made.
+
+NOTE: This filter is only called once before the request is made. If retries are automatically attempted, request
+filters will not be called again.
+
+=== Response Filter
+
+The response filter is called after the HTTP request has completed, just before the `HttpResponse` object is passed
+back to the caller. Filters that need to use this functionality should implement the `HttpClientResponseFilter`.
+
+NOTE: This filter is only called once after the request is completed. If retries are attempted, response filters
+are called only after all retry attempts have completed.
+
+=== Retry Filter
+
+The retry filter allows applications to determine if a request should be retried based on some criteria. If any
+one retry filter determines that the request should be retried, the request will be submitted again until no more
+retry filters request a retry.
+
+Filters that need to use this functionality should implement the `HttpClientRetryFilter` interface.
+
+NOTE: A retry filter may request a retry based on the request, response, and number of previous retries. If one
+retry filter does not request a retry, but another one does, the filter that did not request a retry will not
+have its `onRetry` method called.
+
+A use case for this functionality is authentication schemes that provide an authentication token that can be reused
+until it expires. A retry filter might be created for this type of authentication scheme that inspects the response
+of a call to the service that requires the authentication token, and re-authenticates if the previous authentication
+token has expired. Once a new authentication token is obtained, the original request can be retried with the updated
+authentication token.
+
+TIP: There is a built-in `AuthenticationTokenHeaderFilter` class that creates a framework for this type of
+authentication scheme.
+
+=== Built-In Filters
+
+The library includes several built-in filters for common use cases, including:
+
+* `BasicAuthFilter` that provides basic authentication functionality.
+* `GZIPFilter` that compresses and encodes the request with GZIP.
+* `DeflateFilter` that compresses and encodes the request with the deflate algorithm.
+* `AuthenticationTokenHeaderFilter` is an abstract filter that creates a framework for authentication token schemes.

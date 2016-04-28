@@ -3,7 +3,7 @@
 Entity converters are responsible for converting request and response entities to and from raw byte arrays. This
 prevents applications from having to make separate calls to helper methods or classes to do the conversion.
 
-Much like listeners, an entity converter can be registered with both the `HttpClientFactory` and `HttpClient` objects.
+Much like filter, an entity converter can be registered with both the `HttpClientFactory` and `HttpClient` objects.
 Any entity converter registered with the factory will automatically be added to any clients it creates. Use the
 `addEntityConverter` method on both objects to add an entity converter.
 
@@ -26,3 +26,15 @@ Entity writer implementations should implement the `EntityWriter` interface.
 NOTE: Entity writers have the option to modify the request by adding the `Content-Type` of the entity it successfully
 converted, if a `Content-Type` makes sense. This only happens if a `Content-Type` had not been previously set on the
 request.
+
+=== Built-In Converters
+
+The library contains several built-in entity converters that are, by default, automatically registered with all client
+instances. Those built-ins include:
+
+* `byte[]` reader and writer.
+* `String` reader and writer.
+* `GString` writer.
+* `Map` reader and writer.
+* `List` reader and writer.
+* `FormData` reader and writer.

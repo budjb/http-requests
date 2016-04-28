@@ -14,4 +14,5 @@ def client = factory.createHttpClient()
 
 TIP: The `HttpClientFactory` can be registered as a singleton Spring bean when applications utilize Spring Framework.
 The factory can then be injected as a dependency into other managed Spring beans, and the implementation module can be
-swapped out transparently and without the need to modify dependent objects.
+swapped out transparently and without the need to modify dependent objects. The *Grails 3.x* plugin library does this
+work automatically for *Grails 3.x* applications.

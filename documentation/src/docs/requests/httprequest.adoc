@@ -36,8 +36,10 @@ The HTTP Request configuration properties are enumerated in the following table.
 | `logConversation`       | `Boolean` | `false`                    | If `true`, log the raw HTTP conversation. The\
                                                                      behavior of this functionality is dependent on the\
                                                                      HTTP client implementation.
-| `autoBufferEntity`      | `Boolean` | `true`                     | If `true`, read the entity from the response's\
-                                                                     `InputStream` and close it automatically.
+| `bufferResponseEntity`  | `Boolean` | `true`                     | If `true`, the entity is read completely from\
+                                                                     the response and the response's `InputStream` is\
+                                                                     closed. This allows the entity to be retrieved\
+                                                                     multiple times.
 |===
 
 ==== Building an HttpRequest
@@ -105,13 +107,14 @@ NOTE: If the `followRedirects` property is set to `false`, the response is still
 `throwStatusExceptions`. In other words, if the server responds with `HTTP 302`, an `HttpFoundException` will be thrown
 unless `throwStatusExceptions` is set to `false`.
 
-===== autoBufferEntity
+===== bufferResponseEntity
 
 When this is enabled, the response entity (if there is one) is automatically read from the HTTP connection's
-`InputStream` into a byte array stored in the `HttpResponse` object, and the stream is closed.
+`InputStream` into a byte array stored in the `HttpResponse` object, and the stream is closed. This allows the entity
+to be retrieved multiple times. When disabled, the response `InputStream` can be read only once.
 
-IMPORTANT: It is very important that the response's input stream is closed by application authors if this functionality\
-is disabled, or the underlying system resources may not be freed up.
+IMPORTANT: It is very important that the response's `InputStream` is closed by application authors if this
+functionality is disabled, or the underlying system resources may not be freed up.
 
 ===== logConversation
 

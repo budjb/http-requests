@@ -1,0 +1,11 @@
+== Changelog
+
+The changelog will be updated with release notes for each release of the library.
+
+=== Version 1
+
+==== Version 1.0.0
+
+NOTE: The changelog for version 1.0.0 will represent the changes for all versions before it.
+
+* Initial release of the library.

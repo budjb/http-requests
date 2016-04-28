@@ -18,7 +18,7 @@ following features, and more.
   - HEAD
 * Disable SSL trust and hostname validation.
 * Log HTTP conversations.
-* HTTP request lifecycle listeners.
+* Ability to create HTTP Client filters.
 * Ability to create custom entity converters for custom object types.
 * Built-in entity converters for Strings, Maps, and Lists.
 * HTTP status exceptions for non-successful response status codes available.
