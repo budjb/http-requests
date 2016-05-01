@@ -30,5 +30,5 @@ dependencies {
     compile "com.budjb:http-requests-jersey1:{version}"
 }
 
-Additionally, the bill-of-materials POM is available to keep dependencies in sync. The BOM can be used by using the
-artifact.
+Additionally, the bill-of-materials POM is available to keep dependencies in sync without the need to specify
+their version numbers.

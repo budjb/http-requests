@@ -1,0 +1,12 @@
+== Usage
+
+Requests are made using the `HttpClientFactory`, `HttpClient`, and `HttpRequest` objects, regardless of what
+implementation module is being used. Requests return responses in the form of the `HttpResponse` type.
+
+include::usage/httprequest.adoc[]
+
+include::usage/httpclientfactory.adoc[]
+
+include::usage/httpclient.adoc[]
+
+include::usage/httpresponse.adoc[]

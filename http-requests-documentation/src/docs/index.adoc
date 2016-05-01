@@ -5,9 +5,7 @@ include::introduction.adoc[]
 
 include::installing.adoc[]
 
-include::requests.adoc[]
-
-include::responses.adoc[]
+include::usage.adoc[]
 
 include::filters.adoc[]
 
