@@ -287,4 +287,17 @@ class HttpResponse implements Closeable {
 
         return charset
     }
+
+    /**
+     * Add a value to the given header name.
+     *
+     * @param key Name of the value.
+     * @param value Value of the header.
+     */
+    void addHeader(String key, String value) {
+        if (!headers.containsKey(key)) {
+            headers.put(key, [])
+        }
+        headers.get(key).add(value)
+    }
 }

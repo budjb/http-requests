@@ -117,26 +117,7 @@ class JerseyHttpClient extends AbstractHttpClient {
         ClientBuilder builder = ClientBuilder.newBuilder()
 
         if (!request.isSslValidated()) {
-            TrustManager[] certs = [new X509TrustManager() {
-                X509Certificate[] getAcceptedIssuers() {
-                    null
-                }
-
-                void checkClientTrusted(X509Certificate[] certs, String authType) {}
-
-                void checkServerTrusted(X509Certificate[] certs, String authType) {}
-            }]
-
-            SSLContext sslContext = SSLContext.getInstance("TLS")
-            sslContext.init(null, certs, new SecureRandom())
-
-            HostnameVerifier verifier = new HostnameVerifier() {
-                boolean verify(String hostname, SSLSession session) {
-                    return true
-                }
-            }
-
-            builder = builder.hostnameVerifier(verifier).sslContext(sslContext)
+            builder = builder.hostnameVerifier(createTrustingHostnameVerifier()).sslContext(createTrustingSSLContext())
         }
 
         ClientConfig clientConfig = new ClientConfig()

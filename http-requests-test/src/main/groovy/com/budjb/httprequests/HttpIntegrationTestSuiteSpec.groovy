@@ -15,7 +15,6 @@
  */
 package com.budjb.httprequests
 
-import ch.qos.logback.core.pattern.ConverterUtil
 import com.budjb.httprequests.exception.HttpFoundException
 import com.budjb.httprequests.exception.HttpInternalServerErrorException
 import com.budjb.httprequests.exception.HttpNotAcceptableException
@@ -155,7 +154,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
 
         then:
         def json = response.getEntity(Map)
-        json.foo == ['bar,baz']
+        json.foo == ['bar,baz'] || json.foo == ['bar', 'baz']
         json.hi == ['there']
     }
 
@@ -356,7 +355,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         def response = httpClientFactory.createHttpClient().head { uri = "${baseUrl}/testBasicHead" }
 
         then:
-        response.headers.foo == ['baz', 'bar']
+        response.headers.foo.toSet() == ['baz', 'bar'].toSet()
         response.headers.hi == ['there']
         !response.hasEntity()
     }

@@ -24,6 +24,14 @@ import com.budjb.httprequests.filter.HttpClientFilterManager
 import com.budjb.httprequests.filter.HttpClientFilter
 import com.budjb.httprequests.filter.HttpClientRetryFilter
 
+import javax.net.ssl.HostnameVerifier
+import javax.net.ssl.SSLContext
+import javax.net.ssl.SSLSession
+import javax.net.ssl.TrustManager
+import javax.net.ssl.X509TrustManager
+import java.security.SecureRandom
+import java.security.cert.X509Certificate
+
 /**
  * A base class for HTTP clients that implements most of the functionality of the {@link HttpClient} interface.
  *
@@ -643,5 +651,38 @@ abstract class AbstractHttpClient implements HttpClient {
         converterManager.clear()
     }
 
+    /**
+     * Create and return an all-trusting TLS {@link SSLContext}.
+     *
+     * @return An all-trusting TLS {@link SSLContext}.
+     */
+    protected SSLContext createTrustingSSLContext() {
+        TrustManager[] certs = [new X509TrustManager() {
+            X509Certificate[] getAcceptedIssuers() {
+                null
+            }
 
+            void checkClientTrusted(X509Certificate[] certs, String authType) {}
+
+            void checkServerTrusted(X509Certificate[] certs, String authType) {}
+        }]
+
+        SSLContext sslContext = SSLContext.getInstance('TLS')
+        sslContext.init(null, certs, new SecureRandom())
+
+        return sslContext
+    }
+
+    /**
+     * Create and return an all-trusting {@link HostnameVerifier}.
+     *
+     * @return An all-trusting {@link HostnameVerifier}.
+     */
+    protected HostnameVerifier createTrustingHostnameVerifier() {
+        return new HostnameVerifier() {
+            boolean verify(String hostname, SSLSession session) {
+                return true
+            }
+        }
+    }
 }
