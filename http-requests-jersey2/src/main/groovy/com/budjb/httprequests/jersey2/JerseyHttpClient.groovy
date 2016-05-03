@@ -86,7 +86,10 @@ class JerseyHttpClient extends AbstractHttpClient {
             builder = builder.accept(request.getAccept())
         }
 
-        Entity<InputStream> entity = Entity.entity(inputStream, request.getFullContentType())
+        Entity<InputStream> entity = null
+        if (inputStream) {
+            entity = Entity.entity(inputStream, request.getFullContentType())
+        }
 
         Response clientResponse
         try {

@@ -85,7 +85,7 @@ class JerseyHttpClient extends AbstractHttpClient {
             }
         }
 
-        if (request.getFullContentType()) {
+        if (inputStream && request.getFullContentType()) {
             builder = builder.type(request.getFullContentType())
         }
 
