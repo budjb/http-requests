@@ -16,6 +16,7 @@
 package com.budjb.httprequests.support
 
 import com.budjb.httprequests.AbstractHttpClient
+import com.budjb.httprequests.HttpContext
 import com.budjb.httprequests.HttpMethod
 import com.budjb.httprequests.HttpRequest
 import com.budjb.httprequests.HttpResponse
@@ -31,14 +32,13 @@ class NullHttpClient extends AbstractHttpClient {
     /**
      * Implements the logic to make an actual request with an HTTP client library.
      *
-     * @param method HTTP method to use with the HTTP request.
-     * @param request Request properties to use with the HTTP request.
+     * @param context HTTP request context.
      * @param inputStream An {@link InputStream} containing the response body. May be <code>null</code>.
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
     @Override
-    protected HttpResponse doExecute(HttpMethod method, HttpRequest request, InputStream inputStream) throws IOException {
+    protected HttpResponse doExecute(HttpContext context, InputStream inputStream) throws IOException {
         return response
     }
 }

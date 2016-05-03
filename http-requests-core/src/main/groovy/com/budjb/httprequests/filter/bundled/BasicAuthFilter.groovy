@@ -15,6 +15,7 @@
  */
 package com.budjb.httprequests.filter.bundled
 
+import com.budjb.httprequests.HttpContext
 import com.budjb.httprequests.HttpRequest
 import com.budjb.httprequests.filter.HttpClientFilter
 import com.budjb.httprequests.filter.HttpClientRequestFilter
@@ -46,10 +47,10 @@ class BasicAuthFilter implements HttpClientRequestFilter {
     /**
      * Provides an opportunity to modify the request object before the HTTP request is made.
      *
-     * @param request Request object that will be used to make the HTTP request.
+     * @param context HTTP request context.
      */
     @Override
-    void filterRequest(HttpRequest request) {
-        request.setHeader(HEADER, credentials)
+    void filterHttpRequest(HttpContext context) {
+        context.getRequest().setHeader(HEADER, credentials)
     }
 }

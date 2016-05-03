@@ -37,23 +37,19 @@ class JerseyHttpClient extends AbstractHttpClient {
     /**
      * Implements the logic to make an actual request with an HTTP client library.
      *
-     * @param method HTTP method to use with the HTTP request.
-     * @param request Request properties to use with the HTTP request.
+     * @param context HTTP request context.
      * @param inputStream An {@link InputStream} containing the response body. May be <code>null</code>.
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
     @Override
-    protected HttpResponse doExecute(HttpMethod method, HttpRequest request, InputStream inputStream) throws IOException {
+    protected HttpResponse doExecute(HttpContext context, InputStream inputStream) throws IOException {
+        HttpRequest request = context.getRequest()
+        HttpMethod method = context.getMethod()
+
         Client client = createClient(request)
 
-        client.addFilter(createClientFilter())
-
-        ByteArrayOutputStream logStream = null
-        if (request.isLogConversation()) {
-            logStream = new ByteArrayOutputStream()
-            client.addFilter(new LoggingFilter(new PrintStream(logStream)))
-        }
+        client.addFilter(createClientFilter(context))
 
         client.setReadTimeout(request.getReadTimeout())
         client.setConnectTimeout(request.getConnectionTimeout())
@@ -109,10 +105,6 @@ class JerseyHttpClient extends AbstractHttpClient {
             throw e
         }
 
-        if (logStream) {
-            log.debug("HTTP Conversation:\n${logStream.toString()}")
-        }
-
         return buildResponse(request, response)
     }
 
@@ -165,9 +157,10 @@ class JerseyHttpClient extends AbstractHttpClient {
     /**
      * Creates the client filter that allows the request {@link OutputStream} to be filtered.
      *
+     * @param context HTTP request context.
      * @return A new client filter.
      */
-    protected ClientFilter createClientFilter() {
+    protected ClientFilter createClientFilter(HttpContext context) {
         return new ClientFilter() {
             @Override
             ClientResponse handle(ClientRequest clientRequest) throws ClientHandlerException {
@@ -183,7 +176,7 @@ class JerseyHttpClient extends AbstractHttpClient {
                          */
                         @Override
                         OutputStream adapt(ClientRequest rq, OutputStream out) throws IOException {
-                            return filterOutputStream(out)
+                            return filterOutputStream(context, out)
                         }
                     })
                 }

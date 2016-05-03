@@ -15,6 +15,8 @@
  */
 package com.budjb.httprequests.filter
 
+import com.budjb.httprequests.HttpContext
+
 class HttpClientFilterManager {
     /**
      * List of registered filters.
@@ -105,11 +107,71 @@ class HttpClientFilterManager {
     }
 
     /**
-     * Return a list of all registered {@link HttpClientEntityFilter} instances.
+     * Return a list of all registered {@link HttpClientRequestEntityFilter} instances.
      *
-     * @return A list of all registered {@link HttpClientEntityFilter} instances.
+     * @return A list of all registered {@link HttpClientRequestEntityFilter} instances.
      */
-    List<HttpClientEntityFilter> getEntityFilters() {
-        return filters.findAll { it instanceof HttpClientEntityFilter } as List<HttpClientEntityFilter>
+    List<HttpClientRequestEntityFilter> getRequestEntityFilters() {
+        return filters.findAll { it instanceof HttpClientRequestEntityFilter } as List<HttpClientRequestEntityFilter>
+    }
+
+    /**
+     * Return a list of all registered {@link HttpClientLifecycleFilter} instances.
+     *
+     * @return A list of all registered {@link HttpClientLifecycleFilter} instances.
+     */
+    List<HttpClientLifecycleFilter> getLifecycleFilters() {
+        return filters.findAll { it instanceof HttpClientLifecycleFilter } as List<HttpClientLifecycleFilter>
+    }
+
+    /**
+     * Calls {@link HttpClientRequestFilter#filterHttpRequest} for all registered filters.
+     *
+     * @param context HTTP request context.
+     */
+    void filterHttpRequest(HttpContext context) {
+        getRequestFilters()*.filterHttpRequest(context)
+    }
+
+    /**
+     * Calls {@link HttpClientLifecycleFilter#onRequest} for all registered filters.
+     *
+     * @param context HTTP request context.
+     * @param outputStream The output stream of the request.
+     */
+    void onRequest(HttpContext context, OutputStream outputStream) {
+        getLifecycleFilters()*.onRequest(context, outputStream)
+    }
+
+    /**
+     * Calls {@link HttpClientLifecycleFilter#onResponse} for all registered filters.
+     *
+     * @param context HTTP request context.
+     */
+    void onResponse(HttpContext context) {
+        getLifecycleFilters()*.onResponse(context)
+    }
+
+    /**
+     * Calls {@link HttpClientResponseFilter#filterHttpResponse} for all registered filters.
+     *
+     * @param context HTTP request context.
+     */
+    void filterHttpResponse(HttpContext context) {
+        getResponseFilters()*.filterHttpResponse(context)
+    }
+
+    /**
+     * Filters the {@link OutputStream} of the request.
+     *
+     * @param context HTTP request properties.
+     * @param outputStream {@link OutputStream} of the request.
+     * @return Filtered {@link OutputStream}.
+     */
+    OutputStream filterRequestEntity(HttpContext context, OutputStream outputStream) {
+        getRequestEntityFilters().each {
+            outputStream = it.filterRequestEntity(context, outputStream)
+        }
+        return outputStream
     }
 }

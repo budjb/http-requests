@@ -133,6 +133,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         def response = httpClientFactory.createHttpClient().get(new HttpRequest()
             .setUri("${baseUrl}/testHeaders")
             .addHeaders([foo: ['bar'], key: ['value']])
+            .setLogConversation(true)
         )
 
         then:
@@ -672,7 +673,29 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         def response = httpClientFactory.createHttpClient().post(request, 'Hello, world!')
 
         then:
-        request.getHeaders().get('Content-Encoding') == ['gzip']
         StreamUtils.readString(new GZIPInputStream(response.getEntity()), 'UTF-8') == 'Hello, world!'
+    }
+
+    def 'Ensure the LoggingFilter does not cause interruptions to HTTP requests.'() {
+        when:
+        def response = httpClientFactory.createHttpClient().post("Hello, world") {
+            uri = "${baseUrl}/testBasicPost"
+            logConversation = true
+        }
+
+        then:
+        notThrown IOException
+        response.getEntity(String) == 'Hello, world'
+
+        when:
+        response = httpClientFactory.createHttpClient().get {
+            uri = "${baseUrl}/testBasicGet"
+            accept = "text/plain"
+            logConversation = true
+        }
+
+        then:
+        notThrown IOException
+        response.getEntity(String) == 'The quick brown fox jumps over the lazy dog.'
     }
 }

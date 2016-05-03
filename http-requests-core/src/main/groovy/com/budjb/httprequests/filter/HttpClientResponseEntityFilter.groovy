@@ -16,17 +16,18 @@
 package com.budjb.httprequests.filter
 
 import com.budjb.httprequests.HttpContext
-import com.budjb.httprequests.HttpRequest
 
 /**
- * An {@link HttpClientFilter} that allows modification of the {@link HttpRequest} instance before
- * the request is transmitted.
+ * An HTTP client filter that allows modification of the response entity before it is
+ * returned to the application.
  */
-interface HttpClientRequestFilter extends HttpClientFilter {
+interface HttpClientResponseEntityFilter extends HttpClientFilter {
     /**
-     * Provides an opportunity to modify the {@link HttpRequest} before it is transmitted.
+     * Filters a response entity's {@link InputStream}.
      *
-     * @param context HTTP request context.
+     * @param context HTTP context.
+     * @param inputStream The {@link InputStream} of the response.
+     * @return Filtered response {@link InputStream}.
      */
-    void filterHttpRequest(HttpContext context)
+    InputStream readResponseEntity(HttpContext context, InputStream inputStream)
 }

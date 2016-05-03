@@ -20,7 +20,7 @@ import com.budjb.httprequests.exception.HttpStatusException
 /**
  * An object used to configure an HTTP request.
  */
-class HttpRequest {
+class HttpRequest implements Cloneable {
     /**
      * URI of the request.
      */
@@ -77,7 +77,7 @@ class HttpRequest {
     boolean followRedirects = true
 
     /**
-     * Whether the HTTP client should log the request communication.
+     * Whether the HTTP client should logger the request communication.
      *
      * Note that the logging behavior is specific to the HTTP client implementation in use.
      */
@@ -506,9 +506,9 @@ class HttpRequest {
     }
 
     /**
-     * Sets whether to log the HTTP conversation.
+     * Sets whether to logger the HTTP conversation.
      *
-     * @param logConversation Whether to log the HTTP conversation.
+     * @param logConversation Whether to logger the HTTP conversation.
      * @return The instance of this class the method was called with.
      */
     HttpRequest setLogConversation(boolean logConversation) {
@@ -525,5 +525,56 @@ class HttpRequest {
     HttpRequest setBufferResponseEntity(boolean bufferEntity) {
         this.bufferResponseEntity = bufferEntity
         return this
+    }
+
+    /**
+     * Deep-clone the {@link HttpRequest}.
+     *
+     * @return A new {@link HttpRequest}.
+     */
+    Object clone() {
+        HttpRequest request = new HttpRequest()
+
+        request.setUri(getUri())
+        request.setContentType(getContentType())
+        request.setAccept(getAccept())
+        request.setBufferResponseEntity(isBufferResponseEntity())
+        request.setCharset(getCharset())
+        request.setConnectionTimeout(getConnectionTimeout())
+        request.setReadTimeout(getReadTimeout())
+        request.setFollowRedirects(isFollowRedirects())
+        request.setSslValidated(isSslValidated())
+        request.setThrowStatusExceptions(isThrowStatusExceptions())
+        request.setLogConversation(isLogConversation())
+
+        request.setHeaders(copyMultivalMap(getHeaders()))
+        request.setQueryParameters(copyMultivalMap(getQueryParameters()))
+
+        return request
+    }
+
+    /**
+     * Makes a deep copy of the structure of the given multi-valued map.
+     *
+     * @param source
+     * @return
+     */
+    Map<String, List<Object>> copyMultivalMap(Map<String, List<Object>> source) {
+        Map<String, List<Object>> target = [:]
+
+        source.each { key, values ->
+            if (values instanceof Collection) {
+                List<String> val = []
+                values.each { value ->
+                    val.add(value.toString())
+                }
+                target.put(key, val)
+            }
+            else {
+                target.put(key, [values.toString()])
+            }
+        }
+
+        return target
     }
 }

@@ -15,6 +15,7 @@
  */
 package com.budjb.httprequests.filter.bundled
 
+import com.budjb.httprequests.HttpContext
 import com.budjb.httprequests.HttpRequest
 import com.budjb.httprequests.HttpResponse
 import com.budjb.httprequests.filter.HttpClientRequestFilter
@@ -92,13 +93,13 @@ abstract class AuthenticationTokenHeaderFilter implements HttpClientRetryFilter,
     /**
      * Provides an opportunity to modify the {@link HttpRequest} before it is transmitted.
      *
-     * @param request Request object that will be used to make the HTTP request.
+     * @param context HTTP request context.
      */
     @Override
-    void filterRequest(HttpRequest request) {
+    void filterHttpRequest(HttpContext context) {
         if (!getAuthenticationToken() || (getTimeout() && getTimeout() < new Date())) {
             authenticate()
-            request.setHeader(getAuthenticationTokenHeader(), getAuthenticationToken())
+            context.getRequest().setHeader(getAuthenticationTokenHeader(), getAuthenticationToken())
         }
     }
 }

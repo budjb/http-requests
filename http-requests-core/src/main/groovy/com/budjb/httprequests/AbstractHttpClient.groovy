@@ -15,20 +15,17 @@
  */
 package com.budjb.httprequests
 
-import com.budjb.httprequests.converter.EntityConverterManager
 import com.budjb.httprequests.converter.EntityConverter
+import com.budjb.httprequests.converter.EntityConverterManager
 import com.budjb.httprequests.converter.EntityWriter
 import com.budjb.httprequests.exception.HttpStatusException
 import com.budjb.httprequests.exception.UnsupportedConversionException
-import com.budjb.httprequests.filter.HttpClientFilterManager
 import com.budjb.httprequests.filter.HttpClientFilter
+import com.budjb.httprequests.filter.HttpClientFilterManager
 import com.budjb.httprequests.filter.HttpClientRetryFilter
+import com.budjb.httprequests.filter.bundled.LoggingFilter
 
-import javax.net.ssl.HostnameVerifier
-import javax.net.ssl.SSLContext
-import javax.net.ssl.SSLSession
-import javax.net.ssl.TrustManager
-import javax.net.ssl.X509TrustManager
+import javax.net.ssl.*
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
 
@@ -51,14 +48,13 @@ abstract class AbstractHttpClient implements HttpClient {
     /**
      * Implements the logic to make an actual request with an HTTP client library.
      *
-     * @param method HTTP method to use with the HTTP request.
-     * @param request Request properties to use with the HTTP request.
+     * @param context HTTP request context.
      * @param inputStream An {@link InputStream} containing the response body. May be <code>null</code>.
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
     protected
-    abstract HttpResponse doExecute(HttpMethod method, HttpRequest request, InputStream inputStream) throws IOException
+    abstract HttpResponse doExecute(HttpContext context, InputStream inputStream) throws IOException
 
     /**
      * Execute an HTTP request with the given method and request parameters and without a request entity.
@@ -558,13 +554,41 @@ abstract class AbstractHttpClient implements HttpClient {
      * @return A {@link HttpResponse} object containing the properties of the server response.
      */
     protected HttpResponse run(HttpMethod method, HttpRequest request, InputStream entity) {
-        filterManager.getRequestFilters()*.filterRequest(request)
+        if (request.isLogConversation() && !filterManager.getAll().find { LoggingFilter.isAssignableFrom(it.getClass())}) {
+            addFilter(new LoggingFilter())
+        }
+
+        HttpContext context = new HttpContext()
+        context.setMethod(method)
 
         HttpResponse response
         int retries = 0
         while (true) {
-            response = doExecute(method, request, entity)
+            HttpRequest newRequest = request.clone() as HttpRequest
+            context.setRequest(newRequest)
 
+            filterManager.filterHttpRequest(context)
+
+            // Requests that do not include an entity should still have their
+            // {@link HttpClientLifecycleFilter#onRequest} method called. If the request does
+            // contain an entity, it is the responsibility of the implementation to make a call
+            // to {@link #filterOutputStream}.
+            if (!entity) {
+                filterManager.onRequest(context, null)
+            }
+
+            // Note that {@link HttpClientRequestEntityFilter#filterRequestEntity} and
+            // {@link HttpClientLifecycleFilter#onRequest} should be initiated from the
+            // client implementation, and will occur during the execution started below.
+            response = doExecute(context, entity)
+
+            context.setResponse(response)
+
+            filterManager.filterHttpResponse(context)
+
+            filterManager.onResponse(context)
+
+            // TODO: move this into the manager
             List<HttpClientRetryFilter> requestRetry = filterManager.getRetryFilters().findAll {
                 it.shouldRetry(request, response, retries)
             }
@@ -580,8 +604,6 @@ abstract class AbstractHttpClient implements HttpClient {
             retries++
         }
 
-        filterManager.getResponseFilters()*.filterResponse(request, response)
-
         if (request.isThrowStatusExceptions() && response.getStatus() >= 300) {
             throw HttpStatusException.build(response)
         }
@@ -592,12 +614,13 @@ abstract class AbstractHttpClient implements HttpClient {
     /**
      * Filter the output stream.
      *
+     * @param context HTTP request context.
      * @param outputStream Output stream of the request.
      */
-    protected OutputStream filterOutputStream(OutputStream outputStream) {
-        filterManager.getEntityFilters().each {
-            outputStream = it.filterEntity(outputStream)
-        }
+    protected OutputStream filterOutputStream(HttpContext context, OutputStream outputStream) {
+        outputStream = filterManager.filterRequestEntity(context, outputStream)
+
+        filterManager.onRequest(context, outputStream)
 
         return outputStream
     }

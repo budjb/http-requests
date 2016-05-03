@@ -1,17 +1,12 @@
 package com.budjb.httprequests.httpcomponents.client
 
-import com.budjb.httprequests.AbstractHttpClient
-import com.budjb.httprequests.HttpMethod
-import com.budjb.httprequests.HttpRequest
-import com.budjb.httprequests.HttpResponse
+import com.budjb.httprequests.*
 import org.apache.http.HttpEntity
 import org.apache.http.client.config.RequestConfig
 import org.apache.http.client.methods.*
 import org.apache.http.client.utils.URIBuilder
-import org.apache.http.entity.AbstractHttpEntity
 import org.apache.http.entity.InputStreamEntity
 import org.apache.http.impl.client.CloseableHttpClient
-import org.apache.http.impl.client.ContentEncodingHttpClient
 import org.apache.http.impl.client.HttpClientBuilder
 import org.apache.http.impl.client.HttpClients
 
@@ -19,14 +14,16 @@ class HttpComponentsHttpClient extends AbstractHttpClient {
     /**
      * Implements the logic to make an actual request with an HTTP client library.
      *
-     * @param method HTTP method to use with the HTTP request.
-     * @param request Request properties to use with the HTTP request.
+     * @param context HTTP request context.
      * @param inputStream An {@link InputStream} containing the response body. May be <code>null</code>.
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
     @Override
-    protected HttpResponse doExecute(HttpMethod method, HttpRequest request, InputStream inputStream) throws IOException {
+    protected HttpResponse doExecute(HttpContext context, InputStream inputStream) throws IOException {
+        HttpRequest request = context.getRequest()
+        HttpMethod method = context.getMethod()
+
         CloseableHttpClient client = createClient(request)
 
         URIBuilder uriBuilder = new URIBuilder(request.getUri())
@@ -62,7 +59,7 @@ class HttpComponentsHttpClient extends AbstractHttpClient {
             HttpEntity entity = new InputStreamEntity(inputStream) {
                 @Override
                 public void writeTo(final OutputStream outstream) throws IOException {
-                    OutputStream filtered = filterOutputStream(outstream)
+                    OutputStream filtered = filterOutputStream(context, outstream)
                     super.writeTo(filtered)
 
                     // This is a bit of a hack since HTTP components client does not give
@@ -85,8 +82,9 @@ class HttpComponentsHttpClient extends AbstractHttpClient {
             response.addHeader(it.getName(), it.getValue())
         }
 
-        if (clientResponse.getEntity() && clientResponse.getEntity().getContentLength() != 0) {
-            response.setEntity(clientResponse.getEntity().getContent())
+        InputStream entity = getEntity(clientResponse)
+        if (entity) {
+            response.setEntity(entity)
             response.setContentType(clientResponse.getEntity().getContentType()?.getValue())
         }
 
@@ -151,5 +149,26 @@ class HttpComponentsHttpClient extends AbstractHttpClient {
             default:
                 throw new IllegalArgumentException("HTTP method ${method.toString()} is unsupported")
         }
+    }
+
+    /**
+     * Returns the entity of the response, if there is one. The method accounts for empty entities.
+     *
+     * @param response Response of the request.
+     * @return The entity of the response, if there is one.
+     */
+    protected InputStream getEntity(CloseableHttpResponse response) {
+        if (!response.getEntity()) {
+            return null
+        }
+
+        PushbackInputStream pushbackInputStream = new PushbackInputStream(response.getEntity().getContent())
+        int read = pushbackInputStream.read()
+        if (read != -1) {
+            pushbackInputStream.unread(read)
+            return pushbackInputStream
+        }
+
+        return null
     }
 }

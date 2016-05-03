@@ -16,6 +16,7 @@
 package com.budjb.httprequests.jersey2
 
 import com.budjb.httprequests.AbstractHttpClient
+import com.budjb.httprequests.HttpContext
 import com.budjb.httprequests.HttpMethod
 import com.budjb.httprequests.HttpRequest
 import com.budjb.httprequests.HttpResponse
@@ -39,17 +40,19 @@ class JerseyHttpClient extends AbstractHttpClient {
     /**
      * Implements the logic to make an actual request with an HTTP client library.
      *
-     * @param method HTTP method to use with the HTTP request.
-     * @param request Request properties to use with the HTTP request.
+     * @param context HTTP request context.
      * @param inputStream An {@link InputStream} containing the response body. May be <code>null</code>.
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException
      */
     @Override
-    protected HttpResponse doExecute(HttpMethod method, HttpRequest request, InputStream inputStream) throws IOException {
+    protected HttpResponse doExecute(HttpContext context, InputStream inputStream) throws IOException {
+        HttpRequest request = context.getRequest()
+        HttpMethod method = context.getMethod()
+
         Client client = createClient(request)
 
-        client = client.register(createWriterInterceptor())
+        client = client.register(createWriterInterceptor(context))
 
         client = client.property(ClientProperties.CONNECT_TIMEOUT, request.getConnectionTimeout())
         client = client.property(ClientProperties.READ_TIMEOUT, request.getReadTimeout())
@@ -124,9 +127,6 @@ class JerseyHttpClient extends AbstractHttpClient {
         }
 
         ClientConfig clientConfig = new ClientConfig()
-        if (request.isLogConversation()) {
-            clientConfig.register(new LoggingFilter(Logger.getLogger(getClass().getName()), true))
-        }
 
         return builder.withConfig(clientConfig).build()
     }
@@ -161,14 +161,15 @@ class JerseyHttpClient extends AbstractHttpClient {
     /**
      * Creates a writer interceptor so that the {@link OutputStream} can be filtered.
      *
+     * @param context HTTP request context.
      * @return A new writer interceptor.
      */
-    protected WriterInterceptor createWriterInterceptor() {
+    protected WriterInterceptor createWriterInterceptor(HttpContext context) {
         return new WriterInterceptor() {
             @Override
-            void aroundWriteTo(WriterInterceptorContext context) throws IOException, WebApplicationException {
-                context.setOutputStream(filterOutputStream(context.getOutputStream()))
-                context.proceed()
+            void aroundWriteTo(WriterInterceptorContext interceptorContext) throws IOException, WebApplicationException {
+                interceptorContext.setOutputStream(filterOutputStream(context, interceptorContext.getOutputStream()))
+                interceptorContext.proceed()
             }
         }
     }
