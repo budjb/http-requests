@@ -22,6 +22,7 @@ import com.budjb.httprequests.exception.HttpUnauthorizedException
 import com.budjb.httprequests.filter.HttpClientRetryFilter
 import com.budjb.httprequests.filter.bundled.BasicAuthFilter
 import com.budjb.httprequests.filter.bundled.GZIPFilter
+import com.budjb.httprequests.filter.bundled.HttpStatusExceptionFilter
 import spock.lang.Ignore
 
 import java.util.zip.GZIPInputStream
@@ -30,7 +31,7 @@ import java.util.zip.GZIPInputStream
 abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
     def 'When a GET request is made to /testBasicGet, the proper response is received'() {
         when:
-        def response = httpClientFactory.createHttpClient().get(new HttpRequest().setUri("${baseUrl}/testBasicGet").setLogConversation(true))
+        def response = httpClientFactory.createHttpClient().get(new HttpRequest().setUri("${baseUrl}/testBasicGet"))
 
         then:
         response.getEntity(String) == 'The quick brown fox jumps over the lazy dog.'
@@ -79,13 +80,13 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
 
     def 'When an unknown Accept header is assigned, the server receives it and returns an error'() {
         when:
-        httpClientFactory.createHttpClient().get(new HttpRequest()
+        def response = httpClientFactory.createHttpClient().get(new HttpRequest()
             .setUri("${baseUrl}/testAccept")
             .setAccept('foo/bar')
         )
 
         then:
-        thrown HttpNotAcceptableException
+        response.status == 406
     }
 
     def 'When a read timeout is reached, a SocketTimeoutException occurs'() {
@@ -116,15 +117,15 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         response.getEntity(String) == 'The quick brown fox jumps over the lazy dog.'
     }
 
-    def 'When a redirect is received and the client is configured to not follow it, an HttpFoundException is thrown'() {
+    def 'When a redirect is received and the client is configured to not follow it, the response status code is 302'() {
         when:
-        httpClientFactory.createHttpClient().get(new HttpRequest()
+        def response = httpClientFactory.createHttpClient().get(new HttpRequest()
             .setUri("${baseUrl}/testRedirect")
             .setFollowRedirects(false)
         )
 
         then:
-        thrown HttpFoundException
+        response.status == 302
     }
 
     def 'When a request includes headers, the server receives them correctly'() {
@@ -132,7 +133,6 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         def response = httpClientFactory.createHttpClient().get(new HttpRequest()
             .setUri("${baseUrl}/testHeaders")
             .addHeaders([foo: ['bar'], key: ['value']])
-            .setLogConversation(true)
         )
 
         then:
@@ -189,7 +189,9 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
 
     def 'When a response has a status of 500, an HttpInternalServerErrorException is thrown'() {
         when:
-        httpClientFactory.createHttpClient().get(new HttpRequest().setUri("${baseUrl}/test500"))
+        httpClientFactory.createHttpClient()
+            .addFilter(new HttpStatusExceptionFilter())
+            .get(new HttpRequest().setUri("${baseUrl}/test500"))
 
         then:
         thrown HttpInternalServerErrorException
@@ -199,7 +201,6 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         when:
         def response = httpClientFactory.createHttpClient().get(new HttpRequest()
             .setUri("${baseUrl}/test500")
-            .setThrowStatusExceptions(false)
         )
 
         then:
@@ -215,7 +216,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
 
 
         when:
-        def response = httpClientFactory.createHttpClient().post(new HttpRequest().setUri("${baseUrl}/testForm").setLogConversation(true), formData)
+        def response = httpClientFactory.createHttpClient().post(new HttpRequest().setUri("${baseUrl}/testForm"), formData)
 
         then:
         response.getEntity(Map) == ['foo': ['bar'], 'key': ['value']]
@@ -230,7 +231,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
 
 
         when:
-        def response = httpClientFactory.createHttpClient().post(new HttpRequest().setUri("${baseUrl}/testForm").setLogConversation(true), formData)
+        def response = httpClientFactory.createHttpClient().post(new HttpRequest().setUri("${baseUrl}/testForm"), formData)
 
         then:
         response.getEntity(Map) == ['foo': ['bar', 'baz'], 'key': ['value']]
@@ -238,10 +239,10 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
 
     def 'When a server requires basic authentication but none is provided, an HttpUnauthorizedException is thrown'() {
         when:
-        httpClientFactory.createHttpClient().get(new HttpRequest().setUri("${baseUrl}/testAuth"))
+        def response = httpClientFactory.createHttpClient().get(new HttpRequest().setUri("${baseUrl}/testAuth"))
 
         then:
-        thrown HttpUnauthorizedException
+        response.status == 401
     }
 
     def 'When a server requires basic authentication and the client provides it, the proper response is received'() {
@@ -642,7 +643,6 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         when:
         def response = httpClientFactory.createHttpClient().post("Hello, world") {
             uri = "${baseUrl}/testBasicPost"
-            logConversation = true
         }
 
         then:
@@ -653,7 +653,6 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         response = httpClientFactory.createHttpClient().get {
             uri = "${baseUrl}/testBasicGet"
             accept = "text/plain"
-            logConversation = true
         }
 
         then:

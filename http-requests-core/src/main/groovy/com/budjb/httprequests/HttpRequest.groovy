@@ -67,21 +67,9 @@ class HttpRequest implements Cloneable {
     boolean sslValidated = true
 
     /**
-     * Whether the client should throw an exception for a non-2XX HTTP status.
-     */
-    boolean throwStatusExceptions = true
-
-    /**
      * Whether the client should automatically follow redirects.
      */
     boolean followRedirects = true
-
-    /**
-     * Whether the HTTP client should logger the request communication.
-     *
-     * Note that the logging behavior is specific to the HTTP client implementation in use.
-     */
-    boolean logConversation = false
 
     /**
      * Whether to buffer the response entity in the {@link HttpResponse} object so that it can be
@@ -382,17 +370,6 @@ class HttpRequest implements Cloneable {
     }
 
     /**
-     * Sets whether the client will throw {@link HttpStatusException} for non-2XX HTTP statuses.
-     *
-     * @param throwStatusExceptions Whether the client will throw
-     * @return The instance of this class the method was called with.
-     */
-    HttpRequest setThrowStatusExceptions(boolean throwStatusExceptions) {
-        this.throwStatusExceptions = throwStatusExceptions
-        return this
-    }
-
-    /**
      * Set the character set of the request.
      *
      * @param charSet Character set of the request.
@@ -506,17 +483,6 @@ class HttpRequest implements Cloneable {
     }
 
     /**
-     * Sets whether to logger the HTTP conversation.
-     *
-     * @param logConversation Whether to logger the HTTP conversation.
-     * @return The instance of this class the method was called with.
-     */
-    HttpRequest setLogConversation(boolean logConversation) {
-        this.logConversation = logConversation
-        return this
-    }
-
-    /**
      * Sets whether to automatically buffer the response entity.
      *
      * @param bufferEntity Whether to automatically buffer the response entity.
@@ -544,8 +510,6 @@ class HttpRequest implements Cloneable {
         request.setReadTimeout(getReadTimeout())
         request.setFollowRedirects(isFollowRedirects())
         request.setSslValidated(isSslValidated())
-        request.setThrowStatusExceptions(isThrowStatusExceptions())
-        request.setLogConversation(isLogConversation())
 
         request.setHeaders(copyMultivalMap(getHeaders()))
         request.setQueryParameters(copyMultivalMap(getQueryParameters()))

@@ -58,7 +58,6 @@ class HttpRequestSpec extends Specification {
             .addQueryParameter('foo', ['1', '2'])
             .addQueryParameters([hi: ['there']])
             .setSslValidated(false)
-            .setThrowStatusExceptions(false)
             .setReadTimeout(5000)
             .setConnectionTimeout(10000)
             .setBufferResponseEntity(false)
@@ -70,7 +69,6 @@ class HttpRequestSpec extends Specification {
         request.getHeaders() == [foo: ['bar', '1', '2'], hi: ['there']]
         request.getQueryParameters() == [foo: ['bar', '1', '2'], hi: ['there']]
         !request.isSslValidated()
-        !request.isThrowStatusExceptions()
         !request.getBufferResponseEntity()
         request.connectionTimeout == 10000
         request.readTimeout == 5000
@@ -130,10 +128,8 @@ class HttpRequestSpec extends Specification {
             connectionTimeout = 10000
             readTimeout = 5000
             followRedirects = false
-            logConversation = true
             sslValidated = false
             bufferResponseEntity = false
-            throwStatusExceptions = false
             charset = 'ISO-1234'
             headers = [foo: 'bar']
         }
@@ -145,8 +141,6 @@ class HttpRequestSpec extends Specification {
         request.connectionTimeout == 10000
         request.readTimeout == 5000
         !request.followRedirects
-        request.logConversation
-        !request.throwStatusExceptions
         !request.sslValidated
         !request.bufferResponseEntity
         request.charset == 'ISO-1234'

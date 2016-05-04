@@ -21,8 +21,6 @@ import com.budjb.httprequests.converter.EntityWriter
 import com.budjb.httprequests.exception.UnsupportedConversionException
 import com.budjb.httprequests.filter.HttpClientFilter
 import com.budjb.httprequests.filter.HttpClientFilterManager
-import com.budjb.httprequests.filter.bundled.HttpStatusExceptionFilter
-import com.budjb.httprequests.filter.bundled.LoggingFilter
 
 import javax.net.ssl.*
 import java.security.SecureRandom
@@ -553,20 +551,6 @@ abstract class AbstractHttpClient implements HttpClient {
      * @return A {@link HttpResponse} object containing the properties of the server response.
      */
     protected HttpResponse run(HttpMethod method, HttpRequest request, InputStream entity) {
-        // TODO: do something more intelligent
-        if (request.isLogConversation() && !filterManager.getAll().find {
-            LoggingFilter.isAssignableFrom(it.getClass())
-        }) {
-            addFilter(new LoggingFilter())
-        }
-
-        // TODO: do something more intelligent
-        if (request.isThrowStatusExceptions() && !filterManager.getAll().find {
-            HttpStatusExceptionFilter.isAssignableFrom(it.getClass())
-        }) {
-            addFilter(new HttpStatusExceptionFilter())
-        }
-
         HttpContext context = new HttpContext()
         context.setMethod(method)
 
