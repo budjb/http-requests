@@ -40,7 +40,7 @@ class BasicAuthFilter implements HttpClientRequestFilter {
      * @param password Password to authenticate with.
      */
     BasicAuthFilter(String username, String password) {
-        credentials = "$username:$password".getBytes().encodeBase64()
+        credentials = "Basic " + "$username:$password".getBytes().encodeBase64()
     }
 
     /**
