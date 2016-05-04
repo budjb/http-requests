@@ -24,6 +24,22 @@ import com.budjb.httprequests.AbstractHttpClientFactory
  */
 class JerseyHttpClientFactory extends AbstractHttpClientFactory {
     /**
+     * Base constructor that automatically registers the default set of entity converters.
+     */
+    JerseyHttpClientFactory() {
+        super()
+    }
+
+    /**
+     * Constructor that can optionally register the default set of entity converters.
+     *
+     * @param registerDefaultConverters Whether to register the default set of entity converters.
+     */
+    JerseyHttpClientFactory(boolean registerDefaultConverters) {
+        super(registerDefaultConverters)
+    }
+
+    /**
      * Create a new Jersey HTTP client.
      *
      * @return A new Jersey 1.x {@link HttpClient} implementation.
