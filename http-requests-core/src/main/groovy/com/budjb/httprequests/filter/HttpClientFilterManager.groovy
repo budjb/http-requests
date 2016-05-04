@@ -174,4 +174,31 @@ class HttpClientFilterManager {
         }
         return outputStream
     }
+
+    /**
+     * Initiates the retry filters and returns whether at least one of them requested a retry.
+     *
+     * @param context HTTP request context.
+     * @return Whether at least one filter requested a retry.
+     */
+    boolean onRetry(HttpContext context) {
+        boolean retry = false
+
+        getRetryFilters().each {
+            if (it.onRetry(context)) {
+                retry = true
+            }
+        }
+
+        return retry
+    }
+
+    /**
+     * Calls the {@link HttpClientLifecycleFilter#onComplete} method for all registered filters.
+     *
+     * @param context HTTP request context.
+     */
+    void onComplete(HttpContext context) {
+        getLifecycleFilters()*.onComplete(context)
+    }
 }

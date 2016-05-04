@@ -18,11 +18,10 @@ package com.budjb.httprequests
 import com.budjb.httprequests.converter.EntityConverter
 import com.budjb.httprequests.converter.EntityConverterManager
 import com.budjb.httprequests.converter.EntityWriter
-import com.budjb.httprequests.exception.HttpStatusException
 import com.budjb.httprequests.exception.UnsupportedConversionException
 import com.budjb.httprequests.filter.HttpClientFilter
 import com.budjb.httprequests.filter.HttpClientFilterManager
-import com.budjb.httprequests.filter.HttpClientRetryFilter
+import com.budjb.httprequests.filter.bundled.HttpStatusExceptionFilter
 import com.budjb.httprequests.filter.bundled.LoggingFilter
 
 import javax.net.ssl.*
@@ -554,18 +553,27 @@ abstract class AbstractHttpClient implements HttpClient {
      * @return A {@link HttpResponse} object containing the properties of the server response.
      */
     protected HttpResponse run(HttpMethod method, HttpRequest request, InputStream entity) {
-        if (request.isLogConversation() && !filterManager.getAll().find { LoggingFilter.isAssignableFrom(it.getClass())}) {
+        // TODO: do something more intelligent
+        if (request.isLogConversation() && !filterManager.getAll().find {
+            LoggingFilter.isAssignableFrom(it.getClass())
+        }) {
             addFilter(new LoggingFilter())
+        }
+
+        // TODO: do something more intelligent
+        if (request.isThrowStatusExceptions() && !filterManager.getAll().find {
+            HttpStatusExceptionFilter.isAssignableFrom(it.getClass())
+        }) {
+            addFilter(new HttpStatusExceptionFilter())
         }
 
         HttpContext context = new HttpContext()
         context.setMethod(method)
 
-        HttpResponse response
-        int retries = 0
         while (true) {
             HttpRequest newRequest = request.clone() as HttpRequest
             context.setRequest(newRequest)
+            context.setResponse(null)
 
             filterManager.filterHttpRequest(context)
 
@@ -580,7 +588,7 @@ abstract class AbstractHttpClient implements HttpClient {
             // Note that {@link HttpClientRequestEntityFilter#filterRequestEntity} and
             // {@link HttpClientLifecycleFilter#onRequest} should be initiated from the
             // client implementation, and will occur during the execution started below.
-            response = doExecute(context, entity)
+            HttpResponse response = doExecute(context, entity)
 
             context.setResponse(response)
 
@@ -588,27 +596,13 @@ abstract class AbstractHttpClient implements HttpClient {
 
             filterManager.onResponse(context)
 
-            // TODO: move this into the manager
-            List<HttpClientRetryFilter> requestRetry = filterManager.getRetryFilters().findAll {
-                it.shouldRetry(request, response, retries)
+            if (!filterManager.onRetry(context)) {
+                filterManager.onComplete(context)
+                return response
             }
 
-            if (!requestRetry.size()) {
-                break
-            }
-
-            requestRetry.each {
-                it.onRetry(request, response)
-            }
-
-            retries++
+            context.incrementRetries()
         }
-
-        if (request.isThrowStatusExceptions() && response.getStatus() >= 300) {
-            throw HttpStatusException.build(response)
-        }
-
-        return response
     }
 
     /**

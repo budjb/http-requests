@@ -57,37 +57,21 @@ abstract class AuthenticationTokenHeaderFilter implements HttpClientRetryFilter,
     abstract String getAuthenticationTokenHeader()
 
     /**
-     * Returns whether this filter requests a retry of the HTTP request.
+     * Called once the request has been completed. This method should return <code>true</code> if the request
+     * should be retried. Changes to the {@link HttpRequest} and {@link HttpResponse} objects will be lost, since
+     * every request attempt receives a fresh copy of the request and the previous response is lost. If the retry
+     * filter need to modify the subsequent request before it is sent out, classes that implement this filter should
+     * also implement the {@link HttpClientRequestFilter} interface.
      *
-     * This method should not alter the request or response objects. They are only made available so that the filter
-     * has all the information it needs to determine if a retry should be attempted.
-     *
-     * Note that this filter will receive a call to {@link #onRetry(HttpRequest, HttpResponse)} only if this method
-     * returns true, even if a retry is otherwise attempted.
-     *
-     * @param request Configuration of the request.
-     * @param response Response properties.
-     * @param retries The number of retries that have occurred before this method is run.
-     * @return <code>true</code> if it is determined that a retry of the request should be attempted.
+     * @param context HTTP request context.
      */
     @Override
-    boolean shouldRetry(HttpRequest request, HttpResponse response, int retries) {
-        return retries == 0 && response.getStatus() == 401
-    }
-
-    /**
-     * Called before the attempt to retry the HTTP request.
-     *
-     * This method is only called when {@link #shouldRetry(HttpRequest, HttpResponse, int)} returns true, even if a
-     * retry is otherwise attempted.
-     *
-     * @param request Configuration of the request.
-     * @param response Response properties.
-     */
-    @Override
-    void onRetry(HttpRequest request, HttpResponse response) {
-        authenticate()
-        request.setHeader(getAuthenticationTokenHeader(), getAuthenticationToken())
+    boolean onRetry(HttpContext context) {
+        if (context.getRetries() == 0 && context.getResponse().getStatus() == 401) {
+            authenticate()
+            return true
+        }
+        return false
     }
 
     /**
@@ -99,7 +83,7 @@ abstract class AuthenticationTokenHeaderFilter implements HttpClientRetryFilter,
     void filterHttpRequest(HttpContext context) {
         if (!getAuthenticationToken() || (getTimeout() && getTimeout() < new Date())) {
             authenticate()
-            context.getRequest().setHeader(getAuthenticationTokenHeader(), getAuthenticationToken())
         }
+        context.getRequest().setHeader(getAuthenticationTokenHeader(), getAuthenticationToken())
     }
 }

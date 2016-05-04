@@ -25,6 +25,11 @@ class HttpContext {
     HttpResponse response
 
     /**
+     * The number of retries that have been attempted.
+     */
+    private int retries = 0
+
+    /**
      * Retrieve an object with the given name from the context.
      *
      * @param name Name of the object.
@@ -62,5 +67,21 @@ class HttpContext {
      */
     void set(String name, Object object) {
         data.put(name, object)
+    }
+
+    /**
+     * Increases the number of attempted retries.
+     */
+    void incrementRetries() {
+        retries++
+    }
+
+    /**
+     * Returns the number of retries that have been attempted.
+     *
+     * @return The number of retries that have been attempted.
+     */
+    int getRetries() {
+        return retries
     }
 }

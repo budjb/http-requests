@@ -19,7 +19,6 @@ import com.budjb.httprequests.exception.HttpFoundException
 import com.budjb.httprequests.exception.HttpInternalServerErrorException
 import com.budjb.httprequests.exception.HttpNotAcceptableException
 import com.budjb.httprequests.exception.HttpUnauthorizedException
-import com.budjb.httprequests.filter.HttpClientFilter
 import com.budjb.httprequests.filter.HttpClientRetryFilter
 import com.budjb.httprequests.filter.bundled.BasicAuthFilter
 import com.budjb.httprequests.filter.bundled.GZIPFilter
@@ -258,63 +257,26 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
 
     def 'If a retry filter requests a retry, ensure its proper operations'() {
         setup:
+        boolean ran = false
+
         HttpClientRetryFilter filter = new HttpClientRetryFilter() {
             @Override
-            boolean shouldRetry(HttpRequest request, HttpResponse response, int retries) {
-                return retries == 0
-            }
-
-            @Override
-            void onRetry(HttpRequest request, HttpResponse response) {
-                request.setHeader('foo', 'bar')
+            boolean onRetry(HttpContext context) {
+                if (context.getRetries() == 0) {
+                    ran = true
+                    return true
+                }
+                return false
             }
         }
 
         when:
-        def response = httpClientFactory.createHttpClient().addFilter(filter).get(
-            new HttpRequest().setUri("${baseUrl}/testHeaders")
+        httpClientFactory.createHttpClient().addFilter(filter).get(
+            new HttpRequest().setUri("${baseUrl}/testBasicGet")
         )
 
         then:
-        response.getEntity(Map).foo == ['bar']
-    }
-
-    def 'If a retry filter requests a retry and another does, not, ensure the non-requester is not called'() {
-        setup:
-        HttpClientRetryFilter filter1 = new HttpClientRetryFilter() {
-            @Override
-            boolean shouldRetry(HttpRequest request, HttpResponse response, int retries) {
-                return retries == 0
-            }
-
-            @Override
-            void onRetry(HttpRequest request, HttpResponse response) {
-                request.setHeader('foo', 'bar')
-            }
-        }
-
-        HttpClientFilter filter2 = new HttpClientRetryFilter() {
-            @Override
-            boolean shouldRetry(HttpRequest request, HttpResponse response, int retries) {
-                return false
-            }
-
-            @Override
-            void onRetry(HttpRequest request, HttpResponse response) {
-                request.setHeader('hi', 'there')
-            }
-        }
-
-        when:
-        def response = httpClientFactory
-            .createHttpClient()
-            .addFilter(filter1)
-            .addFilter(filter2)
-            .get(new HttpRequest().setUri("${baseUrl}/testHeaders"))
-
-        then:
-        response.getEntity(Map).foo == ['bar']
-        !response.getEntity(Map).hi
+        ran
     }
 
     def 'Validate builder form of GET works'() {
