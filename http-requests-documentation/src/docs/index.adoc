@@ -13,8 +13,6 @@ include::filters.adoc[]
 
 include::converters.adoc[]
 
-include::providers.adoc[]
-
 include::grails.adoc[]
 
 include::changelog.adoc[]

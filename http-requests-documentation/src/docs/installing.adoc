@@ -6,16 +6,17 @@ popular HTTP client libraries. The table below lists out all of the modules that
 and what their purposes are.
 
 .HTTP Requests Library Modules
-[grid="rows", cols="1,3"]
+[grid="rows"]
 |===
-| Module                  | Purpose
+| Module                                | Purpose
 
-| `http-requests`         | A bill-of-materials POM for all libraries.
-| `http-requests-core`    | Contains the core logic and interfaces that implementation modules will use.
-| `http-requests-jersey1` | Provides a *Jersey 1.x* implementation of the HTTP requests library.
-| `http-requests-jersey2` | Provides a *Jersey 2.x* implementation of the HTTP requests library.
-| `http-requests-test`    | Contains the functional test cases that validate the functionality of an implementation library.
-| `http-requests-grails`  | A *Grails 3.x* plugin that sets up and exposes an `HttpClientFactory` bean.
+| `http-requests`                       | A bill-of-materials POM for all libraries.
+| `http-requests-core`                  | Contains the core logic and interfaces that implementation modules will use.
+| `http-requests-jersey1`               | Provides a *Jersey 1.x* implementation of the HTTP requests library.
+| `http-requests-jersey2`               | Provides a *Jersey 2.x* implementation of the HTTP requests library.
+| `http-requests-httpcomponents-client` | Provides an Apache HttpComponents Client implementation of the HTTP requests library.
+| `http-requests-test`                  | Contains the functional test cases that validate the functionality of an implementation library.
+| `http-requests-grails`                | A *Grails 3.x* plugin that sets up and exposes an `HttpClientFactory` bean.
 |===
 
 When using the HTTP Requests library, the `http-requests-core` library need not be explicitly added as a project

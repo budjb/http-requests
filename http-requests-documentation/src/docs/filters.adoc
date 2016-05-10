@@ -83,12 +83,58 @@ image::filters.png[HTTP Request Filter Chain, role="thumb"]
 
 === Built-In Filters
 
-The library includes several built-in filters for common use cases, including:
+The library includes several built-in filters for common use cases.
 
-* `BasicAuthFilter` that provides basic authentication functionality.
-* `GZIPFilter` that compresses and encodes the request with GZIP.
-* `DeflateFilter` that compresses and encodes the request with the deflate algorithm.
-* `HttpStatusExceptionFilter` that will throw an exception specific to an HTTP status code if the server responds with
-  an HTTP status code above the 200-299 range.
-* `LoggingFilter` that captures the contents of the request and response, and logs the data to an SLF4J logger.
-* `AuthenticationTokenHeaderFilter` is an abstract filter that creates a framework for authentication token schemes.
+==== BasicAuthFilter
+
+The basic authentication filter provides simple basic auth functionality with a username and a password.
+
+==== GZIPFilter
+
+The GZIP filter wraps the output of the request with a `GZIPOutputStream` so that the entity's contents are compressed
+with the GZIP algorithm. The appropriate `Content-Encoding` header is set.
+
+==== DeflateFilter
+
+The deflate filter wraps the output of the request with a `DeflateOutputStream` so that the entity's contents are
+compressed with the deflate algorithm. The appropriate `Content-Encoding` header is set.
+
+==== AuthenticationTokenHeaderFilter
+
+This filter is abstract and provides a framework for HTTP requests that require token authentication and follow the
+flow:
+
+. If no authentication token is known, authenticate.
+. Make the HTTP request.
+. If HTTP status 401 is received, and no retries have been attempted, re-authenticate and request a retry.
+
+The filter provides integration points so that authentication logic and authentication token header names can be
+provided by concrete implementations of the filter.
+
+==== LoggingFilter
+
+The logging filter captures the contents of the request and the response, and logs the data to an SLF4j logger. The
+filter can be configured with a logger name to use, otherwise the fully-qualified class name of the logging filter
+will be used.
+
+==== HttpStatusExceptionFilter
+
+The `HttpStatusExceptionFilter` filter modifies how the response status is treated. When an HTTP status that
+is not considered successful (that is, not in the 200-299 range), an exception representing that status code is thrown.
+For example, if an `HTTP 404` is received, an `HttpNotFoundException` will be thrown.
+
+TIP: Use this functionality to create different error handling for expected error cases.
+
+If no appropriate exception exists for the HTTP status code that is received, an `HttpStatusException` is thrown
+instead. This exception is actually the superclass of all HTTP status specific exceptions.
+
+These exceptions contain the following information about the response:
+
+.HttpStatusException Properties
+[grid="rows"]
+|====
+| Property | Description
+
+| status | The HTTP status code of the response, as an `Integer`.
+| response | The `HttpResponse` object containing details about the received response.
+|====
