@@ -12,28 +12,28 @@ The HTTP Request configuration properties are enumerated in the following table.
 |===
 | Property                | Type      | Default Value              | Description
 
-| `uri`                   | `String`  |                            | The URI of the request, including the protocol,\
+| `uri`                   | `String`  |                            | The URI of the request, including the protocol,
                                                                      port, host, and path.
-| `accept`                | `String`  |                            | Content-Type the client will request from the host\
+| `accept`                | `String`  |                            | Content-Type the client will request from the host
                                                                      in its response.
-| `contentType`           | `String`  | `application/octet-stream` | Content-Type of the request. Applies when the\
+| `contentType`           | `String`  | `application/octet-stream` | Content-Type of the request. Applies when the
                                                                      request has an entity.
 | `charSet`               | `String`  | `UTF-8`                    | Character set of the request entity.
-| `headers`               | `Map`     |                            | Request headers. Individual header names can\
+| `headers`               | `Map`     |                            | Request headers. Individual header names can
                                                                      contain multiple values.
-| `queryParameters`       | `Map`     |                            | Query parameters of the request. Individual query\
+| `queryParameters`       | `Map`     |                            | Query parameters of the request. Individual query
                                                                      parameters can contain multiple values.
-| `connectionTimeout`     | `Integer` | 0                          | The amount of time, in milliseconds, the request\
+| `connectionTimeout`     | `Integer` | 0                          | The amount of time, in milliseconds, the request
                                                                      should wait for the connection to time out.
-| `readTimeout`           | `Integer` | 0                          | The amount of time, in milliseconds, the request\
+| `readTimeout`           | `Integer` | 0                          | The amount of time, in milliseconds, the request
                                                                      should wait to time out while waiting for content.
-| `sslValidated`          | `Boolean` | `true`                     | Whether SSL certification trust chains and host\
+| `sslValidated`          | `Boolean` | `true`                     | Whether SSL certification trust chains and host
                                                                      names should be validated.
-| `followRedirects`       | `Boolean` | `true`                     | Whether the HTTP client should follow redirect\
+| `followRedirects`       | `Boolean` | `true`                     | Whether the HTTP client should follow redirect
                                                                      responses received from the host.
-| `bufferResponseEntity`  | `Boolean` | `true`                     | If `true`, the entity is read completely from\
-                                                                     the response and the response's `InputStream` is\
-                                                                     closed. This allows the entity to be retrieved\
+| `bufferResponseEntity`  | `Boolean` | `true`                     | If `true`, the entity is read completely from
+                                                                     the response and the response's `InputStream` is
+                                                                     closed. This allows the entity to be retrieved
                                                                      multiple times.
 |===
 
@@ -77,8 +77,9 @@ When this is enabled, the response entity (if there is one) is automatically rea
 `InputStream` into a byte array stored in the `HttpResponse` object, and the stream is closed. This allows the entity
 to be retrieved multiple times. When disabled, the response `InputStream` can be read only once.
 
-IMPORTANT: It is very important that the response's `InputStream` is closed by application authors if this
-functionality is disabled, or the underlying system resources may not be freed up.
+IMPORTANT: It is very important that the response's `InputStream` is closed by application authors if this functionality
+is disabled, or the underlying system resources may not be freed up. This is true even when an HTTP status exception is
+thrown via the `HttpStatusExceptionFilter`, which includes the `HttpResponse` in the thrown exception.
 
 ===== sslValidated
 

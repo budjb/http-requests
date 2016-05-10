@@ -2,6 +2,10 @@
 The HTTP Requests library is a wrapper around popular HTTP client libraries that provides a clean and simplified
 interface to make HTTP requests.
 
+The spirit of this library is to make it trivial to do easy things with HTTP requests. It is not a complete HTTP
+client implementation, and relies on other HTTP client libraries to perform the actual HTTP connections and
+conversations.
+
 === Features
 The library allows authors to easily create and submit HTTP requests. At a high level, the library provides the
 following features, and more.
@@ -16,9 +20,10 @@ following features, and more.
   - OPTIONS
   - TRACE
   - HEAD
-* Disable SSL trust and hostname validation.
+* Optionally disable SSL trust and hostname validation.
 * Log HTTP conversations.
-* Ability to create HTTP Client filters.
+* Ability to create filters that affect the HTTP request during the various phases of its lifecycle.
 * Ability to create custom entity converters for custom object types.
-* Built-in entity converters for Strings, Maps, and Lists.
+* Built-in entity converters for common object types.
 * HTTP status exceptions for non-successful response status codes available.
+* Requests can be built using a builder syntax or Groovy DSL closures.

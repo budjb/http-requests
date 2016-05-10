@@ -76,6 +76,5 @@ class EntityInputStream extends InputStream {
             closed = true
             source.close()
         }
-
     }
 }

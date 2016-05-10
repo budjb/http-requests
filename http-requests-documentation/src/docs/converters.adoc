@@ -4,8 +4,13 @@ Entity converters are responsible for converting request and response entities t
 prevents applications from having to make separate calls to helper methods or classes to do the conversion.
 
 Much like filter, an entity converter can be registered with both the `HttpClientFactory` and `HttpClient` objects.
-Any entity converter registered with the factory will automatically be added to any clients it creates. Use the
-`addEntityConverter` method on both objects to add an entity converter.
+Any entity converter registered with the factory will automatically be added to any clients it creates. Entity
+converters can be interacted with on both the factory and the client with the following methods.
+
+* `addEntityConverter`
+* `removeEntityConveter`
+* `getEntityConverters`
+* `clearEntityConverters`
 
 === Entity Readers
 

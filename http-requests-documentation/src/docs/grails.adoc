@@ -26,15 +26,15 @@ be assigned under the `httprequests` key in the application configuration.
 |===
 | Name | Type | Default | Description
 
-| `autoLoadFactory`    | `Boolean` | `true` | Whether to automatically locate and register an `HttpClientFactory`\
+| `autoLoadFactory`    | `Boolean` | `true` | Whether to automatically locate and register an `HttpClientFactory`
                                               from the classpath. If `false`, applications must manually register
-                                              an `HttpClientFactory` with the name `httpClientFactory`, or the \
+                                              an `HttpClientFactory` with the name `httpClientFactory`, or the
                                               application will fail to start.
-| `autoLoadConverters` | `Boolean` | `true` | Whether to automatically register the built-in filters and converters\
-                                              to the `httpClientFactory`. This does not affect loading filters and\
-                                              converters found in the `grails-app/http-filters` and\
+| `autoLoadConverters` | `Boolean` | `true` | Whether to automatically register the built-in filters and converters
+                                              to the `httpClientFactory`. This does not affect loading filters and
+                                              converters found in the `grails-app/http-filters` and
                                               `grails-app/http-converters` directories.
-| `scanPackages`       | `List`    |        | Additional classpath packages to scan for `HttpClientFactory` instances.\
+| `scanPackages`       | `List`    |        | Additional classpath packages to scan for `HttpClientFactory` instances.
                                               This is useful when custom providers are used.
 |===
 

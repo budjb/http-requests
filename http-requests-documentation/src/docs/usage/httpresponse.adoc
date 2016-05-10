@@ -15,7 +15,7 @@ The set of response properties is smaller than that of the request, and provides
 | `contentType`    | `String`      | Content-Type of the response, if the response contains an entity.
 | `charSet`        | `String`      | Character set of the response, if the response contains an entity.
 | `headers`        | `Map`         | Response headers.
-| `allow`          | `List`        | Contains a list of `HttpMethod` objects. Typically returned from `HTTP OPTIONS`\
+| `allow`          | `List`        | Contains a list of `HttpMethod` objects. Typically returned from `HTTP OPTIONS`
                                      requests.
 |===
 
@@ -27,9 +27,9 @@ and the response's `InputStream` is closed. Subsequent calls to retrieve the res
 an unlimited amount of times. If the request properties disabled this functionality, the response's entity can be read
 only once, but it does not require the memory space to buffer the entity in the `HttpResponse` object.
 
-IMPORTANT: It is very important that that access a response entity's `InputStream` close the it when it is no
-longer needed. If it is not closed, underlying system resources may not be freed up. The `close()` method can be called
-on the `HttpResponse` to close the input stream.
+IMPORTANT: When `bufferResponseEntity` is `false`, it is very important that a response entity's `InputStream` is closed
+when it is no longer needed. If it is not closed, underlying system resources may not be freed up. The `close()` method
+can be called on the `HttpResponse` to close the input stream.
 
 The `HttpResponse` supports <<Entity Converters,entity conversion>> using the `getEntity(Class<?> type)` method. If an
 entity reader is registered that supports the requested type, it will be converted and returned.
