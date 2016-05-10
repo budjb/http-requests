@@ -5,16 +5,20 @@ of an HTTP request.
 
 Filters can be added to the `HttpClientFactory` or to the `HttpClient` directly. Any filters registered with the
 `HttpClientFactory` will automatically be assigned to any `HttpClient` instance the factory creates. For both objects,
-use the `addFilter` method to register a filter.
+the following methods are available to work with filters.
 
-=== Request Filter
+* `addFilter`
+* `removeFilter`
+* `clearFilters`
+* `getFilters`
+
+=== HttpClientRequestFilter
 
 Applications may need to intercept an HTTP request directly before the request is actually made to modify the request
 parameters. Any request filter that is registered with the `HttpClient` will be called directly before the request
 is made.
 
-A great example of a use of this filter is the built-in `BasicAuthFilter`, which is an implementation of
-`HttpClientRequestFilter`.
+A great example of a use of this filter is the built-in `BasicAuthFilter`
 
 [source,groovy]
 ----
@@ -25,28 +29,40 @@ client.addFilter(new BasicAuthFilter('username', 'password'))
 The `BasicAuthFilter` is built with the credentials for the request, and the request is updated with that information
 just before the request is actually made.
 
-NOTE: This filter is only called once before the request is made. If retries are automatically attempted, request
-filters will not be called again.
+=== HttpClientRequestEntityFilter
 
-=== Response Filter
+This filter allows applications to modify the `OutputStream` sent to the actual HTTP connection before it is sent.
+An example of a built-in filter that uses this functionality is the `GZIPFilter`, which wraps the output stream
+in a `GZIPOutputStream`.
 
-The response filter is called after the HTTP request has completed, just before the `HttpResponse` object is passed
-back to the caller. Filters that need to use this functionality should implement the `HttpClientResponseFilter`.
+=== HttpClientLifecycleFilter
 
-NOTE: This filter is only called once after the request is completed. If retries are attempted, response filters
-are called only after all retry attempts have completed.
+This filter is actually a trait that provides several integration points related to the lifecycle of the request.
+The trait provides base implementations of each available method so that only the methods a filter cares about must
+be overridden. The methods available are as follows.
 
-=== Retry Filter
+* `onRequest` is available to inspect the request properties and the `OutputStream`, but it should not change anything.
+  This filter method differs from the request filter in that the former is meant to modify the request, while this
+  filter is meant to inspect it once all changes have been made.
+* `onResponse` is similar in purpose to `onRequest`, but is called once a response has been received.
+* `onComplete` is called once the HTTP request has completed and no further retries have been requested. This is the
+  final filter opportunity before the HTTP request call returns to the caller.
+
+=== HttpClientResponseFilter
+
+The response filter is called after a response has been received from the HTTP request. This filter provides an
+opportunity to modify the `HttpResponse`.
+
+=== HttpClientResponseEntityFilter
+
+The response entity filter is called after a response has been received from the HTTP request. This filter provides an
+opportunity to modify the response's entity `InputStream`.
+
+=== HttpClientRetryFilter
 
 The retry filter allows applications to determine if a request should be retried based on some criteria. If any
 one retry filter determines that the request should be retried, the request will be submitted again until no more
 retry filters request a retry.
-
-Filters that need to use this functionality should implement the `HttpClientRetryFilter` interface.
-
-NOTE: A retry filter may request a retry based on the request, response, and number of previous retries. If one
-retry filter does not request a retry, but another one does, the filter that did not request a retry will not
-have its `onRetry` method called.
 
 A use case for this functionality is authentication schemes that provide an authentication token that can be reused
 until it expires. A retry filter might be created for this type of authentication scheme that inspects the response
@@ -57,6 +73,14 @@ authentication token.
 TIP: There is a built-in `AuthenticationTokenHeaderFilter` class that creates a framework for this type of
 authentication scheme.
 
+=== Filter Chain
+
+The graphic below illustrates the order in which the filters explained above are called during the process of making
+an HTTP request.
+
+.HTTP Request Filter Chain
+image::filters.png[HTTP Request Filter Chain, role="thumb"]
+
 === Built-In Filters
 
 The library includes several built-in filters for common use cases, including:
@@ -64,4 +88,7 @@ The library includes several built-in filters for common use cases, including:
 * `BasicAuthFilter` that provides basic authentication functionality.
 * `GZIPFilter` that compresses and encodes the request with GZIP.
 * `DeflateFilter` that compresses and encodes the request with the deflate algorithm.
+* `HttpStatusExceptionFilter` that will throw an exception specific to an HTTP status code if the server responds with
+  an HTTP status code above the 200-299 range.
+* `LoggingFilter` that captures the contents of the request and response, and logs the data to an SLF4J logger.
 * `AuthenticationTokenHeaderFilter` is an abstract filter that creates a framework for authentication token schemes.

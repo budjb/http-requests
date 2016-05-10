@@ -1,6 +1,8 @@
 = HTTP Requests Library Documentation
 Bud Byrd
 
+:imagesdir: images
+
 include::introduction.adoc[]
 
 include::installing.adoc[]
