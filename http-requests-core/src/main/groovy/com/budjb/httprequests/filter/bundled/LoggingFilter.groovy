@@ -208,7 +208,7 @@ class LoggingFilter implements HttpClientRequestEntityFilter, HttpClientResponse
         InputStream inputStream = response.getEntity()
 
         if (!inputStream.markSupported()) {
-            inputStream = new BufferedInputStream(response.getEntity())
+            inputStream = new BufferedInputStream(response.getEntity(), MAX_ENTITY_LENGTH + 1)
         }
 
         inputStream.mark(MAX_ENTITY_LENGTH + 1)

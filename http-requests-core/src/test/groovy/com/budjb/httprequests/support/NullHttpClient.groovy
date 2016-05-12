@@ -20,14 +20,43 @@ import com.budjb.httprequests.HttpContext
 import com.budjb.httprequests.HttpMethod
 import com.budjb.httprequests.HttpRequest
 import com.budjb.httprequests.HttpResponse
+import com.budjb.httprequests.StreamUtils
+import com.budjb.httprequests.converter.EntityConverterManager
+import com.budjb.httprequests.filter.HttpClientFilterManager
 
 class NullHttpClient extends AbstractHttpClient {
     /**
-     * Response object that will be returned from any HTTP request.
-     *
-     * Use this field to effectively mock a request and response.
+     * Headers of the response.
      */
-    HttpResponse response
+    Map<String, Object> headers = [:]
+
+    /**
+     * Content type of the response.
+     */
+    String contentType
+
+    /**
+     * Character set of the response.
+     */
+    String charset
+
+    /**
+     * HTTP status code of the response.
+     */
+    int status
+
+    /**
+     * Input stream of the response.
+     */
+    InputStream responseInputStream
+
+    /**
+     * Constructor.
+     */
+    NullHttpClient() {
+        filterManager = new HttpClientFilterManager()
+        converterManager = new EntityConverterManager()
+    }
 
     /**
      * Implements the logic to make an actual request with an HTTP client library.
@@ -39,6 +68,21 @@ class NullHttpClient extends AbstractHttpClient {
      */
     @Override
     protected HttpResponse doExecute(HttpContext context, InputStream inputStream) throws IOException {
+        if (inputStream) {
+            StreamUtils.readBytes(inputStream)
+        }
+
+        HttpResponse response = createResponse(context.getRequest())
+        response.setStatus(status)
+        response.setHeaders(headers)
+        if (contentType) {
+            response.setContentType(contentType)
+            response.setCharset(charset)
+        }
+        if (responseInputStream) {
+            response.setEntity(responseInputStream)
+        }
+
         return response
     }
 }
