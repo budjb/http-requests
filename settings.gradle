@@ -1,3 +1,4 @@
+include 'http-requests-bom'
 include 'http-requests-core'
 include 'http-requests-jersey1'
 include 'http-requests-jersey2'
