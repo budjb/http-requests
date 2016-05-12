@@ -216,15 +216,17 @@ class LoggingFilter implements HttpClientRequestEntityFilter, HttpClientResponse
 
         int entitySize = inputStream.read(buffer)
 
-        stringBuilder.append(new String(buffer, 0, Math.min(entitySize, MAX_ENTITY_LENGTH)))
+        if (entitySize > -1) {
+            stringBuilder.append(new String(buffer, 0, Math.min(entitySize, MAX_ENTITY_LENGTH)))
 
-        if (entitySize > MAX_ENTITY_LENGTH) {
-            stringBuilder.append(' ...more...')
+            if (entitySize > MAX_ENTITY_LENGTH) {
+                stringBuilder.append(' ...more...')
+            }
+
+            stringBuilder.append("\n")
+
+            inputStream.reset()
         }
-
-        stringBuilder.append("\n")
-
-        inputStream.reset()
 
         response.setEntity(inputStream)
     }
