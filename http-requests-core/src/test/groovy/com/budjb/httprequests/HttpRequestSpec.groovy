@@ -157,7 +157,7 @@ class HttpRequestSpec extends Specification {
         setup:
         def response = new HttpResponse()
         response.setRequest(new HttpRequest())
-        response.setEntity(new ByteArrayInputStream())
+        response.setEntity(new ByteArrayInputStream([1, 2, 3] as byte[]))
 
         expect:
         response.hasEntity()

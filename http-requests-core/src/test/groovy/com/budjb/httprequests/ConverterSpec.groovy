@@ -20,7 +20,6 @@ import com.budjb.httprequests.converter.EntityConverter
 import com.budjb.httprequests.converter.bundled.StringEntityReader
 import com.budjb.httprequests.converter.bundled.StringEntityWriter
 import com.budjb.httprequests.exception.UnsupportedConversionException
-import com.budjb.httprequests.support.NullHttpClient
 import spock.lang.Specification
 
 class ConverterSpec extends Specification {
@@ -32,7 +31,7 @@ class ConverterSpec extends Specification {
         converterManager.add(converter)
         converterManager.add(new StringEntityWriter())
 
-        HttpClient httpClient = new NullHttpClient() {}
+        HttpClient httpClient = new MockHttpClient()
         httpClient.converterManager = new EntityConverterManager(converterManager)
 
         when:

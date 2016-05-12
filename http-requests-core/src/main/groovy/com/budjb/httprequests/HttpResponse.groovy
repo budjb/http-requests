@@ -176,11 +176,28 @@ class HttpResponse implements Closeable {
      * @param inputStream
      */
     void setEntity(InputStream inputStream) {
-        entity = new EntityInputStream(inputStream)
+        entity = null
+        entityBuffer = null
+
+        if (inputStream == null) {
+            return
+        }
+
+        PushbackInputStream pushBackInputStream = new PushbackInputStream(inputStream)
+        int read = pushBackInputStream.read()
+        if (read == -1) {
+            pushBackInputStream.close()
+            return
+        }
+
+        pushBackInputStream.unread(read)
 
         if (!request || request.isBufferResponseEntity()) {
-            entityBuffer = StreamUtils.readBytes(entity)
-            entity.close()
+            entityBuffer = StreamUtils.readBytes(pushBackInputStream)
+            pushBackInputStream.close()
+        }
+        else {
+            entity = new EntityInputStream(pushBackInputStream)
         }
     }
 
@@ -224,7 +241,9 @@ class HttpResponse implements Closeable {
      */
     @Override
     void close() throws IOException {
-        entity?.close()
+        if (entity != null) {
+            entity.close()
+        }
     }
 
     /**
@@ -233,7 +252,7 @@ class HttpResponse implements Closeable {
      * @return Whether the response contains an entity.
      */
     boolean hasEntity() {
-        return entity != null
+        return entity != null || entityBuffer != null
     }
 
     /**

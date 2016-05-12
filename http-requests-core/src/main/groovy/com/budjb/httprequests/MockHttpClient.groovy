@@ -13,18 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.budjb.httprequests.support
+package com.budjb.httprequests
 
-import com.budjb.httprequests.AbstractHttpClient
-import com.budjb.httprequests.HttpContext
-import com.budjb.httprequests.HttpMethod
-import com.budjb.httprequests.HttpRequest
-import com.budjb.httprequests.HttpResponse
-import com.budjb.httprequests.StreamUtils
 import com.budjb.httprequests.converter.EntityConverterManager
 import com.budjb.httprequests.filter.HttpClientFilterManager
 
-class NullHttpClient extends AbstractHttpClient {
+class MockHttpClient extends AbstractHttpClient {
     /**
      * Headers of the response.
      */
@@ -51,9 +45,14 @@ class NullHttpClient extends AbstractHttpClient {
     InputStream responseInputStream
 
     /**
+     * A buffer containing the contents of the request input stream.
+     */
+    byte[] requestBuffer
+
+    /**
      * Constructor.
      */
-    NullHttpClient() {
+    MockHttpClient() {
         filterManager = new HttpClientFilterManager()
         converterManager = new EntityConverterManager()
     }
@@ -69,7 +68,11 @@ class NullHttpClient extends AbstractHttpClient {
     @Override
     protected HttpResponse doExecute(HttpContext context, InputStream inputStream) throws IOException {
         if (inputStream) {
-            StreamUtils.readBytes(inputStream)
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream()
+
+            transmit(inputStream, filterOutputStream(context, outputStream))
+
+            requestBuffer = outputStream.toByteArray()
         }
 
         HttpResponse response = createResponse(context.getRequest())
@@ -84,5 +87,22 @@ class NullHttpClient extends AbstractHttpClient {
         }
 
         return response
+    }
+
+    /**
+     * Converts the entity input stream to an output stream.
+     *
+     * @param inputStream
+     * @param outputStream
+     */
+    private static void transmit(InputStream inputStream, OutputStream outputStream) {
+        int read
+        byte[] buffer = new byte[8192]
+
+        while ((read = inputStream.read(buffer, 0, 8192)) != -1) {
+            outputStream.write(buffer, 0, read)
+        }
+
+        inputStream.close()
     }
 }

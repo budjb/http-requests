@@ -2,7 +2,6 @@ package com.budjb.httprequests
 
 import com.budjb.httprequests.converter.bundled.StringEntityReader
 import com.budjb.httprequests.filter.bundled.LoggingFilter
-import com.budjb.httprequests.support.NullHttpClient
 import org.slf4j.Logger
 import spock.lang.Specification
 
@@ -11,7 +10,7 @@ class LoggingFilterSpec extends Specification {
     Logger log
     HttpResponse httpResponse
     HttpContext httpContext
-    NullHttpClient client
+    MockHttpClient client
 
     def setup() {
         httpResponse = new HttpResponse()
@@ -24,7 +23,7 @@ class LoggingFilterSpec extends Specification {
         filter = new LoggingFilter()
         filter.setLogger(log)
 
-        client = new NullHttpClient()
+        client = new MockHttpClient()
         client.addFilter(filter)
         client.addEntityConverter(new StringEntityReader())
     }
@@ -75,7 +74,8 @@ class LoggingFilterSpec extends Specification {
 
     def 'When a response has a non-empty entity that is not buffered, the entity is logged but the response input stream is not closed'() {
         setup:
-        InputStream responseInputStream = new EntityInputStream(new ByteArrayInputStream(('s' * 11000).bytes))
+        String content = '0123456789' * 1100
+        InputStream responseInputStream = new EntityInputStream(new ByteArrayInputStream(content.bytes))
         client.responseInputStream = responseInputStream
         client.status = 200
 
@@ -89,9 +89,10 @@ class LoggingFilterSpec extends Specification {
         response.status == 200
         !responseInputStream.isClosed()
         response.getEntity().getClass() == EntityInputStream
-        response.getEntity().source.getClass() == BufferedInputStream
-        response.getEntity().source.count == 10001
-        response.getEntity(String) == 's' * 11000
+        response.getEntity().source.getClass() == PushbackInputStream
+        response.getEntity().source.in.getClass() == BufferedInputStream
+        response.getEntity().source.in.count == 10001
+        response.getEntity(String) == content
         response.entityBuffer == null
     }
 }

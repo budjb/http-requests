@@ -82,10 +82,12 @@ class HttpComponentsHttpClient extends AbstractHttpClient {
             response.addHeader(it.getName(), it.getValue())
         }
 
-        InputStream entity = getEntity(clientResponse)
+        HttpEntity entity = clientResponse.getEntity()
         if (entity) {
-            response.setEntity(entity)
-            response.setContentType(clientResponse.getEntity().getContentType()?.getValue())
+            response.setEntity(entity.getContent())
+            if (entity.getContentType()) {
+                response.setContentType(entity.getContentType().getValue())
+            }
         }
 
         return response
@@ -149,26 +151,5 @@ class HttpComponentsHttpClient extends AbstractHttpClient {
             default:
                 throw new IllegalArgumentException("HTTP method ${method.toString()} is unsupported")
         }
-    }
-
-    /**
-     * Returns the entity of the response, if there is one. The method accounts for empty entities.
-     *
-     * @param response Response of the request.
-     * @return The entity of the response, if there is one.
-     */
-    protected InputStream getEntity(CloseableHttpResponse response) {
-        if (!response.getEntity()) {
-            return null
-        }
-
-        PushbackInputStream pushbackInputStream = new PushbackInputStream(response.getEntity().getContent())
-        int read = pushbackInputStream.read()
-        if (read != -1) {
-            pushbackInputStream.unread(read)
-            return pushbackInputStream
-        }
-
-        return null
     }
 }
