@@ -194,7 +194,7 @@ class HttpResponse implements Closeable {
      * @return The response entity.
      */
     InputStream getEntity() {
-        if (entityBuffer) {
+        if (entityBuffer != null) {
             return new EntityInputStream(new ByteArrayInputStream(entityBuffer))
         }
         return entity
