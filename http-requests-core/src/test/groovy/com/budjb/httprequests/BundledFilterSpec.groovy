@@ -9,7 +9,6 @@ import org.slf4j.Logger
 import spock.lang.Specification
 
 class BundledFilterSpec extends Specification {
-    Logger log
     HttpResponse httpResponse
     HttpContext httpContext
     MockHttpClient client
@@ -18,9 +17,6 @@ class BundledFilterSpec extends Specification {
         httpResponse = new HttpResponse()
         httpContext = new HttpContext()
         httpContext.response = httpResponse
-
-        log = Mock(Logger)
-        log.isDebugEnabled() >> true
 
         client = new MockHttpClient()
         client.addEntityConverter(new StringEntityWriter())

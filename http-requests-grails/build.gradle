@@ -56,7 +56,7 @@ dependencies {
 
 grailsPublish {
     githubSlug = 'budjb/http-requests'
-    repo = 'grails-plugins'
+    repo = 'maven'
     license {
         name = 'Apache-2.0'
     }

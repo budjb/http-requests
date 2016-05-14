@@ -28,7 +28,7 @@ import com.budjb.httprequests.filter.HttpClientRetryFilter
  *
  * The authentication token and optionally its timeout are stored in the filter instance. The filter
  * will automatically re-authenticate when the existing token has either timed out (if a timeout is known)
- * or an <code>HTTP 401</code> is received from the first attempt at the request.
+ * or first attempt at the request has failed authentication.
  */
 abstract class AuthenticationTokenHeaderFilter implements HttpClientRetryFilter, HttpClientRequestFilter {
     /**
@@ -47,14 +47,14 @@ abstract class AuthenticationTokenHeaderFilter implements HttpClientRetryFilter,
      * This method, upon successful authentication, should update the {@link #authenticationToken}
      * property, and optionally the {@link #timeout} property if applicable.
      */
-    abstract void authenticate()
+    protected abstract void authenticate()
 
     /**
      * Retrieve the header name that should contain the authentication token.
      *
      * @return The header name that should contain the authentication token.
      */
-    abstract String getAuthenticationTokenHeader()
+    protected abstract String getAuthenticationTokenHeader()
 
     /**
      * Called once the request has been completed. This method should return <code>true</code> if the request
@@ -67,8 +67,8 @@ abstract class AuthenticationTokenHeaderFilter implements HttpClientRetryFilter,
      */
     @Override
     boolean onRetry(HttpContext context) {
-        if (context.getRetries() == 0 && context.getResponse().getStatus() == 401) {
-            authenticate()
+        if (context.getRetries() == 0 && hasAuthenticationFailed(context)) {
+            reset()
             return true
         }
         return false
@@ -85,5 +85,23 @@ abstract class AuthenticationTokenHeaderFilter implements HttpClientRetryFilter,
             authenticate()
         }
         context.getRequest().setHeader(getAuthenticationTokenHeader(), getAuthenticationToken())
+    }
+
+    /**
+     * Determines whether the request has failed authentication.
+     *
+     * @param context HTTP request context.
+     * @return Whether the request has failed authentication.
+     */
+    protected boolean hasAuthenticationFailed(HttpContext context) {
+        return context.getResponse().getStatus() == 401
+    }
+
+    /**
+     * Resets the authentication filter by removing the authentication token and timeout properties.
+     */
+    void reset() {
+        setAuthenticationToken(null)
+        setTimeout(null)
     }
 }

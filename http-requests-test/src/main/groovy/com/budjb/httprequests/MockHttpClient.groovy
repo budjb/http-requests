@@ -50,6 +50,11 @@ class MockHttpClient extends AbstractHttpClient {
     byte[] requestBuffer
 
     /**
+     * HTTP request context.
+     */
+    HttpContext httpContext
+
+    /**
      * Constructor.
      */
     MockHttpClient() {
@@ -67,6 +72,8 @@ class MockHttpClient extends AbstractHttpClient {
      */
     @Override
     protected HttpResponse doExecute(HttpContext context, InputStream inputStream) throws IOException {
+        httpContext = context
+
         if (inputStream) {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream()
 
