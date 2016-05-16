@@ -80,6 +80,35 @@ class HttpResponse implements Closeable {
     }
 
     /**
+     * Sets the content type of the response.
+     *
+     * @param contentType Content type of the response.
+     */
+    void setContentType(String contentType) {
+        if (!contentType) {
+            return
+        }
+
+        int index = contentType.indexOf(';')
+
+        if (index == -1) {
+            this.contentType = contentType
+            return
+        }
+
+        this.contentType = contentType.substring(0, index)
+        if (index + 1 < contentType.size()) {
+            String charset = contentType.substring(index + 1).tokenize(';').find { it.toLowerCase().startsWith('charset') }
+            if (charset) {
+                List<String> tokens = charset.tokenize('=')
+                if (tokens.size() == 2) {
+                    setCharset(tokens[1])
+                }
+            }
+        }
+    }
+
+    /**
      * Sets the response headers from the given map.
      *
      * @param headers Response headers of the request.

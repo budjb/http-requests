@@ -90,20 +90,20 @@ class HttpResponseSpec extends Specification {
 
         when:
         response.headers = [
-            foo: ['bar', 'baz'],
-            hi: ['there'],
+            foo : ['bar', 'baz'],
+            hi  : ['there'],
             peek: 'boo'
         ]
 
         then:
         response.getHeaders() == [
-            foo: ['bar', 'baz'],
-            hi: ['there'],
+            foo : ['bar', 'baz'],
+            hi  : ['there'],
             peek: ['boo']
         ]
         response.getFlattenedHeaders() == [
-            foo: ['bar', 'baz'],
-            hi: 'there',
+            foo : ['bar', 'baz'],
+            hi  : 'there',
             peek: 'boo'
         ]
         response.getHeaders('foo') == ['bar', 'baz']
@@ -121,5 +121,30 @@ class HttpResponseSpec extends Specification {
 
         expect:
         response.getAllow() == [HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT]
+    }
+
+    @Unroll
+    def 'When the content-type is #fullContentType, the content type and character set are parsed properly'() {
+        setup:
+        HttpResponse response = new HttpResponse()
+
+        when:
+        response.setContentType(fullContentType)
+
+        then:
+        response.getContentType() == contentType
+        response.getCharset() == charset
+
+        where:
+        fullContentType                   | contentType  | charset
+        null                              | null         | 'UTF-8'
+        ''                                | null         | 'UTF-8'
+        'text/plain'                      | 'text/plain' | 'UTF-8'
+        'text/plain;'                     | 'text/plain' | 'UTF-8'
+        'text/plain;charset=foobar'       | 'text/plain' | 'foobar'
+        'text/plain;q=0.9;charset=foobar' | 'text/plain' | 'foobar'
+        'text/plain;q=0.9'                | 'text/plain' | 'UTF-8'
+        'text/plain;charset'              | 'text/plain' | 'UTF-8'
+        'text/plain;charset='             | 'text/plain' | 'UTF-8'
     }
 }
