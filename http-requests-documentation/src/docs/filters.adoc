@@ -113,9 +113,20 @@ provided by concrete implementations of the filter.
 
 ==== LoggingFilter
 
-The logging filter captures the contents of the request and the response, and logs the data to an SLF4j logger. The
-filter can be configured with a logger name to use, otherwise the fully-qualified class name of the logging filter
-will be used.
+The logging filter captures the contents of the request and the response and logs it. The `LoggingFilter` itself is an
+abstract class, and there are a couple bundled implementations.
+
+===== ConsoleLoggingFilter
+
+The `ConsoleLoggingFilter` is a concrete implementation of `LoggingFilter` that prints the contents of the log to the
+Java console.
+
+===== Slf4jLoggingFilter
+
+The `Slf4jLoggingFilter` is a concrete implementation of `LoggingFilter` that logs the contents of the log to an SLF4J
+logger. The filter can be configured with a logger name to use, otherwise the fully-qualified class name of the logging
+filter will be used. By default, the log is configured to log at the `TRACE` level. The filter can be configured to log
+at a different level if desired.
 
 ==== HttpStatusExceptionFilter
 
