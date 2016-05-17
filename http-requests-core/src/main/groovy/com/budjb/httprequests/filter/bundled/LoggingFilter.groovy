@@ -7,26 +7,13 @@ import com.budjb.httprequests.HttpResponse
 import com.budjb.httprequests.filter.HttpClientLifecycleFilter
 import com.budjb.httprequests.filter.HttpClientRequestEntityFilter
 import com.budjb.httprequests.filter.HttpClientResponseEntityFilter
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
 /**
- * A filter that captures both the request and response and logs both to a {@link Logger}.
+ * A filter that captures both the request and response and logs it.
  *
- * This class uses parts of the code that exists in Jersey Client 1.x's <code>LoggingFilter</code> class
+ * This class is based on Jersey Client 1.x's <code>LoggingFilter</code>.
  */
-class LoggingFilter implements HttpClientRequestEntityFilter, HttpClientResponseEntityFilter, HttpClientLifecycleFilter {
-    /**
-     * Logger level.
-     */
-    static enum LoggerLevel {
-        TRACE,
-        DEBUG,
-        INFO,
-        WARN,
-        ERROR
-    }
-
+abstract class LoggingFilter implements HttpClientRequestEntityFilter, HttpClientResponseEntityFilter, HttpClientLifecycleFilter {
     /**
      * The maximum number of bytes to logger from request and response entities.
      */
@@ -41,37 +28,6 @@ class LoggingFilter implements HttpClientRequestEntityFilter, HttpClientResponse
      * Name of the {@link LoggingOutputStream} instance in the {@link HttpContext}.
      */
     private static final String OUTPUT_STREAM_NAME = 'com.budjb.httprequests.filter.logging.LoggingOutputStream'
-
-    /**
-     * Logger.
-     */
-    Logger logger
-
-    /**
-     * Log level to log with.
-     */
-    LoggerLevel loggerLevel
-
-    /**
-     * Constructor.
-     */
-    LoggingFilter() {
-        setLoggerName(getClass().getName(), LoggerLevel.DEBUG)
-    }
-
-    /**
-     * Sets the logger name.
-     *
-     * @param name Name of the logger.
-     */
-    void setLoggerName(String name, LoggerLevel loggerLevel) {
-        if (name) {
-            logger = LoggerFactory.getLogger(name)
-        }
-        if (loggerLevel) {
-            this.loggerLevel = loggerLevel
-        }
-    }
 
     /**
      * Filters a request entity's {@link OutputStream}
@@ -111,9 +67,7 @@ class LoggingFilter implements HttpClientRequestEntityFilter, HttpClientResponse
 
         logRequestEntity(context, stringBuilder)
 
-        log("Sending HTTP client request with the following data:\n${stringBuilder.toString()}")
-
-        stringBuilder = new StringBuilder()
+        stringBuilder.append('\n')
 
         logResponseInformation(context, stringBuilder)
 
@@ -121,7 +75,7 @@ class LoggingFilter implements HttpClientRequestEntityFilter, HttpClientResponse
             logResponseEntity(context, stringBuilder)
         }
 
-        log("Received HTTP server response with the following data:\n${stringBuilder.toString()}")
+        log(stringBuilder.toString())
     }
 
     /**
@@ -134,6 +88,7 @@ class LoggingFilter implements HttpClientRequestEntityFilter, HttpClientResponse
         HttpRequest request = context.getRequest()
         HttpMethod method = context.getMethod()
 
+        stringBuilder.append('Sending HTTP client request with the following data:\n')
         stringBuilder.append("> ${method.toString()} ${new URI(request.getUri()).toASCIIString()}\n")
 
         if (request.getContentType()) {
@@ -182,6 +137,8 @@ class LoggingFilter implements HttpClientRequestEntityFilter, HttpClientResponse
      */
     protected void logResponseInformation(HttpContext context, StringBuilder stringBuilder) {
         HttpResponse response = context.getResponse()
+
+        stringBuilder.append('Received HTTP server response with the following data:\n')
         stringBuilder.append("< ${response.getStatus()}\n")
 
         response.getHeaders().each { key, values ->
@@ -244,44 +201,6 @@ class LoggingFilter implements HttpClientRequestEntityFilter, HttpClientResponse
     }
 
     /**
-     * Logs the given data to the {@link #logger} with the configured {@link #loggerLevel}.
-     *
-     * @param data Data to log.
-     */
-    protected void log(String data) {
-        switch(loggerLevel) {
-            case LoggerLevel.TRACE:
-                if (logger.isTraceEnabled()) {
-                    logger.trace(data)
-                }
-                break
-
-            case LoggerLevel.DEBUG:
-                if (logger.isDebugEnabled()) {
-                    logger.debug(data)
-                }
-                break
-
-            case LoggerLevel.INFO:
-                if (logger.isInfoEnabled()) {
-                    logger.info(data)
-                }
-                break
-
-            case LoggerLevel.WARN:
-                if (logger.isWarnEnabled()) {
-                    logger.warn(data)
-                }
-                break
-
-            case LoggerLevel.ERROR:
-                if (logger.isErrorEnabled()) {
-                    logger.error(data)
-                }
-        }
-    }
-
-    /**
      * An {@link OutputStream} that wraps an actual stream and writes to both that stream
      * and another local stream so that the request can be captured.
      */
@@ -330,4 +249,11 @@ class LoggingFilter implements HttpClientRequestEntityFilter, HttpClientResponse
             }
         }
     }
+
+    /**
+     * Writes the contents of the conversation.
+     *
+     * @param content Contents of the conversation.
+     */
+    protected abstract void log(String content)
 }

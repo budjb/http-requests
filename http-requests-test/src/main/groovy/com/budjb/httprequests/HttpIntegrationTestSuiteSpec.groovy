@@ -21,6 +21,7 @@ import com.budjb.httprequests.filter.bundled.BasicAuthFilter
 import com.budjb.httprequests.filter.bundled.GZIPFilter
 import com.budjb.httprequests.filter.bundled.HttpStatusExceptionFilter
 import com.budjb.httprequests.filter.bundled.LoggingFilter
+import com.budjb.httprequests.filter.bundled.Slf4jLoggingFilter
 import spock.lang.Ignore
 import spock.lang.Unroll
 
@@ -665,7 +666,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         String input = 'åäö'
 
         when:
-        def response = httpClientFactory.createHttpClient().addFilter(new LoggingFilter()).post(input) {
+        def response = httpClientFactory.createHttpClient().addFilter(new Slf4jLoggingFilter()).post(input) {
             uri = "${baseUrl}/acceptContentType"
             accept = "text/plain;charset=${charset}"
         }

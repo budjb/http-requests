@@ -1,12 +1,14 @@
 package com.budjb.httprequests
 
 import com.budjb.httprequests.converter.bundled.StringEntityReader
+import com.budjb.httprequests.filter.bundled.ConsoleLoggingFilter
 import com.budjb.httprequests.filter.bundled.LoggingFilter
+import com.budjb.httprequests.filter.bundled.Slf4jLoggingFilter
 import org.slf4j.Logger
 import spock.lang.Specification
 
-class LoggingFilterSpec extends Specification {
-    LoggingFilter filter
+class Slf4jLoggingFilterSpec extends Specification {
+    Slf4jLoggingFilter filter
     Logger log
     HttpResponse httpResponse
     HttpContext httpContext
@@ -18,9 +20,10 @@ class LoggingFilterSpec extends Specification {
         httpContext.response = httpResponse
 
         log = Mock(Logger)
-        log.isDebugEnabled() >> true
+        log.isInfoEnabled() >> true
+        log.isTraceEnabled() >> true
 
-        filter = new LoggingFilter()
+        filter = new Slf4jLoggingFilter()
         filter.setLogger(log)
 
         client = new MockHttpClient()
@@ -38,8 +41,8 @@ class LoggingFilterSpec extends Specification {
 
         then:
         response.status == 200
-        1 * log.debug('Sending HTTP client request with the following data:\n> GET https://example.com\n')
-        1 * log.debug('Received HTTP server response with the following data:\n< 200\n')
+        1 * log.trace('Sending HTTP client request with the following data:\n> GET https://example.com\n\n' +
+            'Received HTTP server response with the following data:\n< 200\n')
     }
 
     def 'When a response has an empty entity, the entity is not logged'() {
@@ -52,8 +55,8 @@ class LoggingFilterSpec extends Specification {
 
         then:
         response.status == 200
-        1 * log.debug('Sending HTTP client request with the following data:\n> GET https://example.com\n')
-        1 * log.debug('Received HTTP server response with the following data:\n< 200\n')
+        1 * log.trace('Sending HTTP client request with the following data:\n> GET https://example.com\n\n' +
+            'Received HTTP server response with the following data:\n< 200\n')
     }
 
     def 'When a response has a non-empty entity, the entity is logged'() {
@@ -68,8 +71,23 @@ class LoggingFilterSpec extends Specification {
         then:
         response.status == 200
         responseInputStream.isClosed()
-        1 * log.debug('Sending HTTP client request with the following data:\n> GET https://example.com\n')
-        1 * log.debug('Received HTTP server response with the following data:\n< 200\nresponse stuff\n')
+        1 * log.trace('Sending HTTP client request with the following data:\n> GET https://example.com\n\n' +
+            'Received HTTP server response with the following data:\n< 200\nresponse stuff\n')
+    }
+
+    def 'When the logger is configured for level INFO, the content is logged appropriately'() {
+        setup:
+        client.responseInputStream = new ByteArrayInputStream([] as byte[])
+        client.status = 200
+        filter.setLoggerLevel(Slf4jLoggingFilter.LoggerLevel.INFO)
+
+        when:
+        def response = client.get { uri = "https://example.com" }
+
+        then:
+        response.status == 200
+        1 * log.info('Sending HTTP client request with the following data:\n> GET https://example.com\n\n' +
+            'Received HTTP server response with the following data:\n< 200\n')
     }
 
     def 'When a response has a non-empty entity that is not buffered, the entity is logged but the response input stream is not closed'() {
