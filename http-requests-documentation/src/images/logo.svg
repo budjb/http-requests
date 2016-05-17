@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0" y="0" width="600" height="600" viewBox="0, 0, 600, 600">
+  <g id="Background">
+    <rect x="0" y="0" width="600" height="600" fill="#FFFFFF"/>
+  </g>
+  <defs>
+    <linearGradient id="Gradient_1" gradientUnits="userSpaceOnUse" x1="241.36" y1="131.736" x2="359.64" y2="400.264">
+      <stop offset="0" stop-color="#0093FF"/>
+      <stop offset="1" stop-color="#000542" stop-opacity="0.959"/>
+    </linearGradient>
+  </defs>
+  <g id="Layer_1">
+    <g>
+      <path d="M84,127 L517,127 C523.627,127 529,132.373 529,139 L529,393 C529,399.627 523.627,405 517,405 L84,405 C77.373,405 72,399.627 72,393 L72,139 C72,132.373 77.373,127 84,127 z" fill="url(#Gradient_1)"/>
+      <path d="M84,127 L517,127 C523.627,127 529,132.373 529,139 L529,393 C529,399.627 523.627,405 517,405 L84,405 C77.373,405 72,399.627 72,393 L72,139 C72,132.373 77.373,127 84,127 z" fill-opacity="0" stroke="#000000" stroke-width="16"/>
+    </g>
+    <g>
+      <path d="M255.5,405 L345.5,405 L345.5,474 L255.5,474 L255.5,405 z" fill="#000000"/>
+      <path d="M255.5,405 L345.5,405 L345.5,474 L255.5,474 L255.5,405 z" fill-opacity="0" stroke="#000000" stroke-width="12"/>
+    </g>
+    <path d="M145.5,474 L455.5,474" fill-opacity="0" stroke="#000000" stroke-width="16"/>
+    <text transform="matrix(1, 0, 0, 1, 300, 281)">
+      <tspan x="-180.725" y="77" font-family="ArialMT" font-size="250" fill="#FFFFFF">&lt;/&gt;</tspan>
+    </text>
+  </g>
+</svg>

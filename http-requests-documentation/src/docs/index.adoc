@@ -1,7 +1,8 @@
 = HTTP Requests Library Documentation
 Bud Byrd
-
+2016-05-17
 :imagesdir: images
+:title-logo-image: logo.png
 
 include::introduction.adoc[]
 

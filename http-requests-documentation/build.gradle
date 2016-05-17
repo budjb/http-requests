@@ -5,6 +5,7 @@ asciidoctor {
     sources {
         include 'index.adoc'
     }
+    backends 'html5', 'pdf'
     attributes 'experimental': 'true',
         'copyright': 'Apache License, Version 2.0',
         'toc': 'left',
