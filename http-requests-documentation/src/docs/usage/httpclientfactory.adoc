@@ -16,3 +16,15 @@ TIP: The `HttpClientFactory` can be registered as a singleton Spring bean when a
 The factory can then be injected as a dependency into other managed Spring beans, and the provider module can be
 swapped out transparently and without the need to modify dependent objects. The *Grails 3.x* plugin library does this
 work automatically for *Grails 3.x* applications.
+
+Each provider module declares its own `HttpClientFactory`, which can be looked up in the following table.
+
+.HttpClientFactory Classes By Provider
+[grid="rows"]
+|===
+| Provider                            | HttpClientFactory Class |
+
+| http-requests-jersey1               | `com.budjb.httprequests.jersey1.JerseyHttpClientFactory` |
+| http-requests-jersey2               | `com.budjb.httprequests.jersey2.JerseyHttpClientFactory` |
+| http-requests-httpcomponents-client | `com.budjb.httprequests.httpcomponents.client.HttpComponentsClientFactory` |
+|===
