@@ -15,15 +15,14 @@
  */
 package com.budjb.httprequests
 
-import com.budjb.httprequests.exception.HttpFoundException
 import com.budjb.httprequests.exception.HttpInternalServerErrorException
-import com.budjb.httprequests.exception.HttpNotAcceptableException
-import com.budjb.httprequests.exception.HttpUnauthorizedException
 import com.budjb.httprequests.filter.HttpClientRetryFilter
 import com.budjb.httprequests.filter.bundled.BasicAuthFilter
 import com.budjb.httprequests.filter.bundled.GZIPFilter
 import com.budjb.httprequests.filter.bundled.HttpStatusExceptionFilter
+import com.budjb.httprequests.filter.bundled.LoggingFilter
 import spock.lang.Ignore
+import spock.lang.Unroll
 
 import java.util.zip.GZIPInputStream
 
@@ -658,5 +657,27 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         then:
         notThrown IOException
         response.getEntity(String) == 'The quick brown fox jumps over the lazy dog.'
+    }
+
+    @Unroll
+    def 'When an accepted character set #charset is requested, the proper output is received and parsed'() {
+        setup:
+        String input = 'åäö'
+
+        when:
+        def response = httpClientFactory.createHttpClient().addFilter(new LoggingFilter()).post(input) {
+            uri = "${baseUrl}/acceptContentType"
+            accept = "text/plain;charset=${charset}"
+        }
+
+        then:
+        response.contentType == 'text/plain'
+        response.charset == charset
+        response.getEntity(String) == output
+
+        where:
+        charset  | output
+        'euc-jp' | '奪辰旦'
+        'UTF-8'  | 'åäö'
     }
 }

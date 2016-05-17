@@ -46,6 +46,7 @@ class HttpResponseSpec extends Specification {
         HttpResponse response = new HttpResponse()
         response.converterManager = converterManager
         response.entity = new ByteArrayInputStream('åäö'.getBytes())
+        response.contentType = 'text/plain'
 
         when:
         String entity = response.getEntity(String)
@@ -53,35 +54,6 @@ class HttpResponseSpec extends Specification {
         then:
         response.charset == 'UTF-8'
         entity == 'åäö'
-    }
-
-    @Unroll
-    def 'When a #type charset is assigned, charset is not actually assigned'() {
-        setup:
-        HttpResponse response = new HttpResponse()
-
-        when:
-        response.charset = charset
-
-        then:
-        response.charset == 'UTF-8'
-
-        where:
-        type    | charset
-        'null'  | null
-        'blank' | ''
-    }
-
-    def 'When a null character set is assigned, the existing value is not overwritten'() {
-        setup:
-        def response = new HttpResponse()
-        response.setCharset('ISO-8859-1')
-
-        when:
-        response.setCharset(null)
-
-        then:
-        response.charset == 'ISO-8859-1'
     }
 
     def 'Verify header parsing and retrieval'() {
@@ -137,8 +109,8 @@ class HttpResponseSpec extends Specification {
 
         where:
         fullContentType                   | contentType  | charset
-        null                              | null         | 'UTF-8'
-        ''                                | null         | 'UTF-8'
+        null                              | null         | null
+        ''                                | null         | null
         'text/plain'                      | 'text/plain' | 'UTF-8'
         'text/plain;'                     | 'text/plain' | 'UTF-8'
         'text/plain;charset=foobar'       | 'text/plain' | 'foobar'

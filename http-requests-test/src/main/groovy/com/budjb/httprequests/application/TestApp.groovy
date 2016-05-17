@@ -20,6 +20,7 @@ import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.RequestEntity
 import org.springframework.http.ResponseEntity
 import org.springframework.util.MultiValueMap
@@ -157,6 +158,16 @@ class TestApp {
     @RequestMapping(value = '/printContentType', produces = 'text/plain')
     String printContentType(@RequestHeader(value = 'Content-Type') String contentType) {
         return contentType
+    }
+
+    @RequestMapping(value = '/acceptContentType', produces = 'text/plain')
+    ResponseEntity<String> acceptContentType(@RequestHeader(value = 'Accept') MediaType accept, @RequestBody String input, HttpServletResponse response) {
+        String charset = accept.getCharSet()
+
+        HttpHeaders headers = new HttpHeaders()
+        headers.add('Content-Type', accept.toString())
+
+        return new ResponseEntity<String>(new String(input.getBytes(), charset), headers, HttpStatus.OK)
     }
 
     @RequestMapping(value = '/echo')

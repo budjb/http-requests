@@ -141,9 +141,7 @@ class JerseyHttpClient extends AbstractHttpClient {
         response.setHeaders(clientResponse.getHeaders())
 
         if (clientResponse.getType()) {
-            MediaType type = clientResponse.getType()
-            response.setContentType(type.toString())
-            response.setCharset(type.getParameters()?.get('charset'))
+            response.setContentType(clientResponse.getType().toString())
         }
 
         if (clientResponse.hasEntity()) {

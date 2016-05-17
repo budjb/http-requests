@@ -23,6 +23,11 @@ import com.budjb.httprequests.exception.UnsupportedConversionException
  */
 class HttpResponse implements Closeable {
     /**
+     * Default character set of the response.
+     */
+    private static final DEFAULT_CHARSET = 'UTF-8'
+
+    /**
      * The HTTP status of the response.
      */
     int status
@@ -45,7 +50,7 @@ class HttpResponse implements Closeable {
     /**
      * The character set of the response.
      */
-    String charset = 'UTF-8'
+    protected String charset
 
     /**
      * Response entity.
@@ -69,43 +74,41 @@ class HttpResponse implements Closeable {
     private byte[] entityBuffer
 
     /**
-     * Sets the character set of the response.
-     *
-     * @param charset Character set of the response.
-     */
-    void setCharset(String charset) {
-        if (charset) {
-            this.charset = charset
-        }
-    }
-
-    /**
      * Sets the content type of the response.
      *
      * @param contentType Content type of the response.
      */
     void setContentType(String contentType) {
         if (!contentType) {
+            this.contentType = null
+            this.charset = null
             return
         }
 
-        int index = contentType.indexOf(';')
+        List<String> parts = contentType.tokenize(';')
 
-        if (index == -1) {
-            this.contentType = contentType
-            return
+        this.contentType = parts.remove(0)
+
+        TreeMap<String, String> parameters = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER)
+        for (String part : parts) {
+            List<String> paramParts = part.tokenize('=').collect { it.trim() }
+
+            String key = paramParts[0]
+            String value = paramParts.size() > 1 ? paramParts[1] : null
+
+            parameters.put(key, value)
         }
 
-        this.contentType = contentType.substring(0, index)
-        if (index + 1 < contentType.size()) {
-            String charset = contentType.substring(index + 1).tokenize(';').find { it.toLowerCase().startsWith('charset') }
-            if (charset) {
-                List<String> tokens = charset.tokenize('=')
-                if (tokens.size() == 2) {
-                    setCharset(tokens[1])
-                }
+        String charset = DEFAULT_CHARSET
+
+        if (parameters.containsKey('charset')) {
+            String cs = parameters.get('charset')
+            if (cs) {
+                charset = cs
             }
         }
+
+        this.charset = charset
     }
 
     /**
@@ -304,7 +307,7 @@ class HttpResponse implements Closeable {
      */
     String getContentType() {
         if (!contentType && headers.containsKey('Content-Type')) {
-            contentType = headers.get('Content-Type').first()
+            setContentType(headers.get('Content-Type').first())
         }
         return contentType
     }
@@ -315,24 +318,9 @@ class HttpResponse implements Closeable {
      * @return Character set of the response.
      */
     String getCharset() {
-        if (!charset && headers.containsKey('Content-Type')) {
-            String contentType = headers.get('Content-Type').first()
-
-            List<String> parameters = contentType.split(';')
-
-            if (parameters.size() > 1) {
-                parameters.remove(0)
-
-                parameters.each {
-                    List<String> parts = it.split(/\s*=\s*/)
-
-                    if (parts.size() == 2 && parts[0].equalsIgnoreCase('charset')) {
-                        charset = parts[1]
-                    }
-                }
-            }
+        if (!charset && !contentType && headers.containsKey('Content-Type')) {
+            setContentType(headers.get('Content-Type').first())
         }
-
         return charset
     }
 
