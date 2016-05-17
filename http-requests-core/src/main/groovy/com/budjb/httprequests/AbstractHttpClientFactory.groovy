@@ -15,15 +15,9 @@
  */
 package com.budjb.httprequests
 
-import com.budjb.httprequests.converter.*
-import com.budjb.httprequests.converter.bundled.ByteArrayEntityReader
-import com.budjb.httprequests.converter.bundled.ByteArrayEntityWriter
-import com.budjb.httprequests.converter.bundled.FormDataEntityWriter
-import com.budjb.httprequests.converter.bundled.GStringEntityWriter
-import com.budjb.httprequests.converter.bundled.JsonEntityReader
-import com.budjb.httprequests.converter.bundled.JsonEntityWriter
-import com.budjb.httprequests.converter.bundled.StringEntityReader
-import com.budjb.httprequests.converter.bundled.StringEntityWriter
+import com.budjb.httprequests.converter.EntityConverter
+import com.budjb.httprequests.converter.EntityConverterManager
+import com.budjb.httprequests.converter.bundled.*
 import com.budjb.httprequests.filter.HttpClientFilter
 import com.budjb.httprequests.filter.HttpClientFilterManager
 
@@ -76,6 +70,7 @@ abstract class AbstractHttpClientFactory implements HttpClientFactory {
         addEntityConverter(new JsonEntityReader())
         addEntityConverter(new JsonEntityWriter())
         addEntityConverter(new FormDataEntityWriter())
+        addEntityConverter(new XmlSlurperEntityReader())
     }
 
     /**

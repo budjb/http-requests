@@ -20,8 +20,8 @@ import com.budjb.httprequests.filter.HttpClientRetryFilter
 import com.budjb.httprequests.filter.bundled.BasicAuthFilter
 import com.budjb.httprequests.filter.bundled.GZIPFilter
 import com.budjb.httprequests.filter.bundled.HttpStatusExceptionFilter
-import com.budjb.httprequests.filter.bundled.LoggingFilter
 import com.budjb.httprequests.filter.bundled.Slf4jLoggingFilter
+import groovy.util.slurpersupport.GPathResult
 import spock.lang.Ignore
 import spock.lang.Unroll
 
@@ -680,5 +680,37 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         charset  | output
         'euc-jp' | '奪辰旦'
         'UTF-8'  | 'åäö'
+    }
+
+    @Unroll
+    def 'When #writeType is sent, the entity was properly written and received'() {
+        when:
+        def response = httpClientFactory.createHttpClient().post(input) {
+            uri = "${baseUrl}/echo"
+        }
+
+        then:
+        response.getEntity(String) == output
+        response.contentType == contentType
+
+        when:
+        def read = response.getEntity(readType)
+
+        then:
+        read != null
+        readType.isInstance(read)
+        notThrown(Exception)
+
+        where:
+        writeType  | input                                  | output            | readType    | contentType
+        'Map'      | [foo: ['bar']]                         | '{"foo":["bar"]}' | Map         | 'application/json'
+        'List'     | ['foo', 'bar']                         | '["foo","bar"]'   | List        | 'application/json'
+        'String'   | "Hello, world!"                        | "Hello, world!"   | String      | 'text/plain'
+        'byte[]'   | [102, 111, 111, 98, 97, 114] as byte[] | 'foobar'          | byte[]      | 'application/octet-stream'
+        'GString'  | "${'foo'}bar"                          | 'foobar'          | String      | 'text/plain'
+        'FormData' | {
+            def form = new FormData(); form.addField('foo', 'bar'); return form
+        }.call()                                            | 'foo=bar'         | String      | 'application/x-www-form-urlencoded'
+        'XML'      | '<Foo>bar</Foo>'                       | '<Foo>bar</Foo>'  | GPathResult | 'text/plain'
     }
 }

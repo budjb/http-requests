@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.*
 
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
+import javax.xml.ws.Response
 
 @RestController
 @SpringBootApplication
@@ -171,7 +172,11 @@ class TestApp {
     }
 
     @RequestMapping(value = '/echo')
-    byte[] echo(@RequestBody byte[] body) {
-        return body
+    ResponseEntity<byte[]> echo(@RequestBody byte[] body, @RequestHeader(value = 'Content-Type', required = false) MediaType contentType) {
+        HttpHeaders headers = new  HttpHeaders()
+        if (contentType != null) {
+            headers.add('Content-Type', contentType.toString())
+        }
+        return new ResponseEntity<byte[]>(body, headers, HttpStatus.OK)
     }
 }
