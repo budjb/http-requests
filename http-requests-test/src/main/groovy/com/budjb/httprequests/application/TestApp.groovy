@@ -40,12 +40,12 @@ class TestApp {
     }
 
     @RequestMapping(value = '/testBasicPost', method = RequestMethod.POST, produces = 'text/plain')
-    String testBasicPost(@RequestBody(required=false) String entity) {
+    String testBasicPost(@RequestBody(required = false) String entity) {
         return entity
     }
 
     @RequestMapping(value = '/testBasicPut', method = RequestMethod.PUT, produces = 'text/plain')
-    String testBasicPut(@RequestBody(required=false) String entity) {
+    String testBasicPut(@RequestBody(required = false) String entity) {
         return entity
     }
 
@@ -149,7 +149,7 @@ class TestApp {
     }
 
     @RequestMapping(value = '/testForm', method = RequestMethod.POST, produces = 'text/plain')
-    String testForm(@RequestBody MultiValueMap<String,String> formData) {
+    String testForm(@RequestBody MultiValueMap<String, String> formData) {
         return new JsonBuilder(formData).toString()
     }
 
@@ -159,7 +159,8 @@ class TestApp {
     }
 
     @RequestMapping(value = '/acceptContentType', produces = 'text/plain')
-    ResponseEntity<String> acceptContentType(@RequestHeader(value = 'Accept') MediaType accept, @RequestBody String input, HttpServletResponse response) {
+    ResponseEntity<String> acceptContentType(
+        @RequestHeader(value = 'Accept') MediaType accept, @RequestBody String input) {
         String charset = accept.getCharSet()
 
         HttpHeaders headers = new HttpHeaders()
@@ -169,8 +170,9 @@ class TestApp {
     }
 
     @RequestMapping(value = '/echo')
-    ResponseEntity<byte[]> echo(@RequestBody byte[] body, @RequestHeader(value = 'Content-Type', required = false) MediaType contentType) {
-        HttpHeaders headers = new  HttpHeaders()
+    ResponseEntity<byte[]> echo(
+        @RequestBody byte[] body, @RequestHeader(value = 'Content-Type', required = false) MediaType contentType) {
+        HttpHeaders headers = new HttpHeaders()
         if (contentType != null) {
             headers.add('Content-Type', contentType.toString())
         }
