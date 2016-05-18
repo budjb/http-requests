@@ -16,7 +16,7 @@ subprojects {
         jcenter()
     }
 
-    version = '0.1.14.BETA'
+    version = '1.0.0'
     group = 'com.budjb'
 }
 
