@@ -32,7 +32,7 @@ The HTTP Request configuration properties are enumerated in the following table.
 | `followRedirects`       | `Boolean` | `true`                     | Whether the HTTP client should follow redirect
                                                                      responses received from the host.
 | `bufferResponseEntity`  | `Boolean` | `true`                     | If `true`, the entity is read completely from
-                                                                     the response and the response's `InputStream` is
+                                                                     the response and the response is
                                                                      closed. This allows the entity to be retrieved
                                                                      multiple times.
 |===
@@ -77,9 +77,9 @@ When this is enabled, the response entity (if there is one) is automatically rea
 `InputStream` into a byte array stored in the `HttpResponse` object, and the stream is closed. This allows the entity
 to be retrieved multiple times. When disabled, the response `InputStream` can be read only once.
 
-IMPORTANT: It is very important that the response's `InputStream` is closed by application authors if this functionality
-is disabled, or the underlying system resources may not be freed up. This is true even when an HTTP status exception is
-thrown via the `HttpStatusExceptionFilter`, which includes the `HttpResponse` in the thrown exception.
+IMPORTANT: It is very important that the response is closed if this functionality is disabled, or the underlying system
+resources may not be freed up. This is true even when an HTTP status exception is thrown via the
+`HttpStatusExceptionFilter`, which includes the `HttpResponse` in the thrown exception.
 
 ===== sslValidated
 

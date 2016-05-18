@@ -23,13 +23,14 @@ The set of response properties is smaller than that of the request, and provides
 
 The response entity can be retrieved by using the `getEntity()` method of the `HttpResponse`, which return an
 `InputStream` containing the entity. By default, the response entity, if available, is buffered in the `HttpResponse`
-and the response's `InputStream` is closed. Subsequent calls to retrieve the response entity will reproduce the entity
+and the response is closed. Subsequent calls to retrieve the response entity will reproduce the entity
 an unlimited amount of times. If the request properties disabled this functionality, the response's entity can be read
-only once, but it does not require the memory space to buffer the entity in the `HttpResponse` object.
+only once, but it does not require the memory space to buffer the entity in the `HttpResponse` object. Additionally, it
+is important to close the response when this functionality is disabled.
 
-IMPORTANT: When `bufferResponseEntity` is `false`, it is very important that a response entity's `InputStream` is closed
+IMPORTANT: When `bufferResponseEntity` is `false`, it is very important that the `HttpResponse` is closed
 when it is no longer needed. If it is not closed, underlying system resources may not be freed up. The `close()` method
-can be called on the `HttpResponse` to close the input stream.
+can be called on the `HttpResponse` to properly clean up the request.
 
 The `HttpResponse` supports <<Entity Converters,entity conversion>> using the `getEntity(Class<?> type)` method. If an
 entity reader is registered that supports the requested type, it will be converted and returned.
@@ -55,31 +56,40 @@ streams being used. The following example writes the response's `InputStream` di
 
 [source,groovy]
 ----
-def client = httpClientFactory.createHttpClient()
-def response = client.get {
-    uri = "https://example.com/large_file.tar.gz"
-    bufferResponseEntity = false
-}
-
-byte[] buffer = new byte[8192]
-int read
-InputStream in = response.getEntity()
-OutputStream out = new FileOutputStream("/path/to/file")
-
 try {
-    while (true) {
-        read = in.read(buffer)
+    def response = httpClientFactory.createHttpClient().get {
+        uri = "https://example.com/large_file.tar.gz"
+        bufferResponseEntity = false
+    }
 
-        if (read == -1) {
-            break
+    try {
+        byte[] buffer = new byte[8192]
+        int read
+        InputStream in = response.getEntity()
+        OutputStream out = new FileOutputStream("/path/to/file")
+
+        try {
+            while (true) {
+                read = in.read(buffer)
+
+                if (read == -1) {
+                    break
+                }
+
+                out.write(buffer, 0, read)
+            }
         }
-
-        out.write(buffer, 0, read)
+        finally {
+            in.close()
+            out.close()
+        }
+    }
+    finally {
+        response.close()
     }
 }
-finally {
-    in.close()
-    out.close()
+catch (HttpStatusException e) {
+    e.response.close()
 }
 ----
 
