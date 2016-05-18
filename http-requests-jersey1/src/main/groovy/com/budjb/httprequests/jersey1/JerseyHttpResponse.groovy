@@ -22,8 +22,8 @@ class JerseyHttpResponse extends HttpResponse {
      * @param response Jersey Client response.
      */
     JerseyHttpResponse(HttpRequest request, EntityConverterManager converterManager, ClientResponse response) {
-        this.request = request
-        this.converterManager = converterManager
+        super(request, converterManager)
+
         this.response = response
 
         setStatus(response.getStatus())

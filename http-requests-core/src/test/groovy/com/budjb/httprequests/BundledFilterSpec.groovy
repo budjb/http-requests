@@ -9,15 +9,9 @@ import org.slf4j.Logger
 import spock.lang.Specification
 
 class BundledFilterSpec extends Specification {
-    HttpResponse httpResponse
-    HttpContext httpContext
     MockHttpClient client
 
     def setup() {
-        httpResponse = new HttpResponse()
-        httpContext = new HttpContext()
-        httpContext.response = httpResponse
-
         client = new MockHttpClient()
         client.addEntityConverter(new StringEntityWriter())
         client.addEntityConverter(new ByteArrayEntityWriter())

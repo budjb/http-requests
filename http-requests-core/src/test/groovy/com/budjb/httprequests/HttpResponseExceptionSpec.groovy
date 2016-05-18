@@ -15,6 +15,7 @@
  */
 package com.budjb.httprequests
 
+import com.budjb.httprequests.converter.EntityConverterManager
 import com.budjb.httprequests.exception.*
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -23,8 +24,14 @@ class HttpResponseExceptionSpec extends Specification {
     @Unroll
     def 'When an HttpResponseException is build with status #status, exception type #type is returned'() {
         setup:
-        HttpResponse response = new HttpResponse()
-        response.setStatus(status)
+        HttpResponse response = new MockHttpResponse(
+            new HttpRequest(),
+            new EntityConverterManager(),
+            status,
+            [:],
+            null,
+            null
+        )
 
         expect:
         HttpStatusException.build(response).getClass() == type

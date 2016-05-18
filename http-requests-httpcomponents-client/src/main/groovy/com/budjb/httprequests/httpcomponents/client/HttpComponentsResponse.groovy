@@ -22,8 +22,8 @@ class HttpComponentsResponse extends HttpResponse {
      * @param response
      */
     HttpComponentsResponse(HttpRequest request, EntityConverterManager converterManager, CloseableHttpResponse response) {
-        this.converterManager = converterManager
-        this.request = request
+        super(request, converterManager)
+
         this.response = response
 
         setStatus(response.getStatusLine().getStatusCode())

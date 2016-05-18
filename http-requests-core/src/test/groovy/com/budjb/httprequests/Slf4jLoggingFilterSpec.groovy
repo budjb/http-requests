@@ -1,8 +1,6 @@
 package com.budjb.httprequests
 
 import com.budjb.httprequests.converter.bundled.StringEntityReader
-import com.budjb.httprequests.filter.bundled.ConsoleLoggingFilter
-import com.budjb.httprequests.filter.bundled.LoggingFilter
 import com.budjb.httprequests.filter.bundled.Slf4jLoggingFilter
 import org.slf4j.Logger
 import spock.lang.Specification
@@ -10,15 +8,9 @@ import spock.lang.Specification
 class Slf4jLoggingFilterSpec extends Specification {
     Slf4jLoggingFilter filter
     Logger log
-    HttpResponse httpResponse
-    HttpContext httpContext
     MockHttpClient client
 
     def setup() {
-        httpResponse = new HttpResponse()
-        httpContext = new HttpContext()
-        httpContext.response = httpResponse
-
         log = Mock(Logger)
         log.isInfoEnabled() >> true
         log.isTraceEnabled() >> true
@@ -111,6 +103,6 @@ class Slf4jLoggingFilterSpec extends Specification {
         response.getEntity().source.in.getClass() == BufferedInputStream
         response.getEntity().source.in.count == 10001
         response.getEntity(String) == content
-        response.entityBuffer == null
+        !response.isEntityBuffered()
     }
 }

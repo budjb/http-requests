@@ -21,7 +21,7 @@ import com.budjb.httprequests.exception.UnsupportedConversionException
 /**
  * An object that represents the response of an HTTP request.
  */
-class HttpResponse implements Closeable {
+abstract class HttpResponse implements Closeable {
     /**
      * Default character set of the response.
      */
@@ -74,6 +74,17 @@ class HttpResponse implements Closeable {
     private byte[] entityBuffer
 
     /**
+     * Constructor.
+     *
+     * @param request Request properties used to make the request.
+     * @param converterManager Converter manager.
+     */
+    HttpResponse(HttpRequest request, EntityConverterManager converterManager) {
+        this.request = request
+        this.converterManager = converterManager
+    }
+
+    /**
      * Sets the content type of the response.
      *
      * @param contentType Content type of the response.
@@ -117,6 +128,8 @@ class HttpResponse implements Closeable {
      * @param headers Response headers of the request.
      */
     void setHeaders(Map<String, ?> headers) {
+        this.headers.clear()
+
         headers.each { name, values ->
             setHeader(name, values)
         }
@@ -335,5 +348,14 @@ class HttpResponse implements Closeable {
             headers.put(key, [])
         }
         headers.get(key).add(value)
+    }
+
+    /**
+     * Returns whether the response entity is buffered. If there is no entity, will return <code>false</code>.
+     *
+     * @return Whether the response entity is buffered.
+     */
+    boolean isEntityBuffered() {
+        return entityBuffer != null
     }
 }

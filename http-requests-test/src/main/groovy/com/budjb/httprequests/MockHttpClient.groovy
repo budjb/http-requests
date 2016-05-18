@@ -18,6 +18,12 @@ package com.budjb.httprequests
 import com.budjb.httprequests.converter.EntityConverterManager
 import com.budjb.httprequests.filter.HttpClientFilterManager
 
+/**
+ * An implementation of {@link HttpClient} that does not make an actual HTTP request; rather it allows
+ * the contents of the response to be injected into the client and returned as if a request had been made
+ * and those properties were returned in the response. This is useful when mocking requests in unit or
+ * integration tests.
+ */
 class MockHttpClient extends AbstractHttpClient {
     /**
      * Headers of the response.
@@ -76,24 +82,16 @@ class MockHttpClient extends AbstractHttpClient {
 
         if (inputStream) {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream()
-
             transmit(inputStream, filterOutputStream(context, outputStream))
-
             requestBuffer = outputStream.toByteArray()
         }
 
-        HttpResponse response = createResponse(context.getRequest())
-        response.setStatus(status)
-        response.setHeaders(headers)
-        if (contentType) {
-            response.setContentType(contentType)
-            response.setCharset(charset)
-        }
-        if (responseInputStream) {
-            response.setEntity(responseInputStream)
+        String contentType = this.contentType
+        if (contentType && charset) {
+            contentType += ";charset=${charset}"
         }
 
-        return response
+        return new MockHttpResponse(context.request, converterManager, status, headers, contentType, responseInputStream)
     }
 
     /**

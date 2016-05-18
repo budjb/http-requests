@@ -604,21 +604,6 @@ abstract class AbstractHttpClient implements HttpClient {
     }
 
     /**
-     * Helper method for client implementations that creates an {@link HttpResponse} object.
-     *
-     * @param request The request properties used to make the request.
-     * @return A new response object populated with the request and converter manager.
-     */
-    protected createResponse(HttpRequest request) {
-        HttpResponse response = new HttpResponse()
-
-        response.setRequest(request)
-        response.setConverterManager(converterManager)
-
-        return response
-    }
-
-    /**
      * Adds an entity converter to the factory.
      *
      * @param converter Converter to add to the factory.

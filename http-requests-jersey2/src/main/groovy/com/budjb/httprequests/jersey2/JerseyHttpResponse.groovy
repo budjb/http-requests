@@ -3,7 +3,6 @@ package com.budjb.httprequests.jersey2
 import com.budjb.httprequests.HttpRequest
 import com.budjb.httprequests.HttpResponse
 import com.budjb.httprequests.converter.EntityConverterManager
-import org.glassfish.jersey.client.ClientResponse
 
 import javax.ws.rs.core.Response
 
@@ -24,8 +23,8 @@ class JerseyHttpResponse extends HttpResponse {
      * @param response Jersey Client response.
      */
     JerseyHttpResponse(HttpRequest request, EntityConverterManager converterManager, Response response) {
-        this.request = request
-        this.converterManager = converterManager
+        super(request, converterManager)
+
         this.response = response
 
         setStatus(response.getStatus())
