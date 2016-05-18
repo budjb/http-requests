@@ -105,7 +105,7 @@ class JerseyHttpClient extends AbstractHttpClient {
             throw e
         }
 
-        return buildResponse(request, response)
+        return new JerseyHttpResponse(request, converterManager, response)
     }
 
     /**
@@ -125,30 +125,6 @@ class JerseyHttpClient extends AbstractHttpClient {
         ))
 
         return Client.create(config)
-    }
-
-    /**
-     * Builds an {@link HttpResponse} object from Jersey's {@link ClientResponse}.
-     *
-     * @param request Request properties to use with the HTTP request.
-     * @param clientResponse Jersey response object to build the {@link HttpResponse} object from.
-     * @return A fully configured {@HttpResponse} object representing the response of the request.
-     */
-    protected HttpResponse buildResponse(HttpRequest request, ClientResponse clientResponse) {
-        HttpResponse response = createResponse(request)
-
-        response.setStatus(clientResponse.getStatus())
-        response.setHeaders(clientResponse.getHeaders())
-
-        if (clientResponse.getType()) {
-            response.setContentType(clientResponse.getType().toString())
-        }
-
-        if (clientResponse.hasEntity()) {
-            response.setEntity(clientResponse.getEntityInputStream())
-        }
-
-        return response
     }
 
     /**

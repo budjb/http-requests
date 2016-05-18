@@ -166,6 +166,7 @@ class HttpRequestSpec extends Specification {
     def 'When the response contains a byte array entity, hasEntity() returns true'() {
         setup:
         def response = new HttpResponse()
+        response.setRequest(new HttpRequest())
         response.setEntity(new ByteArrayInputStream([1, 2, 3] as byte[]))
 
         expect:

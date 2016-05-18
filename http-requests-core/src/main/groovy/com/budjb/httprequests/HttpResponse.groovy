@@ -224,7 +224,7 @@ class HttpResponse implements Closeable {
 
         pushBackInputStream.unread(read)
 
-        if (!request || request.isBufferResponseEntity()) {
+        if (request.isBufferResponseEntity()) {
             entityBuffer = StreamUtils.readBytes(pushBackInputStream)
             pushBackInputStream.close()
         }
@@ -266,7 +266,7 @@ class HttpResponse implements Closeable {
 
     /**
      * Closes the entity and releases any system resources associated
-     * with it. If the stream is already closed then invoking this
+     * with it. If the response is already closed then invoking this
      * method has no effect.
      *
      * @throws IOException if an I/O error occurs

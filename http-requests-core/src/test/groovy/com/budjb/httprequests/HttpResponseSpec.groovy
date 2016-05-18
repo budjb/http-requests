@@ -27,6 +27,7 @@ class HttpResponseSpec extends Specification {
         converterManager.add(new StringEntityReader())
 
         HttpResponse response = new HttpResponse()
+        response.request = new HttpRequest()
         response.converterManager = converterManager
         response.entity = new ByteArrayInputStream('åäö'.getBytes())
         response.charset = 'euc-jp'
@@ -44,6 +45,7 @@ class HttpResponseSpec extends Specification {
         converterManager.add(new StringEntityReader())
 
         HttpResponse response = new HttpResponse()
+        response.request = new HttpRequest()
         response.converterManager = converterManager
         response.entity = new ByteArrayInputStream('åäö'.getBytes())
         response.contentType = 'text/plain'

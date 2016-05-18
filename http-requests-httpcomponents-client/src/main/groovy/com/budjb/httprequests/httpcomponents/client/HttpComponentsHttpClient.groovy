@@ -74,23 +74,7 @@ class HttpComponentsHttpClient extends AbstractHttpClient {
             httpRequest.setEntity(entity)
         }
 
-        CloseableHttpResponse clientResponse = client.execute(httpRequest)
-
-        HttpResponse response = createResponse(request)
-        response.setStatus(clientResponse.getStatusLine().getStatusCode())
-        clientResponse.getAllHeaders().each {
-            response.addHeader(it.getName(), it.getValue())
-        }
-
-        HttpEntity entity = clientResponse.getEntity()
-        if (entity) {
-            response.setEntity(entity.getContent())
-            if (entity.getContentType()) {
-                response.setContentType(entity.getContentType().getValue())
-            }
-        }
-
-        return response
+        return new HttpComponentsResponse(request, converterManager, client.execute(httpRequest))
     }
 
     /**

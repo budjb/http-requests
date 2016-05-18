@@ -713,4 +713,17 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         }.call()                                            | 'foo=bar'         | String      | 'application/x-www-form-urlencoded'
         'XML'      | '<Foo>bar</Foo>'                       | '<Foo>bar</Foo>'  | GPathResult | 'text/plain'
     }
+
+    def 'Closing the response multiple times has no effect and does not cause an error'() {
+        setup:
+        def response = httpClientFactory.createHttpClient().get { uri = "${baseUrl}/testBasicGet" }
+
+        when:
+        response.close()
+        response.close()
+        response.close()
+
+        then:
+        notThrown Exception
+    }
 }

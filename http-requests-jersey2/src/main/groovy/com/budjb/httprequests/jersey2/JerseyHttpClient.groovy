@@ -15,26 +15,16 @@
  */
 package com.budjb.httprequests.jersey2
 
-import com.budjb.httprequests.AbstractHttpClient
-import com.budjb.httprequests.HttpContext
-import com.budjb.httprequests.HttpMethod
-import com.budjb.httprequests.HttpRequest
-import com.budjb.httprequests.HttpResponse
+import com.budjb.httprequests.*
 import org.glassfish.jersey.client.ClientConfig
 import org.glassfish.jersey.client.ClientProperties
-import org.glassfish.jersey.filter.LoggingFilter
 
-import javax.net.ssl.*
 import javax.ws.rs.ProcessingException
 import javax.ws.rs.WebApplicationException
 import javax.ws.rs.client.*
-import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 import javax.ws.rs.ext.WriterInterceptor
 import javax.ws.rs.ext.WriterInterceptorContext
-import java.security.SecureRandom
-import java.security.cert.X509Certificate
-import java.util.logging.Logger
 
 class JerseyHttpClient extends AbstractHttpClient {
     /**
@@ -110,7 +100,7 @@ class JerseyHttpClient extends AbstractHttpClient {
             throw e
         }
 
-        return buildResponse(request, clientResponse)
+        return new JerseyHttpResponse(request, converterManager, clientResponse)
     }
 
     /**
@@ -129,30 +119,6 @@ class JerseyHttpClient extends AbstractHttpClient {
         ClientConfig clientConfig = new ClientConfig()
 
         return builder.withConfig(clientConfig).build()
-    }
-
-    /**
-     * Builds an {@link HttpResponse} object from Jersey's {@link Response}.
-     *
-     * @param request Request properties to use with the HTTP request.
-     * @param clientResponse Jersey response object to build the {@link HttpResponse} object from.
-     * @return A fully configured {@HttpResponse} object representing the response of the request.
-     */
-    protected HttpResponse buildResponse(HttpRequest request, Response clientResponse) {
-        HttpResponse response = createResponse(request)
-
-        response.setStatus(clientResponse.getStatus())
-        response.setHeaders(clientResponse.getHeaders())
-
-        if (clientResponse.getMediaType()) {
-            response.setContentType(clientResponse.getMediaType().toString())
-        }
-
-        if (clientResponse.hasEntity()) {
-            response.setEntity(clientResponse.getEntity() as InputStream)
-        }
-
-        return response
     }
 
     /**
