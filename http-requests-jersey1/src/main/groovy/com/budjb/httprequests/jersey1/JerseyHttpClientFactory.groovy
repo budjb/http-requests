@@ -15,9 +15,9 @@
  */
 package com.budjb.httprequests.jersey1
 
+import com.budjb.httprequests.AbstractHttpClientFactory
 import com.budjb.httprequests.HttpClient
 import com.budjb.httprequests.HttpClientFactory
-import com.budjb.httprequests.AbstractHttpClientFactory
 
 /**
  * An {@link HttpClientFactory} implementation that creates Jersey 1.x HTTP clients.

@@ -15,8 +15,8 @@
  */
 package com.budjb.httprequests
 
-import com.budjb.httprequests.converter.EntityConverterManager
 import com.budjb.httprequests.converter.EntityConverter
+import com.budjb.httprequests.converter.EntityConverterManager
 import com.budjb.httprequests.converter.EntityWriter
 import com.budjb.httprequests.exception.UnsupportedConversionException
 import com.budjb.httprequests.filter.HttpClientFilter

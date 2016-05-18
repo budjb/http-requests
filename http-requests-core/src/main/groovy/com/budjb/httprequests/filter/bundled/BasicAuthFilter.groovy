@@ -16,7 +16,6 @@
 package com.budjb.httprequests.filter.bundled
 
 import com.budjb.httprequests.HttpContext
-import com.budjb.httprequests.HttpRequest
 import com.budjb.httprequests.filter.HttpClientFilter
 import com.budjb.httprequests.filter.HttpClientRequestFilter
 

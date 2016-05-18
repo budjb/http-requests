@@ -20,14 +20,8 @@ import com.sun.jersey.api.client.*
 import com.sun.jersey.api.client.config.ClientConfig
 import com.sun.jersey.api.client.config.DefaultClientConfig
 import com.sun.jersey.api.client.filter.ClientFilter
-import com.sun.jersey.api.client.filter.LoggingFilter
 import com.sun.jersey.client.urlconnection.HTTPSProperties
 import groovy.util.logging.Slf4j
-
-import javax.net.ssl.*
-import javax.ws.rs.core.MediaType
-import java.security.SecureRandom
-import java.security.cert.X509Certificate
 
 /**
  * An implementation of {@link HttpClient} that uses the Jersey Client 1.x library.

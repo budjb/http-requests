@@ -17,7 +17,6 @@ package com.budjb.httprequests.filter
 
 import com.budjb.httprequests.HttpClient
 import com.budjb.httprequests.HttpContext
-import com.budjb.httprequests.HttpRequest
 import com.budjb.httprequests.HttpResponse
 
 /**

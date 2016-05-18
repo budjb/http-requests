@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 package com.budjb.httprequests
-
-import com.budjb.httprequests.exception.HttpStatusException
-
 /**
  * An object used to configure an HTTP request.
  */

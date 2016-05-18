@@ -15,8 +15,8 @@
  */
 package com.budjb.httprequests.jersey2
 
-import com.budjb.httprequests.HttpClient
 import com.budjb.httprequests.AbstractHttpClientFactory
+import com.budjb.httprequests.HttpClient
 
 class JerseyHttpClientFactory extends AbstractHttpClientFactory {
     /**
