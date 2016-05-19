@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 package com.budjb.httprequests
+
 /**
  * An object used to configure an HTTP request.
  */
@@ -80,7 +81,7 @@ class HttpRequest implements Cloneable {
      * @param closure
      * @return
      */
-    static HttpRequest build(Closure closure) {
+    static HttpRequest build(@DelegatesTo(HttpRequest) Closure closure) {
         HttpRequest request = new HttpRequest()
 
         closure = closure.clone() as Closure
