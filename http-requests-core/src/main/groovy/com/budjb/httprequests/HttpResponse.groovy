@@ -131,7 +131,9 @@ abstract class HttpResponse implements Closeable {
         this.headers.clear()
 
         headers.each { name, values ->
-            setHeader(name, values)
+            if (name) {
+                setHeader(name, values)
+            }
         }
     }
 

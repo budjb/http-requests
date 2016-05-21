@@ -50,4 +50,21 @@ abstract class StreamUtils {
 
         return outputStream.toByteArray()
     }
+
+    /**
+     * Shovels data from an {@link InputStream} to an {@link OutputStream}. Streams are not closed
+     * as part of this operation.
+     *
+     * @param inputStream Input stream to read from.
+     * @param outputStream Output stream to write to.
+     * @param size Number of bytes to read at a time.
+     */
+    static void shovel(InputStream inputStream, OutputStream outputStream, int size = 8192) {
+        byte[] buffer = new byte[size]
+        int read
+
+        while ((read = inputStream.read(buffer)) != -1) {
+            outputStream.write(buffer, 0, read)
+        }
+    }
 }
