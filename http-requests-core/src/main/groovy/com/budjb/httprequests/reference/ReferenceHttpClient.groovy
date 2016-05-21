@@ -19,6 +19,10 @@ import com.budjb.httprequests.*
 
 import javax.net.ssl.HttpsURLConnection
 
+/**
+ * A built-in, basic implementation of an {@link HttpClient}. This implementation is useful
+ * when minimal external dependencies are desired.
+ */
 class ReferenceHttpClient extends AbstractHttpClient {
     /**
      * Implements the logic to make an actual request with an HTTP client library.
@@ -63,12 +67,12 @@ class ReferenceHttpClient extends AbstractHttpClient {
             connection.setRequestProperty('Accept', request.getAccept())
         }
 
-        if (methodSupportsResponseEntity(context.getMethod()) && inputStream != null) {
+        if (context.getMethod().isSupportsResponseEntity() && inputStream != null) {
             connection.setDoInput(true)
         }
 
         if (inputStream) {
-            if (methodSupportsRequestEntity(context.getMethod())) {
+            if (context.getMethod().isSupportsRequestEntity()) {
                 connection.setDoOutput(true)
                 OutputStream outputStream = filterOutputStream(context, connection.getOutputStream())
                 StreamUtils.shovel(inputStream, outputStream)
@@ -85,25 +89,11 @@ class ReferenceHttpClient extends AbstractHttpClient {
     }
 
     /**
-     * Determines whether the given method supports a request entity.
+     * Creates the URI of the request.
      *
-     * @param method
+     * @param request Request properties.
      * @return
      */
-    protected methodSupportsRequestEntity(HttpMethod method) {
-        if (method in [HttpMethod.GET, HttpMethod.DELETE]) {
-            return false
-        }
-        return true
-    }
-
-    protected methodSupportsResponseEntity(HttpMethod method) {
-        if (method in [HttpMethod.HEAD]) {
-            return false
-        }
-        return true
-    }
-
     protected URI createURI(HttpRequest request) {
         URI uri = new URI(request.getUri())
 

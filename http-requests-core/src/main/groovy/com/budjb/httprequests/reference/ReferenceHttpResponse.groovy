@@ -19,6 +19,9 @@ import com.budjb.httprequests.HttpRequest
 import com.budjb.httprequests.HttpResponse
 import com.budjb.httprequests.converter.EntityConverterManager
 
+/**
+ * An {@link HttpResponse} implementation that wraps an {@link HttpURLConnection} object.
+ */
 class ReferenceHttpResponse extends HttpResponse {
     /**
      * Connection object of the request.

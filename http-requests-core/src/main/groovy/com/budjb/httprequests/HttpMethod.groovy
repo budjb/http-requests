@@ -22,35 +22,56 @@ enum HttpMethod {
     /**
      * HTTP GET.
      */
-    GET,
+    GET(false, true),
 
     /**
      * HTTP POST.
      */
-    POST,
+    POST(true, true),
 
     /**
      * HTTP PUT.
      */
-    PUT,
+    PUT(true, true),
 
     /**
      * HTTP DELETE.
      */
-    DELETE,
+    DELETE(false, true),
 
     /**
      * HTTP HEAD.
      */
-    HEAD,
+    HEAD(false, false),
 
     /**
      * HTTP TRACE.
      */
-    TRACE,
+    TRACE(false, true),
 
     /**
      * HTTP OPTIONS.
      */
-    OPTIONS
+    OPTIONS(true, true)
+
+    /**
+     * Whether the method supports a request entity.
+     */
+    boolean supportsRequestEntity
+
+    /**
+     * Whether the method supports a response entity.
+     */
+    boolean supportsResponseEntity
+
+    /**
+     * Constructor.
+     *
+     * @param supportsRequestEntity Whether the method supports a request entity.
+     * @param supportsResponseEntity Whether the method supports a response entity.
+     */
+    HttpMethod(boolean supportsRequestEntity, boolean supportsResponseEntity) {
+        this.supportsRequestEntity = supportsRequestEntity
+        this.supportsResponseEntity = supportsResponseEntity
+    }
 }

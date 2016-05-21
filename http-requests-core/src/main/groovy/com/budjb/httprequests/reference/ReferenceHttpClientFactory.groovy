@@ -17,7 +17,12 @@ package com.budjb.httprequests.reference
 
 import com.budjb.httprequests.AbstractHttpClientFactory
 import com.budjb.httprequests.HttpClient
+import com.budjb.httprequests.HttpClientFactory
 
+/**
+ * A built-in, basic implementation of an {@link HttpClientFactory}. This implementation is useful
+ * when minimal external dependencies are desired.
+ */
 class ReferenceHttpClientFactory extends AbstractHttpClientFactory {
     /**
      * Implementation factories should implement this method to create a concrete {@link HttpClient} instance specific
