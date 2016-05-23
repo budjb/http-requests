@@ -554,12 +554,12 @@ abstract class AbstractHttpClient implements HttpClient {
         HttpContext context = new HttpContext()
         context.setMethod(method)
 
-        if (filterManager.hasRetryFilters()) {
+        if (entity != null && filterManager.hasRetryFilters()) {
             entity = new ByteArrayInputStream(StreamUtils.readBytes(entity))
         }
 
         while (true) {
-            if (entity.markSupported()) {
+            if (entity != null && entity.markSupported()) {
                 entity.reset()
             }
 
