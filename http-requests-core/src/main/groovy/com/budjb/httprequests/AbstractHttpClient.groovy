@@ -554,6 +554,11 @@ abstract class AbstractHttpClient implements HttpClient {
         HttpContext context = new HttpContext()
         context.setMethod(method)
 
+        // Requests whose client contains a retry filter must have their entity buffered.
+        // If it is not, the retried request will either throw an error due to the entity
+        // input stream being closed, or the entity will not actually transmit. So, requests
+        // that could potentially be retried are automatically read into a ByteArrayInputStream
+        // so that it can be transmitted more than once.
         if (entity != null && filterManager.hasRetryFilters()) {
             entity = new ByteArrayInputStream(StreamUtils.readBytes(entity))
         }
