@@ -554,7 +554,15 @@ abstract class AbstractHttpClient implements HttpClient {
         HttpContext context = new HttpContext()
         context.setMethod(method)
 
+        if (filterManager.hasRetryFilters()) {
+            entity = new ByteArrayInputStream(StreamUtils.readBytes(entity))
+        }
+
         while (true) {
+            if (entity.markSupported()) {
+                entity.reset()
+            }
+
             HttpRequest newRequest = request.clone() as HttpRequest
             context.setRequest(newRequest)
             context.setResponse(null)

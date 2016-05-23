@@ -176,6 +176,15 @@ class HttpClientFilterManager {
     }
 
     /**
+     * Returns whether there is any one registered {@link HttpClientRetryFilter}.
+     *
+     * @return Whether there is any one registered {@link HttpClientRetryFilter}.
+     */
+    boolean hasRetryFilters() {
+        return filters.any { it instanceof HttpClientRetryFilter }
+    }
+
+    /**
      * Initiates the retry filters and returns whether at least one of them requested a retry.
      *
      * @param context HTTP request context.

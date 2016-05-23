@@ -726,4 +726,25 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         then:
         notThrown Exception
     }
+
+    def 'When a request is retried, the entity is resent correctly'() {
+        setup:
+        InputStream inputStream = new ByteArrayInputStream('test payload'.bytes)
+        HttpClientRetryFilter retryFilter = new HttpClientRetryFilter() {
+            @Override
+            boolean onRetry(HttpContext context) {
+                return context.retries == 0
+            }
+        }
+
+        when:
+        def response = httpClientFactory.createHttpClient().addFilter(retryFilter).post(inputStream) {
+            uri = "${baseUrl}/testBasicPost"
+        }
+
+        then:
+        response.status == 200
+        response.hasEntity()
+        response.getEntity(String) == 'test payload'
+    }
 }
