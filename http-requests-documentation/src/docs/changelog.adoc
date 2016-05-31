@@ -11,6 +11,9 @@ Major version 1 of the library is the first revision of the interface of the `ht
   buffered so that it can be resent with subsequent requests.
 * Add a reference implementation of the client to avoid the need to include other provider
   implementation modules.
+* Made the Grails 3.x plugin compatible with JDK 1.7.
+* Modify Grails 3.x plugin so that the classpath scanner prefers the non-built-in HttpClientFactory if another
+  provider is found.
 
 ==== Version 1.0.0
 * Initial non-beta release of the library.

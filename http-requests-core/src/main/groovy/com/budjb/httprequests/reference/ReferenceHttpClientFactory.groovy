@@ -25,6 +25,22 @@ import com.budjb.httprequests.HttpClientFactory
  */
 class ReferenceHttpClientFactory extends AbstractHttpClientFactory {
     /**
+     * Base constructor that automatically registers the default set of entity converters.
+     */
+    ReferenceHttpClientFactory() {
+        super()
+    }
+
+    /**
+     * Constructor that can optionally register the default set of entity converters.
+     *
+     * @param registerDefaultConverters Whether to register the default set of entity converters.
+     */
+    ReferenceHttpClientFactory(boolean registerDefaultConverters) {
+        super(registerDefaultConverters)
+    }
+
+    /**
      * Implementation factories should implement this method to create a concrete {@link HttpClient} instance specific
      * to the HTTP client implementation.
      *

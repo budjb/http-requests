@@ -146,7 +146,7 @@ class HttpRequestsGrailsGrailsPlugin extends Plugin {
 
         Class<? extends HttpClientFactory> clazz
         if (candidates.size() == 0) {
-            log.debug("no alternative HttpClientFactory implementation found; using built-in HttpClientFactory")
+            log.debug("Could not locate an optional HttpClientFactory provider.")
             clazz = ReferenceHttpClientFactory
         }
         else if (candidates.size() > 1) {

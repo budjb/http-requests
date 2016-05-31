@@ -17,6 +17,9 @@ apply plugin:"org.grails.grails-plugin"
 apply plugin:"org.grails.grails-plugin-publish"
 apply plugin:"org.grails.grails-gsp"
 
+sourceCompatibility = jdkCompatibility
+targetCompatibility = jdkCompatibility
+
 ext {
     grailsVersion = project.grailsVersion
 }
