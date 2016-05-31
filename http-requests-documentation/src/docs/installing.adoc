@@ -1,9 +1,9 @@
 == Installing
 The library is split into several module libraries, which can all be found on
 https://bintray.com/bintray/jcenter[jCenter]. The library contains a core module, which contains the bulk of the code
-and logic provided by the library. There are also implementation-specific libraries that provide implementations of
-popular HTTP client libraries. The table below lists out all of the modules that exist for the HTTP Requests library
-and what their purposes are.
+and logic provided by the library. There are also implementation-specific libraries that provide adapters to popular
+HTTP client libraries, called providers. The table below lists out all of the modules that exist for the HTTP Requests
+library and what their purposes are.
 
 .HTTP Requests Library Modules
 [grid="rows"]
@@ -11,7 +11,7 @@ and what their purposes are.
 | Module                                | Purpose
 
 | `http-requests`                       | A bill-of-materials POM for all libraries.
-| `http-requests-core`                  | Contains the core logic and interfaces that implementation modules will use.
+| `http-requests-core`                  | Contains the core logic and interfaces that implementation modules will use, in addition to a built-in HTTP client implementation.
 | `http-requests-jersey1`               | Provides a *Jersey 1.x* implementation of the HTTP requests library.
 | `http-requests-jersey2`               | Provides a *Jersey 2.x* implementation of the HTTP requests library.
 | `http-requests-httpcomponents-client` | Provides an Apache HttpComponents Client implementation of the HTTP requests library.
@@ -19,9 +19,7 @@ and what their purposes are.
 | `http-requests-grails`                | A *Grails 3.x* plugin that sets up and exposes an `HttpClientFactory` bean.
 |===
 
-When using the HTTP Requests library, the `http-requests-core` library need not be explicitly added as a project
-dependency. Instead, authors should include an implementation module, which will automatically include the core module.
-All modules are deployed under the group `com.budjb`.
+NOTE: All modules are deployed under the group `com.budjb`.
 
 As an example, using gradle and opting to use the Jersey 1.x implementation, a dependency should be added like below:
 

@@ -1,14 +1,17 @@
 == Introduction
-The HTTP Requests library is a wrapper around popular HTTP client libraries that provides a clean and simplified
-interface to make HTTP requests.
+The HTTP Requests library provides a clean and simplified interface to make HTTP requests.
 
-The spirit of this library is to make it trivial to do easy things with HTTP requests. It is not a complete HTTP
-client implementation, and relies on other HTTP client libraries to perform the actual HTTP connections and
-conversations.
+The spirit of this library is to make it trivial to do easy things with HTTP requests. It can accomplish the most
+common use cases for an HTTP client, but does not aim to be a complete HTTP client implementation.
+
+At its core, the library defines a framework for making requests. A built-in implementation of this framework based on
+Java's built-in HTTP classes is included to make the library extremely lightweight, with its only external dependencies
+being `groovy` and `SLF4J`. There are also several implementation providers available that use popular HTTP client
+libraries, such as Jersey and Apache HTTP Components Client. When one of these providers is used, the library serves
+as an adapter, making the use of these popular libraries much easier and your code more concise.
 
 === Features
-The library allows authors to easily create and submit HTTP requests. At a high level, the library provides the
-following features, and more.
+At a high level, the library provides the following features, and more.
 
 * Configure and submit HTTP requests without knowing how to use the underlying HTTP client implementation.
 * Supports common request features, including query parameters, headers, and request entities.

@@ -19,6 +19,7 @@ import com.budjb.httprequests.artefact.EntityConverterArtefactHandler
 import com.budjb.httprequests.artefact.HttpClientFilterArtefactHandler
 import com.budjb.httprequests.converter.EntityConverter
 import com.budjb.httprequests.filter.HttpClientFilter
+import com.budjb.httprequests.reference.ReferenceHttpClientFactory
 import grails.plugins.Plugin
 import groovy.util.logging.Slf4j
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider
@@ -132,6 +133,7 @@ class HttpRequestsGrailsGrailsPlugin extends Plugin {
 
         ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(false)
         provider.addIncludeFilter(new AssignableTypeFilter(HttpClientFactory))
+        provider.addExcludeFilter(new AssignableTypeFilter(ReferenceHttpClientFactory))
 
         List<Class<? extends HttpClientFactory>> candidates = []
 
@@ -142,14 +144,18 @@ class HttpRequestsGrailsGrailsPlugin extends Plugin {
             }
         }
 
+        Class<? extends HttpClientFactory> clazz
         if (candidates.size() == 0) {
-            throw new IllegalStateException("no provider with type 'com.budjb.httprequests.HttpClientFactory' found on the classpath")
+            log.debug("no alternative HttpClientFactory implementation found; using built-in HttpClientFactory")
+            clazz = ReferenceHttpClientFactory
         }
         else if (candidates.size() > 1) {
             throw new IllegalStateException("multiple providers with type 'com.budjb.httprequests.HttpClientFactory' found on the classpath: ${candidates*.simpleName.join(', ')}")
         }
+        else {
+            clazz = candidates.get(0)
+        }
 
-        Class<? extends HttpClientFactory> clazz = candidates.get(0)
         log.debug("Registering HttpClientFactory provider: ${clazz.getName()}")
         return clazz
     }

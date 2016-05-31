@@ -24,6 +24,7 @@ Each provider module declares its own `HttpClientFactory`, which can be looked u
 |===
 | Provider                            | HttpClientFactory Class |
 
+| http-requests-core                  | `com.budjb.httprequests.reference.ReferenceHttpClientFactory` |
 | http-requests-jersey1               | `com.budjb.httprequests.jersey1.JerseyHttpClientFactory` |
 | http-requests-jersey2               | `com.budjb.httprequests.jersey2.JerseyHttpClientFactory` |
 | http-requests-httpcomponents-client | `com.budjb.httprequests.httpcomponents.client.HttpComponentsClientFactory` |

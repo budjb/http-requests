@@ -7,6 +7,8 @@ During initialization, the Grails plugin will automatically locate the `HttpClie
 bean with the name `httpClientFactory`. This class can be injected into other managed Spring beans and used without
 needing to create the factory manually.
 
+NOTE: The plugin will only use the built-in HTTP client provider if no other provider is found on the classpath.
+
 The plugin also makes it easy to create and use filters and converters. Filters should be created under the
 `grails-app/http-filters` directory, and any filter found under that directory will automatically be registered with
 the `httpClientFactory` bean. Likewise, any converter found in the `grails-app/http-converters` directory will
