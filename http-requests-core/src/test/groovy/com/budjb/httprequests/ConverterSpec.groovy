@@ -58,7 +58,7 @@ class ConverterSpec extends Specification {
         EntityConverterManager converterManager = new EntityConverterManager()
 
         when:
-        converterManager.write(null, 'Hello!')
+        converterManager.write(new HttpRequest(), 'Hello!')
 
         then:
         thrown UnsupportedConversionException

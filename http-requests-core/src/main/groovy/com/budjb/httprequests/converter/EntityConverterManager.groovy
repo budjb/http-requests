@@ -23,6 +23,11 @@ import groovy.util.logging.Slf4j
 @Slf4j
 class EntityConverterManager {
     /**
+     * Default character set.
+     */
+    final static String DEFAULT_CHARSET = 'ISO-8859-1'
+
+    /**
      * List of registered entity converters.
      */
     private final List<EntityConverter> converters
@@ -111,12 +116,14 @@ class EntityConverterManager {
      * @throws UnsupportedConversionException when there are no entity writers that support the object type.
      */
     InputStream write(HttpRequest request, Object entity) throws UnsupportedConversionException {
+        String characterSet = request.getCharset() ?: DEFAULT_CHARSET
+
         Class<?> type = entity.getClass()
 
         for (EntityWriter writer : getEntityWriters()) {
             if (writer.supports(type)) {
                 try {
-                    InputStream inputStream = writer.write(entity, request.getCharset())
+                    InputStream inputStream = writer.write(entity, characterSet)
 
                     if (inputStream == null) {
                         continue

@@ -669,6 +669,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         def response = httpClientFactory.createHttpClient().addFilter(new Slf4jLoggingFilter()).post(input) {
             uri = "${baseUrl}/acceptContentType"
             accept = "text/plain;charset=${charset}"
+            delegate.charset = charset
         }
 
         then:

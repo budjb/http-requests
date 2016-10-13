@@ -47,7 +47,7 @@ class HttpRequest implements Cloneable {
     /**
      * Character set.
      */
-    String charset = 'UTF-8'
+    String charset
 
     /**
      * The read timeout of the HTTP connection, in milliseconds. Defaults to 0 (infinity).
@@ -474,7 +474,7 @@ class HttpRequest implements Cloneable {
         }
 
         if (charset) {
-            contentType += ";charset=${charset}"
+            contentType += "; charset=${charset}"
         }
 
         return contentType
