@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Bud Byrd
+ * Copyright 2016-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package com.budjb.httprequests
 
 import com.budjb.httprequests.converter.EntityConverterManager
 import com.budjb.httprequests.exception.*
+import com.budjb.httprequests.mock.MockHttpResponse
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -25,11 +26,10 @@ class HttpResponseExceptionSpec extends Specification {
     def 'When an HttpResponseException is build with status #status, exception type #type is returned'() {
         setup:
         HttpResponse response = new MockHttpResponse(
-            new HttpRequest(),
             new EntityConverterManager(),
+            new HttpRequest(),
             status,
-            [:],
-            null,
+            new MultiValuedMap(),
             null
         )
 

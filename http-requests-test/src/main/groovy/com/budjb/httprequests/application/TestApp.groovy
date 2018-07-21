@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Bud Byrd
+ * Copyright 2016-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -161,7 +161,7 @@ class TestApp {
     @RequestMapping(value = '/acceptContentType', produces = 'text/plain')
     ResponseEntity<String> acceptContentType(
         @RequestHeader(value = 'Accept') MediaType accept, @RequestBody String input) {
-        String charset = accept.getCharSet()
+        String charset = accept.charset
 
         HttpHeaders headers = new HttpHeaders()
         headers.add('Content-Type', accept.toString())

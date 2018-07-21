@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Bud Byrd
+ * Copyright 2016-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,19 +15,21 @@
  */
 package com.budjb.httprequests
 
+import com.budjb.httprequests.application.TestApp
 import com.budjb.httprequests.exception.HttpInternalServerErrorException
-import com.budjb.httprequests.filter.HttpClientRetryFilter
+import com.budjb.httprequests.filter.RetryFilter
 import com.budjb.httprequests.filter.bundled.BasicAuthFilter
 import com.budjb.httprequests.filter.bundled.GZIPFilter
 import com.budjb.httprequests.filter.bundled.HttpStatusExceptionFilter
 import com.budjb.httprequests.filter.bundled.Slf4jLoggingFilter
-import groovy.util.slurpersupport.GPathResult
+import org.springframework.boot.test.context.SpringBootTest
 import spock.lang.Ignore
 import spock.lang.Unroll
 
 import java.util.zip.GZIPInputStream
 
 @Ignore
+@SpringBootTest(classes = TestApp, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = 'spring.mvc.dispatch-trace-request=true')
 abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
     def 'When a GET request is made to /testBasicGet, the proper response is received'() {
         when:
@@ -47,10 +49,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
 
     def 'When a POST request is made to /testBasicPost, the proper response is received'() {
         when:
-        def response = httpClientFactory.createHttpClient().post(
-            new HttpRequest().setUri("${baseUrl}/testBasicPost").setContentType('text/plain'),
-            "Please don't play the repeating game!"
-        )
+        def response = httpClientFactory.createHttpClient().post(new HttpRequest().setUri("${baseUrl}/testBasicPost"), "Please don't play the repeating game!")
 
         then:
         response.getEntity(String) == "Please don't play the repeating game!"
@@ -58,10 +57,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
 
     def 'When a PUT request is made to /testBasicPut, the proper response is received'() {
         when:
-        def response = httpClientFactory.createHttpClient().put(
-            new HttpRequest().setUri("${baseUrl}/testBasicPut").setContentType('text/plain'),
-            "Please don't play the repeating game!"
-        )
+        def response = httpClientFactory.createHttpClient().put(new HttpRequest().setUri("${baseUrl}/testBasicPut"), "Please don't play the repeating game!")
 
         then:
         response.getEntity(String) == "Please don't play the repeating game!"
@@ -132,7 +128,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         when:
         def response = httpClientFactory.createHttpClient().get(new HttpRequest()
             .setUri("${baseUrl}/testHeaders")
-            .addHeaders([foo: ['bar'], key: ['value']])
+            .addHeaders(new MultiValuedMap([foo: ['bar'], key: ['value']]))
         )
 
         then:
@@ -189,9 +185,9 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
 
     def 'When a response has a status of 500, an HttpInternalServerErrorException is thrown'() {
         when:
-        httpClientFactory.createHttpClient()
-            .addFilter(new HttpStatusExceptionFilter())
-            .get(new HttpRequest().setUri("${baseUrl}/test500"))
+        HttpClient client = httpClientFactory.createHttpClient()
+        client.filterManager.add(new HttpStatusExceptionFilter())
+        client.get(new HttpRequest().setUri("${baseUrl}/test500"))
 
         then:
         thrown HttpInternalServerErrorException
@@ -246,11 +242,12 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
     }
 
     def 'When a server requires basic authentication and the client provides it, the proper response is received'() {
+        setup:
+        HttpClient client = httpClientFactory.createHttpClient()
+        client.filterManager.add(new BasicAuthFilter('foo', 'bar'))
+
         when:
-        def response = httpClientFactory
-            .createHttpClient()
-            .addFilter(new BasicAuthFilter('foo', 'bar'))
-            .get(new HttpRequest().setUri("${baseUrl}/testAuth"))
+        def response = client.get(new HttpRequest("${baseUrl}/testAuth"))
 
         then:
         response.getEntity(String) == 'welcome'
@@ -260,9 +257,9 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         setup:
         boolean ran = false
 
-        HttpClientRetryFilter filter = new HttpClientRetryFilter() {
+        RetryFilter filter = new RetryFilter() {
             @Override
-            boolean onRetry(HttpContext context) {
+            boolean isRetryRequired(HttpContext context) {
                 if (context.getRetries() == 0) {
                     ran = true
                     return true
@@ -271,186 +268,24 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
             }
         }
 
+        HttpClient client = httpClientFactory.createHttpClient()
+        client.filterManager.add(filter)
+
         when:
-        httpClientFactory.createHttpClient().addFilter(filter).get(
-            new HttpRequest().setUri("${baseUrl}/testBasicGet")
-        )
+        client.get(new HttpRequest("${baseUrl}/testBasicGet"))
 
         then:
         ran
     }
 
-    def 'Validate builder form of GET works'() {
-        when:
-        def response = httpClientFactory.createHttpClient().get {
-            uri = "${baseUrl}/testBasicGet"
-        }
-
-        then:
-        response.getEntity(String) == 'The quick brown fox jumps over the lazy dog.'
-    }
-
-    def 'Validate builder form of DELETE works'() {
-        when:
-        def response = httpClientFactory.createHttpClient().delete {
-            uri = "${baseUrl}/testBasicDelete"
-        }
-
-        then:
-        response.getEntity(String) == 'Please don\'t hurt me!'
-    }
-
-    /*
-    def 'Validate builder form of TRACE works'() {
-        when:
-        def response = httpClientFactory.createHttpClient().trace {
-            uri = "${baseUrl}/testBasicTrace"
-            headers = [foo: 'bar']
-            logConversation = true
-        }
-
-        then:
-        response.entityAsJson == [foo: ['bar']]
-    }
-    */
-
-    def 'Validate builder form of HEAD works'() {
-        when:
-        def response = httpClientFactory.createHttpClient().head { uri = "${baseUrl}/testBasicHead" }
-
-        then:
-        response.headers.foo.toSet() == ['baz', 'bar'].toSet()
-        response.headers.hi == ['there']
-        !response.hasEntity()
-    }
-
-    def 'Validate builder form of POST with no entity works'() {
-        when:
-        def response = httpClientFactory.createHttpClient().post { uri = "${baseUrl}/testBasicPost" }
-
-        then:
-        !response.hasEntity()
-    }
-
-    def 'Validate builder form of POST with a byte array entity works'() {
-        when:
-        def response = httpClientFactory.createHttpClient().post('Hello'.getBytes()) {
-            uri = "${baseUrl}/testBasicPost"
-        }
-
-        then:
-        response.getEntity(String) == 'Hello'
-    }
-
-    def 'Validate builder form of POST with a string entity works'() {
-        when:
-        def response = httpClientFactory.createHttpClient().post('Hello') { uri = "${baseUrl}/testBasicPost" }
-
-        then:
-        response.getEntity(String) == 'Hello'
-    }
-
-    def 'Validate builder form of POST with an input stream works'() {
-        setup:
-        def stream = new ByteArrayInputStream('Hello'.getBytes())
-
-        when:
-        def response = httpClientFactory.createHttpClient().post(stream) { uri = "${baseUrl}/testBasicPost" }
-
-        then:
-        response.getEntity(String) == 'Hello'
-    }
-
     def 'Validate that a request can be made with a Map'() {
         when:
-        def response = httpClientFactory.createHttpClient().post([foo: ['bar', 'baz']]) {
-            uri = "${baseUrl}/testBasicPost"
-        }
+        def response = httpClientFactory.createHttpClient().post(new HttpRequest("${baseUrl}/testBasicPost"), [foo: ['bar', 'baz']])
 
         then:
         response.getEntity(Map) == [foo: ['bar', 'baz']]
         response.getEntity(String) == '{"foo":["bar","baz"]}'
     }
-
-    def 'Validate that a request can be made with a GString'() {
-        setup:
-        String val = "friend"
-
-        when:
-        def response = httpClientFactory.createHttpClient().post("Hello, ${val}!") {
-            uri = "${baseUrl}/testBasicPost"
-        }
-
-        then:
-        response.getEntity(String) == 'Hello, friend!'
-    }
-
-    def 'Validate builder form of POST with FormData works'() {
-        setup:
-        def form = new FormData()
-        form.addField('foo', 'bar')
-        form.addField('foo', 'baz')
-        form.addField('hi', 'there')
-
-        when:
-        def response = httpClientFactory.createHttpClient().post(form) { uri = "${baseUrl}/testBasicPost" }
-
-        then:
-        response.getEntity(String).contains('foo=bar')
-        response.getEntity(String).contains('foo=baz')
-        response.getEntity(String).contains('hi=there')
-    }
-
-    def 'Validate builder form of PUT with no entity works'() {
-        when:
-        def response = httpClientFactory.createHttpClient().put { uri = "${baseUrl}/testBasicPut" }
-
-        then:
-        !response.hasEntity()
-    }
-
-    def 'Validate builder form of PUT with a byte array entity works'() {
-        when:
-        def response = httpClientFactory.createHttpClient().put('Hello'.getBytes()) { uri = "${baseUrl}/testBasicPut" }
-
-        then:
-        response.getEntity(String) == 'Hello'
-    }
-
-    def 'Validate builder form of PUT with a string entity works'() {
-        when:
-        def response = httpClientFactory.createHttpClient().put('Hello') { uri = "${baseUrl}/testBasicPut" }
-
-        then:
-        response.getEntity(String) == 'Hello'
-    }
-
-    def 'Validate builder form of PUT with an input stream works'() {
-        setup:
-        def stream = new ByteArrayInputStream('Hello'.getBytes())
-
-        when:
-        def response = httpClientFactory.createHttpClient().put(stream) { uri = "${baseUrl}/testBasicPut" }
-
-        then:
-        response.getEntity(String) == 'Hello'
-    }
-
-    /*
-    def 'Validate builder form of PUT with FormData works'() {
-        setup:
-        def form = new FormData()
-        form.addField('foo', 'bar')
-        form.addField('foo', 'baz')
-        form.addField('hi', 'there')
-
-        when:
-        def response = httpClientFactory.createHttpClient().put(form) { uri = "${baseUrl}/testBasicPut" }
-
-        then:
-        response.entityAsString == 'foo=bar&foo=baz&hi=there'
-    }
-    */
 
     def 'Validate request form of POST with no entity works'() {
         setup:
@@ -579,21 +414,27 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
     */
 
     def 'When a content type is already set, it will not be overwritten by a converter'() {
+        setup:
+        HttpClient client = httpClientFactory.createHttpClient()
+        HttpRequest request = new HttpRequest("${baseUrl}/printContentType")
+        HttpEntity entity = client.converterManager.write('hi!', 'foo/bar', null)
+
         when:
-        def response = httpClientFactory.createHttpClient().post('hi!') {
-            uri = "${baseUrl}/printContentType"
-            contentType = 'foo/bar'
-        }
+        def response = client.post(request, entity)
 
         then:
         response.getEntity(String).startsWith('foo/bar')
     }
 
     def 'When no content type is set, it will be set by the converter'() {
+        setup:
+        // TODO: All this bullshit can be much better. Need a builder in the absence of Groovy...
+        HttpClient client = httpClientFactory.createHttpClient()
+        HttpRequest request = new HttpRequest("${baseUrl}/printContentType")
+        HttpEntity entity = client.converterManager.write('hi!', null, null)
+
         when:
-        def response = httpClientFactory.createHttpClient().post('hi!') {
-            uri = "${baseUrl}/printContentType"
-        }
+        def response = httpClientFactory.createHttpClient().post(request, entity)
 
         then:
         response.getEntity(String).startsWith('text/plain')
@@ -601,10 +442,13 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
 
     def 'When the response is not buffered, the entity can only be retrieved once'() {
         setup:
-        def response = httpClientFactory.createHttpClient().post([foo: ['bar', 'baz']]) {
-            uri = "${baseUrl}/testBasicPost"
-            bufferResponseEntity = false
-        }
+        HttpClient client = httpClientFactory.createHttpClient()
+        HttpRequest request = new HttpRequest("${baseUrl}/testBasicPost").setBufferResponseEntity(false)
+        HttpEntity entity = client.converterManager.write([foo: ['bar', 'baz']], null, null)
+
+        def response = httpClientFactory.createHttpClient().post(request, entity)
+
+        expect:
         response.getEntity(Map) == [foo: ['bar', 'baz']]
 
         when:
@@ -616,44 +460,45 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
 
     def 'When the response is buffered, the entity can be retrieved multiple times'() {
         setup:
-        def response = httpClientFactory.createHttpClient().post([foo: ['bar', 'baz']]) {
-            uri = "${baseUrl}/testBasicPost"
-        }
-        response.getEntity(Map) == [foo: ['bar', 'baz']]
+        HttpClient client = httpClientFactory.createHttpClient()
+        HttpRequest request = new HttpRequest("${baseUrl}/testBasicPost").setBufferResponseEntity(true)
+        HttpEntity entity = client.converterManager.write([foo: ['bar', 'baz']], null, null)
+
+        def response = httpClientFactory.createHttpClient().post(request, entity)
 
         expect:
+        response.getEntity(Map) == [foo: ['bar', 'baz']]
         response.getEntity(String) == '{"foo":["bar","baz"]}'
     }
 
     def 'When a GZIPFilter is applied to the request, the request is compressed'() {
         setup:
-        httpClientFactory.addFilter(new GZIPFilter())
-        def request = HttpRequest.build {
-            uri = "${baseUrl}/echo"
-        }
+        HttpClient client = httpClientFactory.createHttpClient()
+        client.filterManager.add(new GZIPFilter())
+
+        HttpRequest request = new HttpRequest("${baseUrl}/echo")
 
         when:
         def response = httpClientFactory.createHttpClient().post(request, 'Hello, world!')
 
         then:
-        StreamUtils.readString(new GZIPInputStream(response.getEntity()), 'UTF-8') == 'Hello, world!'
+        StreamUtils.readString(new GZIPInputStream(response.getEntity().getInputStream()), 'UTF-8') == 'Hello, world!'
     }
 
     def 'Ensure the LoggingFilter does not cause interruptions to HTTP requests.'() {
+        setup:
+        HttpRequest request = new HttpRequest("${baseUrl}/testBasicPost")
+
         when:
-        def response = httpClientFactory.createHttpClient().post("Hello, world") {
-            uri = "${baseUrl}/testBasicPost"
-        }
+        def response = httpClientFactory.createHttpClient().post(request, "Hello, world")
 
         then:
         notThrown IOException
         response.getEntity(String) == 'Hello, world'
 
         when:
-        response = httpClientFactory.createHttpClient().get {
-            uri = "${baseUrl}/testBasicGet"
-            accept = "text/plain"
-        }
+        request = new HttpRequest("${baseUrl}/testBasicGet").setAccept('text/plain')
+        response = httpClientFactory.createHttpClient().get request
 
         then:
         notThrown IOException
@@ -664,17 +509,17 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
     def 'When an accepted character set #charset is requested, the proper output is received and parsed'() {
         setup:
         String input = 'åäö'
+        HttpClient client = httpClientFactory.createHttpClient()
+        client.filterManager.add(new Slf4jLoggingFilter())
 
+        HttpRequest request = new HttpRequest("${baseUrl}/acceptContentType").setAccept("text/plain;charset=${charset}")
+        HttpEntity entity = client.converterManager.write(input, 'text/plain', charset)
         when:
-        def response = httpClientFactory.createHttpClient().addFilter(new Slf4jLoggingFilter()).post(input) {
-            uri = "${baseUrl}/acceptContentType"
-            accept = "text/plain;charset=${charset}"
-            delegate.charset = charset
-        }
+        def response = client.post request, entity
 
         then:
-        response.contentType == 'text/plain'
-        response.charset == charset
+        response.entity.contentType == 'text/plain'
+        response.entity.charSet == charset
         response.getEntity(String) == output
 
         where:
@@ -686,13 +531,11 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
     @Unroll
     def 'When #writeType is sent, the entity was properly written and received'() {
         when:
-        def response = httpClientFactory.createHttpClient().post(input) {
-            uri = "${baseUrl}/echo"
-        }
+        def response = httpClientFactory.createHttpClient().post new HttpRequest("${baseUrl}/echo"), input
 
         then:
         response.getEntity(String) == output
-        response.contentType == contentType
+        response.getEntity().contentType == contentType
 
         when:
         def read = response.getEntity(readType)
@@ -703,21 +546,19 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         notThrown(Exception)
 
         where:
-        writeType  | input                                  | output            | readType    | contentType
-        'Map'      | [foo: ['bar']]                         | '{"foo":["bar"]}' | Map         | 'application/json'
-        'List'     | ['foo', 'bar']                         | '["foo","bar"]'   | List        | 'application/json'
-        'String'   | "Hello, world!"                        | "Hello, world!"   | String      | 'text/plain'
-        'byte[]'   | [102, 111, 111, 98, 97, 114] as byte[] | 'foobar'          | byte[]      | 'application/octet-stream'
-        'GString'  | "${'foo'}bar"                          | 'foobar'          | String      | 'text/plain'
+        writeType  | input                                  | output            | readType | contentType
+        'Map'      | [foo: ['bar']]                         | '{"foo":["bar"]}' | Map      | 'application/json'
+        'List'     | ['foo', 'bar']                         | '["foo","bar"]'   | List     | 'application/json'
+        'String'   | "Hello, world!"                        | "Hello, world!"   | String   | 'text/plain'
+        'byte[]'   | [102, 111, 111, 98, 97, 114] as byte[] | 'foobar'          | byte[]   | 'application/octet-stream'
         'FormData' | {
             def form = new FormData(); form.addField('foo', 'bar'); return form
-        }.call()                                            | 'foo=bar'         | String      | 'application/x-www-form-urlencoded'
-        'XML'      | '<Foo>bar</Foo>'                       | '<Foo>bar</Foo>'  | GPathResult | 'text/plain'
+        }.call()                                            | 'foo=bar'         | String   | 'application/x-www-form-urlencoded'
     }
 
     def 'Closing the response multiple times has no effect and does not cause an error'() {
         setup:
-        def response = httpClientFactory.createHttpClient().get { uri = "${baseUrl}/testBasicGet" }
+        def response = httpClientFactory.createHttpClient().get new HttpRequest("${baseUrl}/testBasicGet")
 
         when:
         response.close()
@@ -731,17 +572,18 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
     def 'When a request is retried, the entity is resent correctly'() {
         setup:
         InputStream inputStream = new ByteArrayInputStream('test payload'.bytes)
-        HttpClientRetryFilter retryFilter = new HttpClientRetryFilter() {
+        RetryFilter retryFilter = new RetryFilter() {
             @Override
-            boolean onRetry(HttpContext context) {
+            boolean isRetryRequired(HttpContext context) {
                 return context.retries == 0
             }
         }
 
+        HttpClient client = httpClientFactory.createHttpClient()
+        client.filterManager.add(retryFilter)
+
         when:
-        def response = httpClientFactory.createHttpClient().addFilter(retryFilter).post(inputStream) {
-            uri = "${baseUrl}/testBasicPost"
-        }
+        def response = client.post new HttpRequest("${baseUrl}/testBasicPost"), inputStream
 
         then:
         response.status == 200

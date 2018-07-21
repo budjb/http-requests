@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Bud Byrd
+ * Copyright 2016-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,15 @@
  */
 package com.budjb.httprequests
 
-import org.springframework.boot.test.WebIntegrationTest
+import org.junit.runner.RunWith
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
+import org.springframework.test.context.junit4.SpringRunner
 import spock.lang.Ignore
 
 @Ignore
-@WebIntegrationTest([
-    'server.port=0',
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, properties = [
     'server.ssl.key-store = classpath:keystore.jks',
     'server.ssl.key-password = password'
 ])

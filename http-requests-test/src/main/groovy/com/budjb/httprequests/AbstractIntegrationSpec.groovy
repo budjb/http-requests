@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Bud Byrd
+ * Copyright 2016-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,16 +15,16 @@
  */
 package com.budjb.httprequests
 
-import com.budjb.httprequests.application.TestApp
+import com.budjb.httprequests.converter.bundled.*
+import com.budjb.httprequests.filter.jackson.JacksonListReader
+import com.budjb.httprequests.filter.jackson.JacksonMapListWriter
+import com.budjb.httprequests.filter.jackson.JacksonMapReader
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.test.SpringApplicationConfiguration
-import org.springframework.boot.test.WebIntegrationTest
 import spock.lang.Ignore
 import spock.lang.Specification
 
 @Ignore
-@WebIntegrationTest(['spring.mvc.dispatch-trace-request=true'])
-@SpringApplicationConfiguration(TestApp)
 abstract class AbstractIntegrationSpec extends Specification {
     /**
      * HTTP client factory to use with tests.
@@ -59,6 +59,15 @@ abstract class AbstractIntegrationSpec extends Specification {
      * @return
      */
     def setup() {
+        ObjectMapper objectMapper = new ObjectMapper()
         httpClientFactory = createHttpClientFactory()
+        httpClientFactory.converterManager.add(new StringEntityReader())
+        httpClientFactory.converterManager.add(new StringEntityWriter())
+        httpClientFactory.converterManager.add(new ByteArrayEntityWriter())
+        httpClientFactory.converterManager.add(new ByteArrayEntityReader())
+        httpClientFactory.converterManager.add(new JacksonMapReader(objectMapper))
+        httpClientFactory.converterManager.add(new JacksonListReader(objectMapper))
+        httpClientFactory.converterManager.add(new JacksonMapListWriter(objectMapper))
+        httpClientFactory.converterManager.add(new FormDataEntityWriter())
     }
 }
