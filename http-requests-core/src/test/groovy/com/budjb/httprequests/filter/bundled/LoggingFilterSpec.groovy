@@ -61,7 +61,6 @@ class LoggingFilterSpec extends Specification {
 
         HttpRequest request = Mock(HttpRequest)
         request.getUri() >> 'http://foo.bar.com'
-        request.getAccept() >> 'text/plain'
         request.getHeaders() >> map
 
         HttpEntity entity = Mock(HttpEntity)
@@ -94,7 +93,6 @@ class LoggingFilterSpec extends Specification {
 
         HttpRequest request = Mock(HttpRequest)
         request.getUri() >> 'this is bad'
-        request.getAccept() >> 'text/plain'
         request.getHeaders() >> map
 
         HttpEntity entity = Mock(HttpEntity)

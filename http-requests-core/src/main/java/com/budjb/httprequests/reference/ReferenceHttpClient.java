@@ -76,10 +76,6 @@ class ReferenceHttpClient extends AbstractHttpClient {
 
         request.getHeaders().forEach((k, v) -> connection.setRequestProperty(k, String.join(",", v)));
 
-        if (!isNullOrEmpty(request.getAccept())) {
-            connection.setRequestProperty("Accept", request.getAccept());
-        }
-
         if (httpEntity != null) {
             if (!context.getMethod().isSupportsResponseEntity()) {
                 throw new IllegalArgumentException("HTTP request entity is not supported for HTTP  method " + context.getMethod().name());

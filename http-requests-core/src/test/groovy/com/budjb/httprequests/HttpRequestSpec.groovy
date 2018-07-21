@@ -48,7 +48,6 @@ class HttpRequestSpec extends Specification {
 
         when:
         request.setUri('http://localhost')
-            .setAccept('text/plain')
             .addHeader('foo', 'bar')
             .addHeader('foo', ['1', '2'])
             .addQueryParameter('foo', 'bar')
@@ -59,7 +58,6 @@ class HttpRequestSpec extends Specification {
             .setBufferResponseEntity(false)
 
         then:
-        request.getAccept() == 'text/plain'
         request.getHeaders() == [foo: ['bar', '1', '2']]
         request.getQueryParameters() == [foo: ['bar', '1', '2']]
         !request.isSslValidated()

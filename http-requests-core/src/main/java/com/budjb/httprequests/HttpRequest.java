@@ -41,11 +41,6 @@ public class HttpRequest implements Cloneable {
     private String uri;
 
     /**
-     * Requested content type of the response.
-     */
-    private String accept;
-
-    /**
      * The read timeout of the HTTP connection, in milliseconds. Defaults to 0 (infinity).
      */
     private int readTimeout = 0;
@@ -109,20 +104,6 @@ public class HttpRequest implements Cloneable {
     /**
      * Sets the URI of the request.
      * <p>
-     * Note that query parameters will reset to what is contained in the URI string.
-     *
-     * @param uri URI of the request.
-     * @return The instance of this class the method was called with.
-     * @throws URISyntaxException When a problem occurs while parsing a URI.
-     */
-    public HttpRequest setUri(String uri) throws URISyntaxException {
-        parseUri(uri);
-        return this;
-    }
-
-    /**
-     * Sets the URI of the request.
-     * <p>
      * Note that query parameters will reset to what is contained in the URI.
      *
      * @param uri URI of the request.
@@ -134,22 +115,16 @@ public class HttpRequest implements Cloneable {
     }
 
     /**
-     * Returns the requested Content-Type of the response.
+     * Sets the URI of the request.
+     * <p>
+     * Note that query parameters will reset to what is contained in the URI string.
      *
-     * @return The requested Content-Type of the response.
-     */
-    public String getAccept() {
-        return accept;
-    }
-
-    /**
-     * Sets the requested Content-Type of the response.
-     *
-     * @param accept Requested Content-Type of the response.
+     * @param uri URI of the request.
      * @return The instance of this class the method was called with.
+     * @throws URISyntaxException When a problem occurs while parsing a URI.
      */
-    public HttpRequest setAccept(String accept) {
-        this.accept = accept;
+    public HttpRequest setUri(String uri) throws URISyntaxException {
+        parseUri(uri);
         return this;
     }
 
@@ -480,7 +455,6 @@ public class HttpRequest implements Cloneable {
             throw new RuntimeException(e);
         }
 
-        request.setAccept(getAccept());
         request.setBufferResponseEntity(isBufferResponseEntity());
         request.setConnectionTimeout(getConnectionTimeout());
         request.setReadTimeout(getReadTimeout());

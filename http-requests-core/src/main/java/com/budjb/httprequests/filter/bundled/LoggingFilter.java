@@ -124,10 +124,6 @@ public abstract class LoggingFilter implements OutputStreamFilter, LifecycleFilt
             }
         }
 
-        if (request.getAccept() != null) {
-            stringBuilder.append("> Accept: ").append(request.getAccept()).append("\n");
-        }
-
         request.getHeaders().forEach((k, v) -> {
             stringBuilder.append("> ").append(k).append(": ");
             stringBuilder.append(String.join(",", v));

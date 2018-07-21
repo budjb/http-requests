@@ -67,7 +67,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         when:
         def response = httpClientFactory.createHttpClient().get(new HttpRequest()
             .setUri("${baseUrl}/testAccept")
-            .setAccept('text/plain')
+            .setHeader('Accept', 'text/plain')
         )
 
         then:
@@ -78,7 +78,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         when:
         def response = httpClientFactory.createHttpClient().get(new HttpRequest()
             .setUri("${baseUrl}/testAccept")
-            .setAccept('foo/bar')
+            .setHeader('Accept', 'foo/bar')
         )
 
         then:
@@ -497,7 +497,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         response.getEntity(String) == 'Hello, world'
 
         when:
-        request = new HttpRequest("${baseUrl}/testBasicGet").setAccept('text/plain')
+        request = new HttpRequest("${baseUrl}/testBasicGet").setHeader('Accept', 'text/plain')
         response = httpClientFactory.createHttpClient().get request
 
         then:
@@ -512,7 +512,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         HttpClient client = httpClientFactory.createHttpClient()
         client.filterManager.add(new Slf4jLoggingFilter())
 
-        HttpRequest request = new HttpRequest("${baseUrl}/acceptContentType").setAccept("text/plain;charset=${charset}")
+        HttpRequest request = new HttpRequest("${baseUrl}/acceptContentType").setHeader('Accept', "text/plain;charset=${charset}")
         HttpEntity entity = client.converterManager.write(input, 'text/plain', charset)
         when:
         def response = client.post request, entity
