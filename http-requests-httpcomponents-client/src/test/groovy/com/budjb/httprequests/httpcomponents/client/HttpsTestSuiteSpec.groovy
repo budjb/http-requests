@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.budjb.httprequests.httpcomponents.client
 
-include 'http-requests-httpcomponents-client'
-//include 'http-requests-bom'
-include 'http-requests-core'
-//include 'http-requests-jersey1'
-//include 'http-requests-jersey2'
-include 'http-requests-spring'
-include 'http-requests-test'
-include 'http-requests-jackson'
-include 'http-requests-spring-test'
+import com.budjb.httprequests.HttpClientFactory
+import com.budjb.httprequests.HttpsIntegrationTestSuiteSpec
+import com.budjb.httprequests.converter.EntityConverterManager
+
+class HttpsTestSuiteSpec extends HttpsIntegrationTestSuiteSpec {
+    @Override
+    HttpClientFactory createHttpClientFactory(EntityConverterManager converterManager) {
+        return new HttpComponentsClientFactory(converterManager)
+    }
+}

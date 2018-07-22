@@ -17,31 +17,39 @@
 package com.budjb.httprequests.spring;
 
 import com.budjb.httprequests.HttpClientFactory;
+import com.budjb.httprequests.converter.EntityConverter;
 import com.budjb.httprequests.converter.EntityConverterManager;
-import com.budjb.httprequests.filter.HttpClientFilterManager;
+import com.budjb.httprequests.httpcomponents.client.HttpComponentsClientFactory;
 import com.budjb.httprequests.reference.ReferenceHttpClientFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
+import java.util.Optional;
 
 @Configuration
 public class HttpRequestsAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
-    EntityConverterManager entityConverterManager() {
-        return new EntityConverterManager();
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    EntityConverterManager entityConverterManager(Optional<List<EntityConverter>> entityConverters) {
+        EntityConverterManager converterManager = new EntityConverterManager();
+        entityConverters.ifPresent(list -> list.forEach(converterManager::add));
+        return converterManager;
     }
 
-    @Bean
+    @Bean("httpClientFactory")
+    @ConditionalOnClass(name = "com.budjb.httprequests.httpcomponents.client.HttpComponentsClientFactory")
     @ConditionalOnMissingBean
-    HttpClientFilterManager httpClientFilterManager() {
-        return new HttpClientFilterManager();
+    HttpClientFactory apacheHttpClientFactory(EntityConverterManager converterManager) {
+        return new HttpComponentsClientFactory(converterManager);
     }
 
-    @Bean
+    @Bean("httpClientFactory")
     @ConditionalOnMissingBean
-    HttpClientFactory httpClientFactory(EntityConverterManager entityConverterManager, HttpClientFilterManager httpClientFilterManager) {
-        // TODO: load the correct one based on classpath presence
-        return new ReferenceHttpClientFactory(entityConverterManager, httpClientFilterManager);
+    HttpClientFactory referenceHttpClientFactory(EntityConverterManager entityConverterManager) {
+        return new ReferenceHttpClientFactory(entityConverterManager);
     }
 }

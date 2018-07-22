@@ -1,0 +1,24 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { setUrl('http://repo.spring.io/plugins-release') }
+    }
+    dependencies {
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.5.8.RELEASE'
+    }
+}
+
+apply plugin: 'org.springframework.boot'
+
+version '0.1.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.springframework.boot:spring-boot-starter'
+
+    compile project(':http-requests-spring')
+    compile project(':http-requests-httpcomponents-client')
+}

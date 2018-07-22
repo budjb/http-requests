@@ -17,6 +17,7 @@ package com.budjb.httprequests.httpcomponents.client
 
 import com.budjb.httprequests.HttpClientFactory
 import com.budjb.httprequests.HttpIntegrationTestSuiteSpec
+import com.budjb.httprequests.converter.EntityConverterManager
 
 class HttpTestSuiteSpec extends HttpIntegrationTestSuiteSpec {
     /**
@@ -25,7 +26,7 @@ class HttpTestSuiteSpec extends HttpIntegrationTestSuiteSpec {
      * @return
      */
     @Override
-    HttpClientFactory createHttpClientFactory() {
-        return new HttpComponentsClientFactory()
+    HttpClientFactory createHttpClientFactory(EntityConverterManager converterManager) {
+        return new HttpComponentsClientFactory(converterManager)
     }
 }

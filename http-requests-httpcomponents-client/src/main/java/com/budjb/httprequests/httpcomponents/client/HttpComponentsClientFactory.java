@@ -13,19 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.budjb.httprequests.httpcomponents.client
+package com.budjb.httprequests.httpcomponents.client;
 
-import com.budjb.httprequests.HttpClientFactory
-import com.budjb.httprequests.HttpsIntegrationTestSuiteSpec
+import com.budjb.httprequests.AbstractHttpClientFactory;
+import com.budjb.httprequests.HttpClient;
+import com.budjb.httprequests.converter.EntityConverterManager;
 
-class HttpsTestSuiteSpec extends HttpsIntegrationTestSuiteSpec {
+public class HttpComponentsClientFactory extends AbstractHttpClientFactory {
     /**
-     * Create an HTTP client factory to use with tests.
+     * Constructor.
      *
-     * @return
+     * @param converterManager Entity converter manager.
+     */
+    public HttpComponentsClientFactory(EntityConverterManager converterManager) {
+        super(converterManager);
+    }
+
+    /**
+     * {@inheritDoc}
      */
     @Override
-    HttpClientFactory createHttpClientFactory() {
-        return new HttpComponentsClientFactory()
+    public HttpClient createHttpClient() {
+        return new HttpComponentsHttpClient(getConverterManager());
     }
 }

@@ -17,24 +17,15 @@
 buildscript {
     repositories {
         mavenCentral()
-        jcenter()
         maven { setUrl('http://repo.spring.io/plugins-release') }
     }
     dependencies {
-        classpath 'io.spring.gradle:propdeps-plugin:0.0.9.RELEASE'
         classpath "io.spring.gradle:dependency-management-plugin:${springDependencyManagementVersion}"
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
     }
 }
 
 apply plugin: 'java'
-apply plugin: 'groovy'
-apply plugin: 'propdeps'
-apply plugin: 'propdeps-maven'
-apply plugin: 'propdeps-idea'
 apply plugin: 'io.spring.dependency-management'
-apply plugin: 'com.jfrog.bintray'
-apply plugin: 'maven-publish'
 
 version version
 group 'com.budjb'
@@ -45,7 +36,6 @@ dependencyManagement {
 
 repositories {
     mavenCentral()
-    jcenter()
 }
 
 dependencyManagement {
@@ -53,104 +43,8 @@ dependencyManagement {
 }
 
 dependencies {
-    compile 'org.springframework.boot:spring-boot-starter'
     compile project(':http-requests-core')
-//    compile 'org.springframework.boot:spring-boot-starter-validation'
+    compile 'org.springframework.boot:spring-boot-starter'
 
-//    optional "org.springframework.boot:spring-boot-configuration-processor"
-//    optional project(':http-requests-httpcomponents-client')
-
+    compileOnly project(':http-requests-httpcomponents-client')
 }
-
-compileJava.dependsOn(processResources)
-
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-artifacts {
-    archives sourcesJar
-    archives javadocJar
-}
-
-/*
-publishing {
-    publications {
-        library(MavenPublication) {
-            from components.java
-
-            artifact sourcesJar
-            artifact javadocJar
-
-            groupId project.group
-            artifactId project.name
-            version project.version
-
-            pom {
-                name = project.name
-                description = projectDescription
-                url = githubHttpsUrl
-
-                licenses {
-                    license {
-                        name = 'The Apache License, Version 2.0'
-                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    }
-                }
-                developers {
-                    developer {
-                        id = 'budjb'
-                        name = 'Bud Byrd'
-                        email = 'bud.byrd@gmail.com'
-                    }
-                }
-                scm {
-                    url = githubHttpsUrl
-                    connection = "scm:git:" + githubHttpsUrl + ".git"
-                    developerConnection = "scm:git:" + githubHttpsUrl + ".git"
-                }
-                issueManagement {
-                    system = 'GitHub Issues'
-                    url = githubHttpsUrl + "/issues"
-                }
-            }
-        }
-    }
-}
-
-bintray {
-    user = System.getenv(bintrayUsernameEnvVar)
-    key = System.getenv(bintrayKeyEnvVar)
-    publish = true
-
-    pkg {
-        websiteUrl = githubHttpsUrl
-        issueTrackerUrl = "${githubHttpsUrl}/issues"
-        vcsUrl = githubGitUrl
-        githubRepo = 'budjb/spring-distributed-scheduler'
-
-        desc = projectDescription
-        labels = ['spring-boot', 'spring-framework', 'hazelcast']
-        repo = 'spring'
-        name = project.name
-        licenses = ['Apache-2.0']
-        publications = ['library']
-
-        version {
-            name = project.version
-            released = new Date()
-            vcsTag = project.version
-            gpg {
-                sign = true
-                passphrase = System.getenv('GPG_PASSWORD')
-            }
-        }
-    }
-}
-*/

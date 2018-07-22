@@ -20,11 +20,6 @@ import com.budjb.httprequests.HttpIntegrationTestSuiteSpec
 import com.budjb.httprequests.converter.EntityConverterManager
 
 class HttpIntegrationSpec extends HttpIntegrationTestSuiteSpec {
-    /**
-     * Create an HTTP client factory to use with tests.
-     *
-     * @return
-     */
     @Override
     HttpClientFactory createHttpClientFactory(EntityConverterManager converterManager) {
         return new ReferenceHttpClientFactory(converterManager)

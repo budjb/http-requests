@@ -492,7 +492,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
 
         then:
         response.entity.contentType == 'text/plain'
-        response.entity.charSet == charset
+        response.entity.charSet.equalsIgnoreCase(charset)
         response.getEntity(String) == output
 
         where:
