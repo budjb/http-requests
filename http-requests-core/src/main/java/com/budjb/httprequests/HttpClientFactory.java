@@ -16,7 +16,6 @@
 package com.budjb.httprequests;
 
 import com.budjb.httprequests.converter.EntityConverterManager;
-import com.budjb.httprequests.filter.HttpClientFilterManager;
 
 /**
  * Describes a factory class that creates an {@link HttpClient} instance. Individual HTTP client libraries
@@ -38,11 +37,4 @@ public interface HttpClientFactory {
      * @return The entity converter manager.
      */
     EntityConverterManager getConverterManager();
-
-    /**
-     * Returns the filter manager.
-     *
-     * @return The filter manager.
-     */
-    HttpClientFilterManager getFilterManager();
 }

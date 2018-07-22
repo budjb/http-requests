@@ -27,9 +27,8 @@ class BasicAuthFilterSpec extends Specification {
         HttpClient client = new MockHttpClientFactory().createHttpClient()
         String username = 'foo'
         String password = 'bar'
-        client.filterManager.add(new BasicAuthFilter(username, password))
 
-        HttpRequest request = new HttpRequest('http://foo.bar.com')
+        HttpRequest request = new HttpRequest('http://foo.bar.com').addFilter(new BasicAuthFilter(username, password))
 
         when:
         def response = client.get request

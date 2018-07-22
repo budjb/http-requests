@@ -19,27 +19,18 @@ package com.budjb.httprequests.mock;
 import com.budjb.httprequests.AbstractHttpClientFactory;
 import com.budjb.httprequests.HttpClient;
 import com.budjb.httprequests.converter.EntityConverterManager;
-import com.budjb.httprequests.filter.HttpClientFilterManager;
 
 /**
  * A factory for {@link MockHttpClient}.
  */
 public class MockHttpClientFactory extends AbstractHttpClientFactory {
     /**
-     * Constructor using an empty converter manager and filter manager.
-     */
-    public MockHttpClientFactory() {
-        super();
-    }
-
-    /**
      * Constructor.
      *
      * @param entityConverterManager Entity converter manager.
-     * @param httpClientFilterManager Filter manager.
      */
-    public MockHttpClientFactory(EntityConverterManager entityConverterManager, HttpClientFilterManager httpClientFilterManager) {
-        super(entityConverterManager, httpClientFilterManager);
+    public MockHttpClientFactory(EntityConverterManager entityConverterManager) {
+        super(entityConverterManager);
     }
 
     /**
@@ -47,6 +38,6 @@ public class MockHttpClientFactory extends AbstractHttpClientFactory {
      */
     @Override
     public HttpClient createHttpClient() {
-        return new MockHttpClient(getConverterManager(), getFilterManager());
+        return new MockHttpClient(getConverterManager());
     }
 }

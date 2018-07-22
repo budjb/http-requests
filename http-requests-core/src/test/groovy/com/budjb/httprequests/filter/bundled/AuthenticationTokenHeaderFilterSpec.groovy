@@ -18,6 +18,7 @@ package com.budjb.httprequests.filter.bundled
 import com.budjb.httprequests.HttpClientFactory
 import com.budjb.httprequests.HttpContext
 import com.budjb.httprequests.HttpRequest
+import com.budjb.httprequests.converter.EntityConverterManager
 import com.budjb.httprequests.converter.bundled.ByteArrayEntityWriter
 import com.budjb.httprequests.converter.bundled.StringEntityWriter
 import com.budjb.httprequests.mock.MockHttpClient
@@ -28,10 +29,11 @@ class AuthenticationTokenHeaderFilterSpec extends Specification {
     MockHttpClient client
 
     def setup() {
-        HttpClientFactory httpClientFactory = new MockHttpClientFactory()
+        EntityConverterManager converterManager = new EntityConverterManager()
+        converterManager.add(new StringEntityWriter())
+        converterManager.add(new ByteArrayEntityWriter())
+        HttpClientFactory httpClientFactory = new MockHttpClientFactory(converterManager)
         client = (MockHttpClient) httpClientFactory.createHttpClient()
-        client.converterManager.add(new StringEntityWriter())
-        client.converterManager.add(new ByteArrayEntityWriter())
     }
 
     def 'When authentication is valid, the request succeeds'() {
@@ -51,9 +53,8 @@ class AuthenticationTokenHeaderFilterSpec extends Specification {
                 return 'X-Auth-Token'
             }
         }
-        client.filterManager.add(filter)
 
-        HttpRequest request = new HttpRequest('http://foo.bar.com')
+        HttpRequest request = new HttpRequest('http://foo.bar.com').addFilter(filter)
 
         when:
         client.get request
@@ -86,10 +87,9 @@ class AuthenticationTokenHeaderFilterSpec extends Specification {
                 super.isRetryRequired(httpContext)
             }
         }
-        client.filterManager.add(filter)
         client.status = 401
 
-        HttpRequest request = new HttpRequest('http://foo.bar.com')
+        HttpRequest request = new HttpRequest('http://foo.bar.com').addFilter(filter)
 
         when:
         def response = client.get request
@@ -118,9 +118,8 @@ class AuthenticationTokenHeaderFilterSpec extends Specification {
                 return 'X-Auth-Token'
             }
         }
-        client.filterManager.add(filter)
 
-        HttpRequest request = new HttpRequest('http://foo.bar.com')
+        HttpRequest request = new HttpRequest('http://foo.bar.com').addFilter(filter)
 
         when:
         client.get request

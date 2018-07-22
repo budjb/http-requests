@@ -15,8 +15,11 @@
  */
 package com.budjb.httprequests;
 
+import com.budjb.httprequests.filter.HttpClientFilter;
+
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -67,6 +70,11 @@ public class HttpRequest implements Cloneable {
     private boolean bufferResponseEntity = true;
 
     /**
+     * Filters to apply to the request.
+     */
+    private List<HttpClientFilter> filters = new ArrayList<>();
+
+    /**
      * Base constructor.
      */
     public HttpRequest() {
@@ -104,19 +112,6 @@ public class HttpRequest implements Cloneable {
     /**
      * Sets the URI of the request.
      * <p>
-     * Note that query parameters will reset to what is contained in the URI.
-     *
-     * @param uri URI of the request.
-     * @return The instance of this class the method was called with.
-     */
-    public HttpRequest setUri(URI uri) {
-        parseUri(uri);
-        return this;
-    }
-
-    /**
-     * Sets the URI of the request.
-     * <p>
      * Note that query parameters will reset to what is contained in the URI string.
      *
      * @param uri URI of the request.
@@ -124,6 +119,19 @@ public class HttpRequest implements Cloneable {
      * @throws URISyntaxException When a problem occurs while parsing a URI.
      */
     public HttpRequest setUri(String uri) throws URISyntaxException {
+        parseUri(uri);
+        return this;
+    }
+
+    /**
+     * Sets the URI of the request.
+     * <p>
+     * Note that query parameters will reset to what is contained in the URI.
+     *
+     * @param uri URI of the request.
+     * @return The instance of this class the method was called with.
+     */
+    public HttpRequest setUri(URI uri) {
         parseUri(uri);
         return this;
     }
@@ -465,5 +473,46 @@ public class HttpRequest implements Cloneable {
         request.setQueryParameters((MultiValuedMap) getQueryParameters().clone());
 
         return request;
+    }
+
+    /**
+     * Adds an {@link HttpClientFilter} to the request.
+     *
+     * @param filter Filter to add.
+     * @return The instance of this class the method was called with.
+     */
+    public HttpRequest addFilter(HttpClientFilter filter) {
+        filters.add(filter);
+        return this;
+    }
+
+    /**
+     * Removes an {@link HttpClientFilter} from the request.
+     *
+     * @param filter Filter to remove.
+     * @return The instance of this class the method was called with.
+     */
+    public HttpRequest removeFilter(HttpClientFilter filter) {
+        filters.remove(filter);
+        return this;
+    }
+
+    /**
+     * Removes all filters from the request.
+     *
+     * @return The instance of this class the method was called with.
+     */
+    public HttpRequest clearFilters() {
+        filters.clear();
+        return this;
+    }
+
+    /**
+     * Returns the list of filters registered with the request.
+     *
+     * @return The list of filters registered with the request.
+     */
+    public List<HttpClientFilter> getFilters() {
+        return filters;
     }
 }

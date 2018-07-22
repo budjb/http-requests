@@ -21,7 +21,6 @@ import com.budjb.httprequests.filter.RetryFilter
 import com.budjb.httprequests.filter.bundled.BasicAuthFilter
 import com.budjb.httprequests.filter.bundled.GZIPFilter
 import com.budjb.httprequests.filter.bundled.HttpStatusExceptionFilter
-import com.budjb.httprequests.filter.bundled.Slf4jLoggingFilter
 import org.springframework.boot.test.context.SpringBootTest
 import spock.lang.Ignore
 import spock.lang.Unroll
@@ -185,9 +184,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
 
     def 'When a response has a status of 500, an HttpInternalServerErrorException is thrown'() {
         when:
-        HttpClient client = httpClientFactory.createHttpClient()
-        client.filterManager.add(new HttpStatusExceptionFilter())
-        client.get(new HttpRequest().setUri("${baseUrl}/test500"))
+        httpClientFactory.createHttpClient().get(new HttpRequest().setUri("${baseUrl}/test500").addFilter(new HttpStatusExceptionFilter()))
 
         then:
         thrown HttpInternalServerErrorException
@@ -242,12 +239,8 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
     }
 
     def 'When a server requires basic authentication and the client provides it, the proper response is received'() {
-        setup:
-        HttpClient client = httpClientFactory.createHttpClient()
-        client.filterManager.add(new BasicAuthFilter('foo', 'bar'))
-
         when:
-        def response = client.get(new HttpRequest("${baseUrl}/testAuth"))
+        def response = httpClientFactory.createHttpClient().get(new HttpRequest("${baseUrl}/testAuth").addFilter(new BasicAuthFilter('foo', 'bar')))
 
         then:
         response.getEntity(String) == 'welcome'
@@ -268,11 +261,8 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
             }
         }
 
-        HttpClient client = httpClientFactory.createHttpClient()
-        client.filterManager.add(filter)
-
         when:
-        client.get(new HttpRequest("${baseUrl}/testBasicGet"))
+        httpClientFactory.createHttpClient().get(new HttpRequest("${baseUrl}/testBasicGet").addFilter(filter))
 
         then:
         ran
@@ -414,27 +404,16 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
     */
 
     def 'When a content type is already set, it will not be overwritten by a converter'() {
-        setup:
-        HttpClient client = httpClientFactory.createHttpClient()
-        HttpRequest request = new HttpRequest("${baseUrl}/printContentType")
-        HttpEntity entity = client.converterManager.write('hi!', 'foo/bar', null)
-
         when:
-        def response = client.post(request, entity)
+        def response = httpClientFactory.createHttpClient().post(new HttpRequest("${baseUrl}/printContentType"), new ConvertingHttpEntity('hi!', 'foo/bar'))
 
         then:
         response.getEntity(String).startsWith('foo/bar')
     }
 
     def 'When no content type is set, it will be set by the converter'() {
-        setup:
-        // TODO: All this bullshit can be much better. Need a builder in the absence of Groovy...
-        HttpClient client = httpClientFactory.createHttpClient()
-        HttpRequest request = new HttpRequest("${baseUrl}/printContentType")
-        HttpEntity entity = client.converterManager.write('hi!', null, null)
-
         when:
-        def response = httpClientFactory.createHttpClient().post(request, entity)
+        def response = httpClientFactory.createHttpClient().post(new HttpRequest("${baseUrl}/printContentType"), 'hi!')
 
         then:
         response.getEntity(String).startsWith('text/plain')
@@ -442,11 +421,10 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
 
     def 'When the response is not buffered, the entity can only be retrieved once'() {
         setup:
-        HttpClient client = httpClientFactory.createHttpClient()
-        HttpRequest request = new HttpRequest("${baseUrl}/testBasicPost").setBufferResponseEntity(false)
-        HttpEntity entity = client.converterManager.write([foo: ['bar', 'baz']], null, null)
-
-        def response = httpClientFactory.createHttpClient().post(request, entity)
+        def response = httpClientFactory.createHttpClient().post(
+            new HttpRequest("${baseUrl}/testBasicPost").setBufferResponseEntity(false),
+            [foo: ['bar', 'baz']]
+        )
 
         expect:
         response.getEntity(Map) == [foo: ['bar', 'baz']]
@@ -460,11 +438,10 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
 
     def 'When the response is buffered, the entity can be retrieved multiple times'() {
         setup:
-        HttpClient client = httpClientFactory.createHttpClient()
-        HttpRequest request = new HttpRequest("${baseUrl}/testBasicPost").setBufferResponseEntity(true)
-        HttpEntity entity = client.converterManager.write([foo: ['bar', 'baz']], null, null)
-
-        def response = httpClientFactory.createHttpClient().post(request, entity)
+        def response = httpClientFactory.createHttpClient().post(
+            new HttpRequest("${baseUrl}/testBasicPost").setBufferResponseEntity(true),
+            [foo: ['bar', 'baz']]
+        )
 
         expect:
         response.getEntity(Map) == [foo: ['bar', 'baz']]
@@ -472,14 +449,11 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
     }
 
     def 'When a GZIPFilter is applied to the request, the request is compressed'() {
-        setup:
-        HttpClient client = httpClientFactory.createHttpClient()
-        client.filterManager.add(new GZIPFilter())
-
-        HttpRequest request = new HttpRequest("${baseUrl}/echo")
-
         when:
-        def response = httpClientFactory.createHttpClient().post(request, 'Hello, world!')
+        def response = httpClientFactory.createHttpClient().post(
+            new HttpRequest("${baseUrl}/echo").addFilter(new GZIPFilter()),
+            'Hello, world!'
+        )
 
         then:
         StreamUtils.readString(new GZIPInputStream(response.getEntity().getInputStream()), 'UTF-8') == 'Hello, world!'
@@ -509,13 +483,12 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
     def 'When an accepted character set #charset is requested, the proper output is received and parsed'() {
         setup:
         String input = 'åäö'
-        HttpClient client = httpClientFactory.createHttpClient()
-        client.filterManager.add(new Slf4jLoggingFilter())
 
-        HttpRequest request = new HttpRequest("${baseUrl}/acceptContentType").setHeader('Accept', "text/plain;charset=${charset}")
-        HttpEntity entity = client.converterManager.write(input, 'text/plain', charset)
         when:
-        def response = client.post request, entity
+        def response = httpClientFactory.createHttpClient().post(
+            new HttpRequest("${baseUrl}/acceptContentType").setHeader('Accept', "text/plain;charset=${charset}"),
+            new ConvertingHttpEntity(input, 'text/plain', charset)
+        )
 
         then:
         response.entity.contentType == 'text/plain'
@@ -579,11 +552,8 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
             }
         }
 
-        HttpClient client = httpClientFactory.createHttpClient()
-        client.filterManager.add(retryFilter)
-
         when:
-        def response = client.post new HttpRequest("${baseUrl}/testBasicPost"), inputStream
+        def response = httpClientFactory.createHttpClient().post new HttpRequest("${baseUrl}/testBasicPost").addFilter(retryFilter), inputStream
 
         then:
         response.status == 200

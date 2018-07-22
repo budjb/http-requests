@@ -23,11 +23,11 @@ import com.budjb.httprequests.exception.NullEntityException;
 import java.io.*;
 
 /**
- * Contains an HTTP entity, along with its content type, and optionally its character set.
+ * Contains an HTTP entity, and optionally its content type and character set.
  */
 public class HttpEntity implements Closeable {
     /**
-     * Default content type.
+     * Default content type that will be applied if no other content type is set.
      */
     private final static String DEFAULT_CONTENT_TYPE = "application/octet-stream";
 
@@ -37,15 +37,18 @@ public class HttpEntity implements Closeable {
     private final InputStream inputStream;
 
     /**
-     * Content type of the entity.
+     * Content type of the entity. May be {@code null}.
      */
     private final String contentType;
 
     /**
-     * Character set of the entity.
+     * Character set of the entity. May be {@code null}.
      */
     private final String charSet;
 
+    /**
+     * Entity buffer. This will remain null unless a call is made to {@link #buffer()}.
+     */
     private byte[] entityBuffer;
 
     /**

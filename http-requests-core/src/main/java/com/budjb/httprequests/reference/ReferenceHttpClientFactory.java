@@ -19,27 +19,18 @@ package com.budjb.httprequests.reference;
 import com.budjb.httprequests.AbstractHttpClientFactory;
 import com.budjb.httprequests.HttpClient;
 import com.budjb.httprequests.converter.EntityConverterManager;
-import com.budjb.httprequests.filter.HttpClientFilterManager;
 
 /**
  * A factory for {@link ReferenceHttpClient}.
  */
 public class ReferenceHttpClientFactory extends AbstractHttpClientFactory {
     /**
-     * Constructor using empty converter and filter managers.
-     */
-    public ReferenceHttpClientFactory() {
-        super();
-    }
-
-    /**
      * Constructor using the provided converter and filter managers.
      *
-     * @param entityConverterManager  Entity converter manager.
-     * @param httpClientFilterManager Filter manager.
+     * @param entityConverterManager Entity converter manager.
      */
-    public ReferenceHttpClientFactory(EntityConverterManager entityConverterManager, HttpClientFilterManager httpClientFilterManager) {
-        super(entityConverterManager, httpClientFilterManager);
+    public ReferenceHttpClientFactory(EntityConverterManager entityConverterManager) {
+        super(entityConverterManager);
     }
 
     /**
@@ -47,6 +38,6 @@ public class ReferenceHttpClientFactory extends AbstractHttpClientFactory {
      */
     @Override
     public HttpClient createHttpClient() {
-        return new ReferenceHttpClient(getConverterManager(), getFilterManager());
+        return new ReferenceHttpClient(getConverterManager());
     }
 }

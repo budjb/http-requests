@@ -15,6 +15,7 @@
  */
 package com.budjb.httprequests.converter;
 
+import com.budjb.httprequests.ConvertingHttpEntity;
 import com.budjb.httprequests.HttpEntity;
 import com.budjb.httprequests.exception.UnsupportedConversionException;
 import org.slf4j.Logger;
@@ -36,21 +37,6 @@ public class EntityConverterManager {
      * List of registered entity converters.
      */
     private final List<EntityConverter> converters = new ArrayList<>();
-
-    /**
-     * Base constructor.
-     */
-    public EntityConverterManager() {
-    }
-
-    /**
-     * Creates a converter manager with the contents of another manager.
-     *
-     * @param other Other converter manager to make a copy of.
-     */
-    public EntityConverterManager(EntityConverterManager other) {
-        other.getAll().forEach(this::add);
-    }
 
     /**
      * Adds an entity converter to the manager.
@@ -105,8 +91,41 @@ public class EntityConverterManager {
     }
 
     /**
-     * Attempts to convert the given entity into an {@link InputStream}. If an entity writer is successful,
-     * the content type for the conversion is set in the request, if a content type is available.
+     * Attempts to convert the given entity into an {@link InputStream}.
+     *
+     * @param entity Entity object to convert.
+     * @return Converted entity as an InputStream.
+     * @throws UnsupportedConversionException when there are no entity writers that support the object type.
+     */
+    public HttpEntity write(Object entity) throws UnsupportedConversionException {
+        return write(entity, null, null);
+    }
+
+    /**
+     * Attempts to convert the given entity into an {@link InputStream} with the given content type.
+     *
+     * @param entity      Entity object to convert.
+     * @param contentType Content type of the entity.
+     * @return Converted entity as an InputStream.
+     * @throws UnsupportedConversionException when there are no entity writers that support the object type.
+     */
+    public HttpEntity write(Object entity, String contentType) throws UnsupportedConversionException {
+        return write(entity, contentType, null);
+    }
+
+    /**
+     * Attempts to convert the given entity into an {@link InputStream}.
+     *
+     * @param entity Converting HTTP entity.
+     * @return Converted entity as an InputStream.
+     * @throws UnsupportedConversionException when there are no entity writers that support the object type.
+     */
+    public HttpEntity write(ConvertingHttpEntity entity) throws UnsupportedConversionException {
+        return write(entity.getObject(), entity.getContentType(), entity.getCharSet());
+    }
+
+    /**
+     * Attempts to convert the given entity into an {@link InputStream} with the given content type and character set.
      *
      * @param entity       Entity object to convert.
      * @param contentType  Content type of the entity.

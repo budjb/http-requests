@@ -18,7 +18,6 @@ package com.budjb.httprequests;
 import com.budjb.httprequests.converter.EntityConverterManager;
 import com.budjb.httprequests.converter.EntityWriter;
 import com.budjb.httprequests.exception.UnsupportedConversionException;
-import com.budjb.httprequests.filter.HttpClientFilterManager;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -77,6 +76,21 @@ public interface HttpClient {
     HttpResponse execute(HttpMethod method, HttpRequest request, Object entity) throws IOException, UnsupportedConversionException;
 
     /**
+     * Executes an HTTP request with the given method, request parameters, and entity.
+     * <p>
+     * The entity will be converted if an appropriate {@link EntityWriter} can be found. If no
+     * writer can be found, an {@link UnsupportedConversionException} will be thrown.
+     *
+     * @param method  HTTP method to use with the HTTP request.
+     * @param request Request properties to use with the HTTP request.
+     * @param entity  Request entity.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
+     * @throws IOException                    When an underlying IO exception occurs.
+     * @throws UnsupportedConversionException When an error in entity conversion occurs.
+     */
+    HttpResponse execute(HttpMethod method, HttpRequest request, ConvertingHttpEntity entity) throws IOException, UnsupportedConversionException;
+
+    /**
      * Perform an HTTP GET request.
      *
      * @param request Request properties to use with the HTTP request.
@@ -130,6 +144,20 @@ public interface HttpClient {
     HttpResponse post(HttpRequest request, Object entity) throws IOException, UnsupportedConversionException;
 
     /**
+     * Perform an HTTP POST request with the given entity.
+     * <p>
+     * The entity will be converted if an appropriate {@link EntityWriter} can be found. If no
+     * writer can be found, an {@link UnsupportedConversionException} will be thrown.
+     *
+     * @param request Request properties to use with the HTTP request.
+     * @param entity  Request entity.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
+     * @throws IOException                    When an underlying IO exception occurs.
+     * @throws UnsupportedConversionException When an error in entity conversion occurs.
+     */
+    HttpResponse post(HttpRequest request, ConvertingHttpEntity entity) throws IOException, UnsupportedConversionException;
+
+    /**
      * Perform an HTTP PUT request without a request entity.
      *
      * @param request Request properties to use with the HTTP request.
@@ -171,6 +199,20 @@ public interface HttpClient {
      * @throws UnsupportedConversionException When an error in entity conversion occurs.
      */
     HttpResponse put(HttpRequest request, Object entity) throws IOException, UnsupportedConversionException;
+
+    /**
+     * Perform an HTTP PUT request with the given entity.
+     * <p>
+     * The entity will be converted if an appropriate {@link EntityWriter} can be found. If no
+     * writer can be found, an {@link UnsupportedConversionException} will be thrown.
+     *
+     * @param request Request properties to use with the HTTP request.
+     * @param entity  Request entity.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
+     * @throws IOException                    When an underlying IO exception occurs.
+     * @throws UnsupportedConversionException When an error in entity conversion occurs.
+     */
+    HttpResponse put(HttpRequest request, ConvertingHttpEntity entity) throws IOException, UnsupportedConversionException;
 
     /**
      * Perform an HTTP DELETE request.
@@ -225,6 +267,20 @@ public interface HttpClient {
     HttpResponse options(HttpRequest request, Object entity) throws IOException, UnsupportedConversionException;
 
     /**
+     * Perform an HTTP OPTIONS request with the given entity.
+     * <p>
+     * The entity will be converted if an appropriate {@link EntityWriter} can be found. If no
+     * writer can be found, an {@link UnsupportedConversionException} will be thrown.
+     *
+     * @param request Request properties to use with the HTTP request.
+     * @param entity  Request entity.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
+     * @throws IOException                    When an underlying IO exception occurs.
+     * @throws UnsupportedConversionException When an error in entity conversion occurs.
+     */
+    HttpResponse options(HttpRequest request, ConvertingHttpEntity entity) throws IOException, UnsupportedConversionException;
+
+    /**
      * Perform an HTTP HEAD request.
      *
      * @param request Request properties to use with the HTTP request.
@@ -248,11 +304,4 @@ public interface HttpClient {
      * @return The entity converter manager.
      */
     EntityConverterManager getConverterManager();
-
-    /**
-     * Returns the filter manager associated with this client.
-     *
-     * @return The filter manager.
-     */
-    HttpClientFilterManager getFilterManager();
 }

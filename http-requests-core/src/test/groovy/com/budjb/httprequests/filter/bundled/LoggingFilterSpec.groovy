@@ -58,6 +58,7 @@ class LoggingFilterSpec extends Specification {
         MultiValuedMap map = new MultiValuedMap()
         map.set('foo', 'bar')
         map.set('hi', 'there')
+        map.set('Accept', 'text/plain')
 
         HttpRequest request = Mock(HttpRequest)
         request.getUri() >> 'http://foo.bar.com'

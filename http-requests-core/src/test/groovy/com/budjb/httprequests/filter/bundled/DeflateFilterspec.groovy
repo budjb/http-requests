@@ -16,6 +16,7 @@
 package com.budjb.httprequests.filter.bundled
 
 import com.budjb.httprequests.HttpRequest
+import com.budjb.httprequests.converter.EntityConverterManager
 import com.budjb.httprequests.converter.bundled.StringEntityWriter
 import com.budjb.httprequests.mock.MockHttpClient
 import com.budjb.httprequests.mock.MockHttpClientFactory
@@ -24,11 +25,11 @@ import spock.lang.Specification
 class DeflateFilterspec extends Specification {
     def 'When the deflate filter is used, the input is compressed and the proper header is set'() {
         setup:
-        MockHttpClient client = (MockHttpClient) new MockHttpClientFactory().createHttpClient()
-        client.converterManager.add(new StringEntityWriter())
-        client.filterManager.add(new DeflateFilter())
+        EntityConverterManager converterManager = new EntityConverterManager()
+        converterManager.add(new StringEntityWriter())
+        MockHttpClient client = (MockHttpClient) new MockHttpClientFactory(converterManager).createHttpClient()
 
-        HttpRequest request = new HttpRequest('http://foo.bar.com')
+        HttpRequest request = new HttpRequest('http://foo.bar.com').addFilter(new DeflateFilter())
 
         when:
         def response = client.post request, 'hi there'

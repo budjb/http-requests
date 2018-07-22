@@ -16,7 +16,6 @@
 package com.budjb.httprequests;
 
 import com.budjb.httprequests.converter.EntityConverterManager;
-import com.budjb.httprequests.filter.HttpClientFilterManager;
 
 public abstract class AbstractHttpClientFactory implements HttpClientFactory {
     /**
@@ -25,26 +24,12 @@ public abstract class AbstractHttpClientFactory implements HttpClientFactory {
     private final EntityConverterManager converterManager;
 
     /**
-     * Filter manager.
-     */
-    private final HttpClientFilterManager filterManager;
-
-    /**
-     * Constructor.
-     */
-    protected AbstractHttpClientFactory() {
-        this(new EntityConverterManager(), new HttpClientFilterManager());
-    }
-
-    /**
      * Constructor.
      *
-     * @param entityConverterManager  Entity converter manager.
-     * @param httpClientFilterManager Filter manager.
+     * @param entityConverterManager Entity converter manager.
      */
-    protected AbstractHttpClientFactory(EntityConverterManager entityConverterManager, HttpClientFilterManager httpClientFilterManager) {
+    protected AbstractHttpClientFactory(EntityConverterManager entityConverterManager) {
         this.converterManager = entityConverterManager;
-        this.filterManager = httpClientFilterManager;
     }
 
     /**
@@ -55,15 +40,5 @@ public abstract class AbstractHttpClientFactory implements HttpClientFactory {
     @Override
     public EntityConverterManager getConverterManager() {
         return converterManager;
-    }
-
-    /**
-     * Returns the filter manager.
-     *
-     * @return The filter manager.
-     */
-    @Override
-    public HttpClientFilterManager getFilterManager() {
-        return filterManager;
     }
 }

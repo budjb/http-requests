@@ -20,7 +20,6 @@ import com.budjb.httprequests.HttpRequest;
 import com.budjb.httprequests.HttpResponse;
 
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,59 +27,17 @@ import java.util.stream.Collectors;
  * Aggregates {@link HttpClientFilter} objects and provides a single entry-point to their
  * various callbacks.
  */
-public class HttpClientFilterManager {
+public class HttpClientFilterProcessor {
     /**
      * List of registered filters.
      */
-    private final List<HttpClientFilter> filters = new ArrayList<>();
+    private final List<HttpClientFilter> filters;
 
     /**
      * Base constructor.
      */
-    public HttpClientFilterManager() {
-    }
-
-    /**
-     * Creates a filter manager with the contents of another manager.
-     *
-     * @param other Other filter manager to make a copy of.
-     */
-    public HttpClientFilterManager(HttpClientFilterManager other) {
-        other.getAll().forEach(this::add);
-    }
-
-    /**
-     * Adds a filter to the manager.
-     *
-     * @param filter Filter to add to the manager.
-     */
-    public void add(HttpClientFilter filter) {
-        filters.add(filter);
-    }
-
-    /**
-     * Returns the list of registered filters.
-     *
-     * @return List of registered filters.
-     */
-    public List<HttpClientFilter> getAll() {
-        return filters;
-    }
-
-    /**
-     * Remove a filter.
-     *
-     * @param filter Filter to remove.
-     */
-    public void remove(HttpClientFilter filter) {
-        filters.remove(filter);
-    }
-
-    /**
-     * Remove all filters.
-     */
-    public void clear() {
-        filters.clear();
+    public HttpClientFilterProcessor(List<HttpClientFilter> filters) {
+        this.filters = filters;
     }
 
     /**
@@ -88,7 +45,7 @@ public class HttpClientFilterManager {
      *
      * @return All registered {@link RequestFilter} instances.
      */
-    public List<RequestFilter> getRequestFilters() {
+    private List<RequestFilter> getRequestFilters() {
         return filters.stream().filter(f -> f instanceof RequestFilter).map(f -> (RequestFilter) f).collect(Collectors.toList());
     }
 
@@ -97,7 +54,7 @@ public class HttpClientFilterManager {
      *
      * @return A list of all registered {@link ResponseFilter} instances.
      */
-    public List<ResponseFilter> getResponseFilters() {
+    private List<ResponseFilter> getResponseFilters() {
         return filters.stream().filter(f -> f instanceof ResponseFilter).map(f -> (ResponseFilter) f).collect(Collectors.toList());
     }
 
@@ -106,7 +63,7 @@ public class HttpClientFilterManager {
      *
      * @return A list of all registered {@link OutputStreamFilter} instances.
      */
-    public List<OutputStreamFilter> getRequestEntityFilters() {
+    private List<OutputStreamFilter> getRequestEntityFilters() {
         return filters.stream().filter(f -> f instanceof OutputStreamFilter).map(f -> (OutputStreamFilter) f).collect(Collectors.toList());
     }
 
@@ -115,7 +72,7 @@ public class HttpClientFilterManager {
      *
      * @return A list of all registered {@link LifecycleFilter} instances.
      */
-    public List<LifecycleFilter> getLifecycleFilters() {
+    private List<LifecycleFilter> getLifecycleFilters() {
         return filters.stream().filter(f -> f instanceof LifecycleFilter).map(f -> (LifecycleFilter) f).collect(Collectors.toList());
     }
 
@@ -124,7 +81,7 @@ public class HttpClientFilterManager {
      *
      * @return A list of all registered {@link LifecycleFilter} instances.
      */
-    public List<RetryFilter> getRetryFilters() {
+    private List<RetryFilter> getRetryFilters() {
         return filters.stream().filter(f -> f instanceof RetryFilter).map(f -> (RetryFilter) f).collect(Collectors.toList());
     }
 

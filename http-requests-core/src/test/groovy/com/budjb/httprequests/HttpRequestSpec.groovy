@@ -99,7 +99,7 @@ class HttpRequestSpec extends Specification {
 
         then:
         request.uri == 'https://localhost:12345'
-        request.queryParameters == [f: [''], foo: ['bar', 'baz']]
+        request.queryParameters == [f: [''], foo: ['bar', 'baz'], var: ['val']]
     }
 
     /*

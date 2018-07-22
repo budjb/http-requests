@@ -21,22 +21,6 @@ import com.budjb.httprequests.exception.UnsupportedConversionException
 import spock.lang.Specification
 
 class EntityConverterManagerSpec extends Specification {
-    def 'When creating an EntityConverterManager from another one, all converters are copied into the new one'() {
-        setup:
-        EntityConverter ec1 = Mock(EntityConverter)
-        EntityConverter ec2 = Mock(EntityConverter)
-
-        EntityConverterManager m1 = new EntityConverterManager()
-        m1.add(ec1)
-        m1.add(ec2)
-
-        when:
-        EntityConverterManager m2 = new EntityConverterManager(m1)
-
-        then:
-        m2.getAll().sort() == m1.getAll().sort()
-    }
-
     def 'When an EntityConverter is added, the manager contains it'() {
         setup:
         EntityConverter converter = Mock(EntityConverter)

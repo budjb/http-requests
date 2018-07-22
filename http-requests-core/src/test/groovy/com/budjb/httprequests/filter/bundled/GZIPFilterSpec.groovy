@@ -17,6 +17,7 @@
 package com.budjb.httprequests.filter.bundled
 
 import com.budjb.httprequests.HttpRequest
+import com.budjb.httprequests.converter.EntityConverterManager
 import com.budjb.httprequests.converter.bundled.StringEntityWriter
 import com.budjb.httprequests.exception.EntityConverterException
 import com.budjb.httprequests.mock.MockHttpClient
@@ -26,10 +27,10 @@ import spock.lang.Specification
 class GZIPFilterSpec extends Specification {
     def 'When the GZIP filter is used, the input is compressed and the proper header is set'() {
         setup:
-        MockHttpClient client = (MockHttpClient) new MockHttpClientFactory().createHttpClient()
-        client.converterManager.add(new StringEntityWriter())
-        client.filterManager.add(new GZIPFilter())
-        HttpRequest request = new HttpRequest('http://foo.bar.com')
+        EntityConverterManager converterManager = new EntityConverterManager()
+        converterManager.add(new StringEntityWriter())
+        MockHttpClient client = (MockHttpClient) new MockHttpClientFactory(converterManager).createHttpClient()
+        HttpRequest request = new HttpRequest('http://foo.bar.com').addFilter(new GZIPFilter())
 
         when:
         def response = client.post request, 'hi there'

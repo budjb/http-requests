@@ -17,7 +17,7 @@ package com.budjb.httprequests.mock;
 
 import com.budjb.httprequests.*;
 import com.budjb.httprequests.converter.EntityConverterManager;
-import com.budjb.httprequests.filter.HttpClientFilterManager;
+import com.budjb.httprequests.filter.HttpClientFilterProcessor;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -70,10 +70,9 @@ public class MockHttpClient extends AbstractHttpClient {
      * Constructor.
      *
      * @param converterManager Converter manager.
-     * @param filterManager    HTTP client filter manager.
      */
-    public MockHttpClient(EntityConverterManager converterManager, HttpClientFilterManager filterManager) {
-        super(converterManager, filterManager);
+    public MockHttpClient(EntityConverterManager converterManager) {
+        super(converterManager);
     }
 
     /**
@@ -153,12 +152,12 @@ public class MockHttpClient extends AbstractHttpClient {
      * {@inheritDoc}
      */
     @Override
-    protected HttpResponse execute(HttpContext context, HttpEntity httpEntity) throws IOException {
+    protected HttpResponse execute(HttpContext context, HttpEntity httpEntity, HttpClientFilterProcessor filterProcessor) throws IOException {
         httpContext = context;
 
         if (httpEntity != null) {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            transmit(httpEntity.getInputStream(), getFilterManager().filterOutputStream(outputStream));
+            transmit(httpEntity.getInputStream(), filterProcessor.filterOutputStream(outputStream));
             requestBuffer = outputStream.toByteArray();
         }
 

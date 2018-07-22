@@ -17,7 +17,7 @@ package com.budjb.httprequests.reference;
 
 import com.budjb.httprequests.*;
 import com.budjb.httprequests.converter.EntityConverterManager;
-import com.budjb.httprequests.filter.HttpClientFilterManager;
+import com.budjb.httprequests.filter.HttpClientFilterProcessor;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
@@ -47,17 +47,16 @@ class ReferenceHttpClient extends AbstractHttpClient {
      * Constructor.
      *
      * @param converterManager Entity converter manager.
-     * @param filterManager    HTTP client filter manager.
      */
-    ReferenceHttpClient(EntityConverterManager converterManager, HttpClientFilterManager filterManager) {
-        super(converterManager, filterManager);
+    ReferenceHttpClient(EntityConverterManager converterManager) {
+        super(converterManager);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected HttpResponse execute(HttpContext context, HttpEntity httpEntity) throws IOException, URISyntaxException, GeneralSecurityException {
+    protected HttpResponse execute(HttpContext context, HttpEntity httpEntity, HttpClientFilterProcessor filterProcessor) throws IOException, URISyntaxException, GeneralSecurityException {
         HttpRequest request = context.getRequest();
 
         URI uri = createURI(request);
@@ -84,7 +83,7 @@ class ReferenceHttpClient extends AbstractHttpClient {
             connection.setDoOutput(true);
             connection.setRequestProperty("Content-Type", httpEntity.getFullContentType());
 
-            OutputStream outputStream = getFilterManager().filterOutputStream(connection.getOutputStream());
+            OutputStream outputStream = filterProcessor.filterOutputStream(connection.getOutputStream());
             StreamUtils.shovel(httpEntity.getInputStream(), outputStream);
             httpEntity.getInputStream().close();
             outputStream.close();

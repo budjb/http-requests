@@ -17,7 +17,7 @@ package com.budjb.httprequests;
 
 import com.budjb.httprequests.converter.EntityConverterManager;
 import com.budjb.httprequests.exception.UnsupportedConversionException;
-import com.budjb.httprequests.filter.HttpClientFilterManager;
+import com.budjb.httprequests.filter.HttpClientFilterProcessor;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -42,19 +42,12 @@ public abstract class AbstractHttpClient implements HttpClient {
     private final EntityConverterManager converterManager;
 
     /**
-     * Filter manager.
-     */
-    private final HttpClientFilterManager filterManager;
-
-    /**
      * Constructor.
      *
-     * @param entityConverterManager  Converter manager.
-     * @param httpClientFilterManager Filter manager.
+     * @param entityConverterManager Converter manager.
      */
-    protected AbstractHttpClient(EntityConverterManager entityConverterManager, HttpClientFilterManager httpClientFilterManager) {
+    protected AbstractHttpClient(EntityConverterManager entityConverterManager) {
         this.converterManager = entityConverterManager;
-        this.filterManager = httpClientFilterManager;
     }
 
     /**
@@ -67,7 +60,7 @@ public abstract class AbstractHttpClient implements HttpClient {
      * @throws URISyntaxException       When a problem parsing a URI occurs.
      * @throws GeneralSecurityException When an issue with SSL configuration occurs.
      */
-    protected abstract HttpResponse execute(HttpContext context, HttpEntity httpEntity) throws IOException, URISyntaxException, GeneralSecurityException;
+    protected abstract HttpResponse execute(HttpContext context, HttpEntity httpEntity, HttpClientFilterProcessor filterProcessor) throws IOException, URISyntaxException, GeneralSecurityException;
 
     /**
      * {@inheritDoc}
@@ -91,6 +84,14 @@ public abstract class AbstractHttpClient implements HttpClient {
     @Override
     public HttpResponse execute(HttpMethod method, HttpRequest request, Object entity) throws IOException, UnsupportedConversionException {
         return execute(method, request, converterManager.write(entity, null, null));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpResponse execute(HttpMethod method, HttpRequest request, ConvertingHttpEntity entity) throws UnsupportedConversionException, IOException {
+        return execute(method, request, converterManager.write(entity));
     }
 
     /**
@@ -145,6 +146,14 @@ public abstract class AbstractHttpClient implements HttpClient {
      * {@inheritDoc}
      */
     @Override
+    public HttpResponse post(HttpRequest request, ConvertingHttpEntity entity) throws IOException, UnsupportedConversionException {
+        return execute(HttpMethod.POST, request, entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public HttpResponse put(HttpRequest request) throws IOException {
         return execute(HttpMethod.PUT, request);
     }
@@ -170,6 +179,14 @@ public abstract class AbstractHttpClient implements HttpClient {
      */
     @Override
     public HttpResponse put(HttpRequest request, Object entity) throws IOException, UnsupportedConversionException {
+        return execute(HttpMethod.PUT, request, entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpResponse put(HttpRequest request, ConvertingHttpEntity entity) throws IOException, UnsupportedConversionException {
         return execute(HttpMethod.PUT, request, entity);
     }
 
@@ -217,6 +234,14 @@ public abstract class AbstractHttpClient implements HttpClient {
      * {@inheritDoc}
      */
     @Override
+    public HttpResponse options(HttpRequest request, ConvertingHttpEntity entity) throws IOException, UnsupportedConversionException {
+        return execute(HttpMethod.OPTIONS, request, entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public HttpResponse head(HttpRequest request) throws IOException {
         return execute(HttpMethod.HEAD, request);
     }
@@ -240,13 +265,14 @@ public abstract class AbstractHttpClient implements HttpClient {
      */
     private HttpResponse run(HttpMethod method, HttpRequest request, HttpEntity entity) throws IOException {
         HttpContext context = new HttpContext();
+        HttpClientFilterProcessor filterProcessor = new HttpClientFilterProcessor(request.getFilters());
 
-        filterManager.onStart(context);
+        filterProcessor.onStart(context);
 
         context.setMethod(method);
 
         HttpEntity originalEntity = null;
-        boolean hasRetryFilters = filterManager.hasRetryFilters();
+        boolean hasRetryFilters = filterProcessor.hasRetryFilters();
 
         // Requests whose client contains a retry filter must have their entity buffered.
         // If it is not, the retried request will either throw an error due to the entity
@@ -274,14 +300,14 @@ public abstract class AbstractHttpClient implements HttpClient {
             context.setRequest(newRequest);
             context.setResponse(null);
 
-            filterManager.filterHttpRequest(newRequest);
-            filterManager.onRequest(context);
+            filterProcessor.filterHttpRequest(newRequest);
+            filterProcessor.onRequest(context);
 
             // Note that OutputStreamFilter#filter should be called by the client implementation,
             // and will occur during the execution started below.
             HttpResponse response;
             try {
-                response = execute(context, entity);
+                response = execute(context, entity, filterProcessor);
             }
             catch (IOException e) {
                 throw e;
@@ -291,11 +317,11 @@ public abstract class AbstractHttpClient implements HttpClient {
             }
 
             context.setResponse(response);
-            filterManager.filterHttpResponse(response);
-            filterManager.onResponse(context);
+            filterProcessor.filterHttpResponse(response);
+            filterProcessor.onResponse(context);
 
-            if (!filterManager.isRetryRequired(context)) {
-                filterManager.onComplete(context);
+            if (!filterProcessor.isRetryRequired(context)) {
+                filterProcessor.onComplete(context);
                 return context.getResponse();
             }
 
@@ -311,16 +337,6 @@ public abstract class AbstractHttpClient implements HttpClient {
     @Override
     public EntityConverterManager getConverterManager() {
         return converterManager;
-    }
-
-    /**
-     * Returns the filter manager.
-     *
-     * @return The filter manager.
-     */
-    @Override
-    public HttpClientFilterManager getFilterManager() {
-        return filterManager;
     }
 
     /**

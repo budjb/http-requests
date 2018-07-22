@@ -15,6 +15,7 @@
  */
 package com.budjb.httprequests
 
+import com.budjb.httprequests.converter.EntityConverterManager
 import com.budjb.httprequests.converter.bundled.*
 import com.budjb.httprequests.filter.jackson.JacksonListReader
 import com.budjb.httprequests.filter.jackson.JacksonMapListWriter
@@ -42,7 +43,7 @@ abstract class AbstractIntegrationSpec extends Specification {
      *
      * @return
      */
-    abstract HttpClientFactory createHttpClientFactory()
+    abstract HttpClientFactory createHttpClientFactory(EntityConverterManager converterManager)
 
     /**
      * Return the base URL of the running server.
@@ -60,14 +61,17 @@ abstract class AbstractIntegrationSpec extends Specification {
      */
     def setup() {
         ObjectMapper objectMapper = new ObjectMapper()
-        httpClientFactory = createHttpClientFactory()
-        httpClientFactory.converterManager.add(new StringEntityReader())
-        httpClientFactory.converterManager.add(new StringEntityWriter())
-        httpClientFactory.converterManager.add(new ByteArrayEntityWriter())
-        httpClientFactory.converterManager.add(new ByteArrayEntityReader())
-        httpClientFactory.converterManager.add(new JacksonMapReader(objectMapper))
-        httpClientFactory.converterManager.add(new JacksonListReader(objectMapper))
-        httpClientFactory.converterManager.add(new JacksonMapListWriter(objectMapper))
-        httpClientFactory.converterManager.add(new FormDataEntityWriter())
+
+        EntityConverterManager converterManager = new EntityConverterManager()
+        converterManager.add(new StringEntityReader())
+        converterManager.add(new StringEntityWriter())
+        converterManager.add(new ByteArrayEntityWriter())
+        converterManager.add(new ByteArrayEntityReader())
+        converterManager.add(new JacksonMapReader(objectMapper))
+        converterManager.add(new JacksonListReader(objectMapper))
+        converterManager.add(new JacksonMapListWriter(objectMapper))
+        converterManager.add(new FormDataEntityWriter())
+
+        httpClientFactory = createHttpClientFactory(converterManager)
     }
 }

@@ -22,6 +22,5 @@ repositories {
 
 dependencies {
     compile project(':http-requests-core')
-    compile 'com.fasterxml.jackson.core:jackson-core:2.9.6'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.9.6'
 }

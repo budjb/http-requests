@@ -52,4 +52,13 @@ public class HttpClientFactoryHolder {
     public static HttpClientFactory getHttpClientFactory() {
         return Objects.requireNonNull(instance.factory, "no HttpClientFactory is registered with the HttpClientFactoryHolder");
     }
+
+    /**
+     * Sets the {@link HttpClientFactory} registered with the holder.
+     *
+     * @param factory The {@link HttpClientFactory} to register with the holder.
+     */
+    public static void setHttpClientFactory(HttpClientFactory factory) {
+        instance.factory = factory;
+    }
 }
