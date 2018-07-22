@@ -48,4 +48,5 @@ dependencies {
 
     compileOnly project(':http-requests-httpcomponents-client')
     compileOnly project(':http-requests-jersey1')
+    compileOnly project(':http-requests-jersey2')
 }

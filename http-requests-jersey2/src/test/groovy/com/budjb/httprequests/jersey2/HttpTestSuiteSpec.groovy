@@ -16,16 +16,12 @@
 package com.budjb.httprequests.jersey2
 
 import com.budjb.httprequests.HttpClientFactory
-import com.budjb.httprequests.HttpsIntegrationTestSuiteSpec
+import com.budjb.httprequests.HttpIntegrationTestSuiteSpec
+import com.budjb.httprequests.converter.EntityConverterManager
 
-class HttpsTestSuiteSpec extends HttpsIntegrationTestSuiteSpec {
-    /**
-     * Create an HTTP client factory to use with tests.
-     *
-     * @return
-     */
+class HttpTestSuiteSpec extends HttpIntegrationTestSuiteSpec {
     @Override
-    HttpClientFactory createHttpClientFactory() {
-        return new JerseyHttpClientFactory()
+    HttpClientFactory createHttpClientFactory(EntityConverterManager converterManager) {
+        return new JerseyHttpClientFactory(converterManager)
     }
 }

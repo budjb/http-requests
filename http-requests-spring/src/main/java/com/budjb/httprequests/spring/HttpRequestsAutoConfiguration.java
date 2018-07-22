@@ -56,6 +56,13 @@ public class HttpRequestsAutoConfiguration {
     }
 
     @Bean("httpClientFactory")
+    @ConditionalOnClass(name = "com.budjb.httprequests.jersey2.JerseyHttpClientFactory")
+    @ConditionalOnMissingBean
+    HttpClientFactory jersey2HttpClientFactory(EntityConverterManager converterManager) {
+        return new com.budjb.httprequests.jersey2.JerseyHttpClientFactory(converterManager);
+    }
+
+    @Bean("httpClientFactory")
     @ConditionalOnMissingBean
     HttpClientFactory referenceHttpClientFactory(EntityConverterManager entityConverterManager) {
         return new ReferenceHttpClientFactory(entityConverterManager);

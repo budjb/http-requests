@@ -14,7 +14,33 @@
  * limitations under the License.
  */
 
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { setUrl('http://repo.spring.io/plugins-release') }
+    }
+    dependencies {
+        classpath "io.spring.gradle:dependency-management-plugin:1.0.5.RELEASE"
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'groovy'
+apply plugin: 'io.spring.dependency-management'
+
+repositories {
+    mavenCentral()
+}
+
+dependencyManagement {
+    imports { mavenBom("org.springframework.boot:spring-boot-dependencies:2.0.2.RELEASE") }
+}
+
 dependencies {
     compile project(':http-requests-core')
-    compile 'org.glassfish.jersey.core:jersey-client:2.22.2'
+    compile 'org.glassfish.jersey.core:jersey-client:2.27' // TODO: put version in properties
+    compile 'org.glassfish.jersey.core:jersey-common:2.27'
+    compile 'org.glassfish.jersey.inject:jersey-hk2:2.27'
+
+    testCompile project(':http-requests-test')
 }
