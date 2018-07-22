@@ -15,9 +15,9 @@
  */
 
 apply from: "${rootDir}/gradle/library.gradle"
+apply from: "${rootDir}/gradle/bintray.gradle"
 
 apply plugin: 'maven-publish'
-apply plugin: 'com.jfrog.bintray'
 
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
@@ -79,41 +79,6 @@ publishing {
                     }
                 }
             }
-        }
-    }
-}
-
-bintray {
-    user = System.getenv(bintrayUsernameEnvVar)
-    key = System.getenv(bintrayKeyEnvVar)
-    publish = true
-
-    pkg {
-        websiteUrl = githubHttpsUrl
-        issueTrackerUrl = "${githubHttpsUrl}/issues"
-        vcsUrl = githubGitUrl
-        githubRepo = 'budjb/spring-distributed-scheduler'
-
-        desc = projectDescription
-        labels = ['REST', 'HTTP', 'java']
-        repo = 'spring'
-        name = project.name
-        licenses = ['Apache-2.0']
-        publications = ['library']
-
-        version {
-            name = project.version
-            released = new Date()
-            vcsTag = project.version
-            gpg {
-                sign = true
-                passphrase = System.getenv('GPG_PASSWORD')
-            }
-//            mavenCentralSync {
-//                sync = true
-//                user = 'userToken' // TODO
-//                password = 'paasword' // TODO
-//            }
         }
     }
 }
