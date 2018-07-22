@@ -13,30 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.budjb.httprequests.jersey1
+package com.budjb.httprequests.jersey1;
 
-import com.budjb.httprequests.AbstractHttpClientFactory
-import com.budjb.httprequests.HttpClient
-import com.budjb.httprequests.HttpClientFactory
+import com.budjb.httprequests.AbstractHttpClientFactory;
+import com.budjb.httprequests.HttpClient;
+import com.budjb.httprequests.HttpClientFactory;
+import com.budjb.httprequests.converter.EntityConverterManager;
 
 /**
  * An {@link HttpClientFactory} implementation that creates Jersey 1.x HTTP clients.
  */
-class JerseyHttpClientFactory extends AbstractHttpClientFactory {
-    /**
-     * Base constructor that automatically registers the default set of entity converters.
-     */
-    JerseyHttpClientFactory() {
-        super()
-    }
-
+public class JerseyHttpClientFactory extends AbstractHttpClientFactory {
     /**
      * Constructor that can optionally register the default set of entity converters.
      *
-     * @param registerDefaultConverters Whether to register the default set of entity converters.
+     * @param converterManager Entity converter manager.
      */
-    JerseyHttpClientFactory(boolean registerDefaultConverters) {
-        super(registerDefaultConverters)
+    public JerseyHttpClientFactory(EntityConverterManager converterManager) {
+        super(converterManager);
     }
 
     /**
@@ -45,7 +39,7 @@ class JerseyHttpClientFactory extends AbstractHttpClientFactory {
      * @return A new Jersey 1.x {@link HttpClient} implementation.
      */
     @Override
-    protected HttpClient createClientImplementation() {
-        return new JerseyHttpClient()
+    public HttpClient createHttpClient() {
+        return new JerseyHttpClient(getConverterManager());
     }
 }

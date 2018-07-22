@@ -47,4 +47,5 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-starter'
 
     compileOnly project(':http-requests-httpcomponents-client')
+    compileOnly project(':http-requests-jersey1')
 }

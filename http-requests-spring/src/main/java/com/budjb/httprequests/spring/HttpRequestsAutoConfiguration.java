@@ -20,6 +20,7 @@ import com.budjb.httprequests.HttpClientFactory;
 import com.budjb.httprequests.converter.EntityConverter;
 import com.budjb.httprequests.converter.EntityConverterManager;
 import com.budjb.httprequests.httpcomponents.client.HttpComponentsClientFactory;
+import com.budjb.httprequests.jersey1.JerseyHttpClientFactory;
 import com.budjb.httprequests.reference.ReferenceHttpClientFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -45,6 +46,13 @@ public class HttpRequestsAutoConfiguration {
     @ConditionalOnMissingBean
     HttpClientFactory apacheHttpClientFactory(EntityConverterManager converterManager) {
         return new HttpComponentsClientFactory(converterManager);
+    }
+
+    @Bean("httpClientFactory")
+    @ConditionalOnClass(name = "com.budjb.httprequests.jersey1.JerseyHttpClientFactory")
+    @ConditionalOnMissingBean
+    HttpClientFactory jersey1HttpClientFactory(EntityConverterManager converterManager) {
+        return new JerseyHttpClientFactory(converterManager);
     }
 
     @Bean("httpClientFactory")

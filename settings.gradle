@@ -17,7 +17,7 @@
 include 'http-requests-httpcomponents-client'
 //include 'http-requests-bom'
 include 'http-requests-core'
-//include 'http-requests-jersey1'
+include 'http-requests-jersey1'
 //include 'http-requests-jersey2'
 include 'http-requests-spring'
 include 'http-requests-test'
