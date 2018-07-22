@@ -1,5 +1,0 @@
----
-httprequests:
-    autoLoadFactory: true
-    autoLoadConverters: true
-    scanPackages:

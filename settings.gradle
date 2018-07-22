@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-include 'http-requests-httpcomponents-client'
+rootProject.name = 'http-requests'
+
 //include 'http-requests-bom'
+
 include 'http-requests-core'
+include 'http-requests-httpcomponents-client'
 include 'http-requests-jersey1'
 include 'http-requests-jersey2'
-include 'http-requests-spring'
+
 include 'http-requests-test'
 include 'http-requests-jackson'
-include 'http-requests-spring-test'
+
+include 'http-requests-spring'

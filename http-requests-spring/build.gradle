@@ -14,32 +14,11 @@
  * limitations under the License.
  */
 
-buildscript {
-    repositories {
-        mavenCentral()
-        maven { setUrl('http://repo.spring.io/plugins-release') }
-    }
-    dependencies {
-        classpath "io.spring.gradle:dependency-management-plugin:${springDependencyManagementVersion}"
-    }
-}
+apply from: "${rootDir}/gradle/spring-dependency-management.gradle"
+apply from: "${rootDir}/gradle/library-publish.gradle"
 
-apply plugin: 'java'
-apply plugin: 'io.spring.dependency-management'
-
-version version
-group 'com.budjb'
-
-dependencyManagement {
-    imports { mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}") }
-}
-
-repositories {
-    mavenCentral()
-}
-
-dependencyManagement {
-    imports { mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}") }
+ext {
+    excludeSpringDependencyManagement = false
 }
 
 dependencies {

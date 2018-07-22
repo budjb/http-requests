@@ -13,124 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-//buildscript {
-//    repositories {
-//        mavenCentral()
-//        jcenter()
-//    }
-//    dependencies {
-//        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
-//        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.3'
-//        classpath 'org.asciidoctor:asciidoctorj-pdf:1.5.0-alpha.11'
-//    }
-//}
 
-//subprojects {
-//    repositories {
-//        mavenCentral()
-//        jcenter()
-//    }
-//
-//    version = version
-//    group = 'com.budjb'
-//}
+buildscript {
+    repositories {
+        maven { setUrl('http://repo.spring.io/plugins-release') }
+    }
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+        classpath "io.spring.gradle:dependency-management-plugin:${springDependencyManagementVersion}"
+    }
+}
 
-// Common configuration for most libraries
-//configure([
-//    project(':http-requests-core'),
-//    project(':http-requests-jersey1'),
-//    project(':http-requests-jersey2'),
-//    project(':http-requests-httpcomponents-client')
-//]) {
-//    apply plugin: 'groovy'
-//    apply plugin: 'maven-publish'
-//    apply plugin: 'com.jfrog.bintray'
-//
-//    task sourcesJar(type: Jar, dependsOn: classes) {
-//        classifier = 'sources'
-//        from sourceSets.main.allSource
-//    }
-//
-//    task javadocJar(type: Jar, dependsOn: javadoc) {
-//        classifier = 'javadoc'
-//        from javadoc.destinationDir
-//    }
-//
-//    artifacts {
-//        archives sourcesJar
-//        archives javadocJar
-//    }
-//
-//    publishing {
-//        publications {
-//            library(MavenPublication) {
-//                from components.java
-//
-//                artifact sourcesJar
-//                artifact javadocJar
-//
-//                artifactId project.name
-//                groupId project.group
-//                version project.version
-//
-//                pom {
-//                    name = project.name
-//                    description = projectDescription
-//                    url = 'https://github.com/budjb/http-requests'
-//
-//                    licenses {
-//                        license {
-//                            name = 'The Apache Software License, Version 2.0'
-//                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-//                            distribution = 'repo'
-//                        }
-//                    }
-//
-//                    scm {
-//                        url = 'scm:git@github.com:budjb/http-requests.git'
-//                        connection = 'scm:git:git@github.com:budjb/http-requests.git'
-//                        developerConnection = 'scm:git:git@github.com:budjb/http-requests.git'
-//                    }
-//
-//                    developers {
-//                        developer {
-//                            id = 'budjb'
-//                            name = 'Bud Byrd'
-//                            email = 'bud.byrd@gmail.com'
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-//
-//    bintray {
-//        user = System.getenv('BINTRAY_USER')
-//        key = System.getenv('BINTRAY_KEY')
-//        publish = true
-//
-//        pkg {
-//            repo = 'maven'
-//            name = project.name
-//            desc = projectDescription
-//            websiteUrl = 'https://github.com/budjb/http-requests'
-//            issueTrackerUrl = 'https://github.com/budjb/http-requests/issues'
-//            vcsUrl = 'https://github.com/budjb/http-requests.git'
-//            publicDownloadNumbers = true
-//            githubRepo = 'budjb/http-requests'
-//            githubReleaseNotesFile = 'README.md'
-//            licenses = ['Apache-2.0']
-//            publications = ['library']
-//
-//            version {
-//                name = project.version
-//                released = new Date()
-//                vcsTag = project.version
-//                gpg {
-//                    sign = true
-//                    passphrase = System.getenv('GPG_PASSWORD')
-//                }
-//            }
-//        }
-//    }
-//}
+allprojects {
+    group group
+    version version
+
+    repositories {
+        mavenCentral()
+    }
+}
+

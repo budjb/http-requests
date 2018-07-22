@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Bud Byrd
+ * Copyright 2016-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,10 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.budjb.httprequests.artefact;
 
-import grails.core.InjectableGrailsClass;
-
-public interface GrailsEntityConverterClass extends InjectableGrailsClass {
-
-}
+apply plugin: 'java'
+apply plugin: 'groovy'
+apply plugin: 'idea'

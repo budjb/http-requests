@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-apply plugin: 'java'
-apply plugin: 'groovy'
-apply plugin: 'idea'
-apply plugin: 'maven-publish'
+apply from: "${rootDir}/gradle/spring-dependency-management.gradle"
+apply from: "${rootDir}/gradle/library-publish.gradle"
 
-repositories {
-    mavenCentral()
+ext {
+    excludeSpringDependencyManagement = true
 }
 
 dependencies {
-    compile 'org.slf4j:slf4j-api:1.7.13'
+    compile 'org.slf4j:slf4j-api:1.7.25'
 
+    testCompile project(':http-requests-test')
     testCompile 'org.codehaus.groovy:groovy-all:2.4.6'
     testCompile "org.spockframework:spock-core:1.1-groovy-2.4"
     testCompile "org.hamcrest:hamcrest-core:1.3"
