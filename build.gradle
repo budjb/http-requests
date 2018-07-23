@@ -28,8 +28,12 @@ allprojects {
     group group
     version version
 
+    apply plugin: 'idea'
+
     repositories {
         mavenCentral()
+        jcenter()
+        mavenLocal()
     }
 }
 

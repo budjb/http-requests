@@ -16,55 +16,8 @@
 
 package com.budjb.httprequests.spring;
 
-import com.budjb.httprequests.HttpClientFactory;
-import com.budjb.httprequests.converter.EntityConverter;
-import com.budjb.httprequests.converter.EntityConverterManager;
-import com.budjb.httprequests.httpcomponents.client.HttpComponentsClientFactory;
-import com.budjb.httprequests.jersey1.JerseyHttpClientFactory;
-import com.budjb.httprequests.reference.ReferenceHttpClientFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
-import java.util.List;
-import java.util.Optional;
-
-@Configuration
+@Import({HttpClientFactoryConfiguration.class, EntityConverterConfiguration.class, JacksonEntityConverterConfiguration.class})
 public class HttpRequestsAutoConfiguration {
-    @Bean
-    @ConditionalOnMissingBean
-    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    EntityConverterManager entityConverterManager(Optional<List<EntityConverter>> entityConverters) {
-        EntityConverterManager converterManager = new EntityConverterManager();
-        entityConverters.ifPresent(list -> list.forEach(converterManager::add));
-        return converterManager;
-    }
-
-    @Bean("httpClientFactory")
-    @ConditionalOnClass(name = "com.budjb.httprequests.httpcomponents.client.HttpComponentsClientFactory")
-    @ConditionalOnMissingBean
-    HttpClientFactory apacheHttpClientFactory(EntityConverterManager converterManager) {
-        return new HttpComponentsClientFactory(converterManager);
-    }
-
-    @Bean("httpClientFactory")
-    @ConditionalOnClass(name = "com.budjb.httprequests.jersey1.JerseyHttpClientFactory")
-    @ConditionalOnMissingBean
-    HttpClientFactory jersey1HttpClientFactory(EntityConverterManager converterManager) {
-        return new JerseyHttpClientFactory(converterManager);
-    }
-
-    @Bean("httpClientFactory")
-    @ConditionalOnClass(name = "com.budjb.httprequests.jersey2.JerseyHttpClientFactory")
-    @ConditionalOnMissingBean
-    HttpClientFactory jersey2HttpClientFactory(EntityConverterManager converterManager) {
-        return new com.budjb.httprequests.jersey2.JerseyHttpClientFactory(converterManager);
-    }
-
-    @Bean("httpClientFactory")
-    @ConditionalOnMissingBean
-    HttpClientFactory referenceHttpClientFactory(EntityConverterManager entityConverterManager) {
-        return new ReferenceHttpClientFactory(entityConverterManager);
-    }
 }

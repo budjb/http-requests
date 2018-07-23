@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-apply from: "${rootDir}/gradle/library.gradle"
+apply from: "${rootDir}/gradle/library-publish.gradle"
+
+ext {
+    excludeSpringDependencyManagement = true
+}
 
 dependencies {
     compile project(':http-requests-core')

@@ -75,7 +75,7 @@ publishing {
                 }
                 if (excludeSpringDependencyManagement) {
                     withXml {
-                        asNode().dependencyManagement.replaceNode(null)
+                        asNode().dependencyManagement*.replaceNode {}
                     }
                 }
             }
