@@ -1,7 +1,6 @@
 package com.budjb.httprequests.sample.spring;
 
 import com.budjb.httprequests.HttpClientFactory;
-import com.budjb.httprequests.HttpRequest;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -15,6 +14,6 @@ public class Application {
 
     @Bean
     CommandLineRunner commandLineRunner(HttpClientFactory httpClientFactory) {
-        return args -> System.out.println(httpClientFactory.createHttpClient().get(new HttpRequest("https://reqres.in/api/users")).getEntity(String.class));
+        return args -> System.out.println(httpClientFactory.createHttpClient().get("https://reqres.in/api/users").getEntity(String.class));
     }
 }

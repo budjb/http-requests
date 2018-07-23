@@ -74,8 +74,24 @@ public abstract class AbstractHttpClient implements HttpClient {
      * {@inheritDoc}
      */
     @Override
+    public HttpResponse execute(HttpMethod method, String uri) throws URISyntaxException, IOException {
+        return execute(method, new HttpRequest(uri));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public HttpResponse execute(HttpMethod method, HttpRequest request, InputStream inputStream) throws IOException {
-        return run(method, request, new HttpEntity(inputStream));
+        return execute(method, request, new HttpEntity(inputStream));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpResponse execute(HttpMethod method, String uri, InputStream inputStream) throws IOException, URISyntaxException {
+        return execute(method, new HttpRequest(uri), inputStream);
     }
 
     /**
@@ -90,8 +106,24 @@ public abstract class AbstractHttpClient implements HttpClient {
      * {@inheritDoc}
      */
     @Override
+    public HttpResponse execute(HttpMethod method, String uri, Object entity) throws IOException, URISyntaxException, UnsupportedConversionException {
+        return execute(method, new HttpRequest(uri), entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public HttpResponse execute(HttpMethod method, HttpRequest request, ConvertingHttpEntity entity) throws UnsupportedConversionException, IOException {
         return execute(method, request, converterManager.write(entity));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpResponse execute(HttpMethod method, String uri, ConvertingHttpEntity entity) throws IOException, URISyntaxException, UnsupportedConversionException {
+        return execute(method, new HttpRequest(uri), entity);
     }
 
     /**
@@ -106,8 +138,24 @@ public abstract class AbstractHttpClient implements HttpClient {
      * {@inheritDoc}
      */
     @Override
+    public HttpResponse execute(HttpMethod method, String uri, HttpEntity entity) throws IOException, URISyntaxException {
+        return execute(method, new HttpRequest(uri), entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public HttpResponse get(HttpRequest request) throws IOException {
         return execute(HttpMethod.GET, request);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpResponse get(String uri) throws IOException, URISyntaxException {
+        return execute(HttpMethod.GET, uri);
     }
 
     /**
@@ -122,8 +170,24 @@ public abstract class AbstractHttpClient implements HttpClient {
      * {@inheritDoc}
      */
     @Override
+    public HttpResponse post(String uri) throws IOException, URISyntaxException {
+        return execute(HttpMethod.POST, uri);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public HttpResponse post(HttpRequest request, HttpEntity entity) throws IOException {
         return execute(HttpMethod.POST, request, entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpResponse post(String uri, HttpEntity entity) throws IOException, URISyntaxException {
+        return execute(HttpMethod.POST, uri, entity);
     }
 
     /**
@@ -138,8 +202,24 @@ public abstract class AbstractHttpClient implements HttpClient {
      * {@inheritDoc}
      */
     @Override
+    public HttpResponse post(String uri, InputStream inputStream) throws IOException, URISyntaxException {
+        return execute(HttpMethod.POST, uri, inputStream);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public HttpResponse post(HttpRequest request, Object entity) throws IOException, UnsupportedConversionException {
         return execute(HttpMethod.POST, request, entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpResponse post(String uri, Object entity) throws UnsupportedConversionException, IOException, URISyntaxException {
+        return execute(HttpMethod.POST, uri, entity);
     }
 
     /**
@@ -154,8 +234,24 @@ public abstract class AbstractHttpClient implements HttpClient {
      * {@inheritDoc}
      */
     @Override
+    public HttpResponse post(String uri, ConvertingHttpEntity entity) throws UnsupportedConversionException, IOException, URISyntaxException {
+        return execute(HttpMethod.POST, uri, entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public HttpResponse put(HttpRequest request) throws IOException {
         return execute(HttpMethod.PUT, request);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpResponse put(String uri) throws IOException, URISyntaxException {
+        return execute(HttpMethod.PUT, uri);
     }
 
     /**
@@ -170,8 +266,24 @@ public abstract class AbstractHttpClient implements HttpClient {
      * {@inheritDoc}
      */
     @Override
+    public HttpResponse put(String uri, HttpEntity entity) throws IOException, URISyntaxException {
+        return execute(HttpMethod.PUT, uri, entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public HttpResponse put(HttpRequest request, InputStream inputStream) throws IOException {
         return execute(HttpMethod.PUT, request, inputStream);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpResponse put(String uri, InputStream inputStream) throws IOException, URISyntaxException {
+        return execute(HttpMethod.PUT, uri, inputStream);
     }
 
     /**
@@ -186,8 +298,24 @@ public abstract class AbstractHttpClient implements HttpClient {
      * {@inheritDoc}
      */
     @Override
+    public HttpResponse put(String uri, Object entity) throws UnsupportedConversionException, IOException, URISyntaxException {
+        return execute(HttpMethod.PUT, uri, entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public HttpResponse put(HttpRequest request, ConvertingHttpEntity entity) throws IOException, UnsupportedConversionException {
         return execute(HttpMethod.PUT, request, entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpResponse put(String uri, ConvertingHttpEntity entity) throws UnsupportedConversionException, IOException, URISyntaxException {
+        return execute(HttpMethod.PUT, uri, entity);
     }
 
     /**
@@ -202,8 +330,24 @@ public abstract class AbstractHttpClient implements HttpClient {
      * {@inheritDoc}
      */
     @Override
+    public HttpResponse delete(String uri) throws IOException, URISyntaxException {
+        return execute(HttpMethod.DELETE, uri);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public HttpResponse options(HttpRequest request) throws IOException {
         return execute(HttpMethod.OPTIONS, request);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpResponse options(String uri) throws IOException, URISyntaxException {
+        return execute(HttpMethod.OPTIONS, uri);
     }
 
     /**
@@ -218,8 +362,24 @@ public abstract class AbstractHttpClient implements HttpClient {
      * {@inheritDoc}
      */
     @Override
+    public HttpResponse options(String uri, HttpEntity entity) throws IOException, URISyntaxException {
+        return execute(HttpMethod.OPTIONS, uri, entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public HttpResponse options(HttpRequest request, InputStream inputStream) throws IOException {
         return execute(HttpMethod.OPTIONS, request, inputStream);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpResponse options(String uri, InputStream inputStream) throws IOException, URISyntaxException {
+        return execute(HttpMethod.OPTIONS, uri, inputStream);
     }
 
     /**
@@ -234,8 +394,24 @@ public abstract class AbstractHttpClient implements HttpClient {
      * {@inheritDoc}
      */
     @Override
+    public HttpResponse options(String uri, Object entity) throws UnsupportedConversionException, IOException, URISyntaxException {
+        return execute(HttpMethod.OPTIONS, uri, entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public HttpResponse options(HttpRequest request, ConvertingHttpEntity entity) throws IOException, UnsupportedConversionException {
         return execute(HttpMethod.OPTIONS, request, entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpResponse options(String uri, ConvertingHttpEntity entity) throws UnsupportedConversionException, IOException, URISyntaxException {
+        return execute(HttpMethod.OPTIONS, uri, entity);
     }
 
     /**
@@ -250,8 +426,24 @@ public abstract class AbstractHttpClient implements HttpClient {
      * {@inheritDoc}
      */
     @Override
+    public HttpResponse head(String uri) throws IOException, URISyntaxException {
+        return execute(HttpMethod.HEAD, uri);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public HttpResponse trace(HttpRequest request) throws IOException {
         return execute(HttpMethod.TRACE, request);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpResponse trace(String uri) throws IOException, URISyntaxException {
+        return execute(HttpMethod.TRACE, uri);
     }
 
     /**
