@@ -28,6 +28,3 @@ include 'http-requests-functional-test'
 include 'http-requests-jackson'
 
 include 'http-requests-spring'
-
-include 'http-requests-sample-spring'
-include 'http-requests-sample-jdk'
