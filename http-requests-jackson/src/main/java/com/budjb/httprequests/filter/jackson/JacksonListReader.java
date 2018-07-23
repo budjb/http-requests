@@ -17,7 +17,6 @@
 package com.budjb.httprequests.filter.jackson;
 
 import com.budjb.httprequests.converter.EntityReader;
-import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.InputStream;
