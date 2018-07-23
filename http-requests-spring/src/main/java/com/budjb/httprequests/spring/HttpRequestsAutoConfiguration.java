@@ -18,6 +18,6 @@ package com.budjb.httprequests.spring;
 
 import org.springframework.context.annotation.Import;
 
-@Import({HttpClientFactoryConfiguration.class, EntityConverterConfiguration.class, JacksonEntityConverterConfiguration.class})
+@Import({HttpClientFactoryConfiguration.class, EntityConverterConfiguration.class, JacksonEntityConverterConfiguration.class, GroovyExtensionConfiguration.class})
 public class HttpRequestsAutoConfiguration {
 }

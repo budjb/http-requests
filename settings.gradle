@@ -22,6 +22,7 @@ include 'http-requests-core'
 include 'http-requests-httpcomponents-client'
 include 'http-requests-jersey1'
 include 'http-requests-jersey2'
+include 'http-requests-groovy'
 
 include 'http-requests-functional-test'
 include 'http-requests-jackson'

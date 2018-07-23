@@ -14,8 +14,6 @@
 # limitations under the License.
 #
 
-distributionBase=GRADLE_USER_HOME
-distributionPath=wrapper/dists
-distributionUrl=https\://services.gradle.org/distributions/gradle-4.8.1-all.zip
-zipStoreBase=GRADLE_USER_HOME
-zipStorePath=wrapper/dists
+moduleName=Groovy extensions for the http-requests library.
+moduleVersion=2.0.0
+extensionClasses=com.budjb.httprequests.groovy.HttpClientGroovyExtensions
