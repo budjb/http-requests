@@ -61,7 +61,7 @@ publishing {
                         builder.dependencyManagement {
                             builder.dependencies {
                                 for (sub in rootProject.subprojects) {
-                                    if (!sub.plugins.hasPlugin('java')) {
+                                    if (!sub.plugins.hasPlugin('java') || !sub.plugins.hasPlugin('maven-publish')) {
                                         continue
                                     }
 

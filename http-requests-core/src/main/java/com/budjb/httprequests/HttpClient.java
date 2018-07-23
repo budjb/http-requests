@@ -430,6 +430,106 @@ public interface HttpClient {
     HttpResponse delete(String uri) throws IOException, URISyntaxException;
 
     /**
+     * Perform an HTTP DELETE request with the given request entity.
+     *
+     * @param request Request properties to use with the HTTP request.
+     * @param entity  An HTTP entity.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
+     * @throws IOException When an underlying IO exception occurs.
+     */
+    HttpResponse delete(HttpRequest request, HttpEntity entity) throws IOException;
+
+    /**
+     * Perform an HTTP DELETE request with the given request entity.
+     *
+     * @param uri    URI of the request.
+     * @param entity An HTTP entity.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
+     * @throws IOException        When an underlying IO exception occurs.
+     * @throws URISyntaxException When the syntax of the request is incorrect.
+     */
+    HttpResponse delete(String uri, HttpEntity entity) throws IOException, URISyntaxException;
+
+    /**
+     * Perform an HTTP DELETE request with the given input stream.
+     *
+     * @param request     Request properties to use with the HTTP request.
+     * @param inputStream An {@link InputStream} containing the response body.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
+     * @throws IOException When an underlying IO exception occurs.
+     */
+    HttpResponse delete(HttpRequest request, InputStream inputStream) throws IOException;
+
+    /**
+     * Perform an HTTP DELETE request with the given input stream.
+     *
+     * @param uri         URI of the request.
+     * @param inputStream An {@link InputStream} containing the response body.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
+     * @throws IOException        When an underlying IO exception occurs.
+     * @throws URISyntaxException When the syntax of the request is incorrect.
+     */
+    HttpResponse delete(String uri, InputStream inputStream) throws IOException, URISyntaxException;
+
+    /**
+     * Perform an HTTP DELETE request with the given entity.
+     * <p>
+     * The entity will be converted if an appropriate {@link EntityWriter} can be found. If no
+     * writer can be found, an {@link UnsupportedConversionException} will be thrown.
+     *
+     * @param request Request properties to use with the HTTP request.
+     * @param entity  Request entity.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
+     * @throws IOException                    When an underlying IO exception occurs.
+     * @throws UnsupportedConversionException When an error in entity conversion occurs.
+     */
+    HttpResponse delete(HttpRequest request, Object entity) throws IOException, UnsupportedConversionException;
+
+    /**
+     * Perform an HTTP DELETE request with the given entity.
+     * <p>
+     * The entity will be converted if an appropriate {@link EntityWriter} can be found. If no
+     * writer can be found, an {@link UnsupportedConversionException} will be thrown.
+     *
+     * @param uri    URI of the request.
+     * @param entity Request entity.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
+     * @throws IOException                    When an underlying IO exception occurs.
+     * @throws URISyntaxException             When the syntax of the request is incorrect.
+     * @throws UnsupportedConversionException When an error in entity conversion occurs.
+     */
+    HttpResponse delete(String uri, Object entity) throws IOException, URISyntaxException, UnsupportedConversionException;
+
+    /**
+     * Perform an HTTP DELETE request with the given entity.
+     * <p>
+     * The entity will be converted if an appropriate {@link EntityWriter} can be found. If no
+     * writer can be found, an {@link UnsupportedConversionException} will be thrown.
+     *
+     * @param request Request properties to use with the HTTP request.
+     * @param entity  Request entity.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
+     * @throws IOException                    When an underlying IO exception occurs.
+     * @throws UnsupportedConversionException When an error in entity conversion occurs.
+     */
+    HttpResponse delete(HttpRequest request, ConvertingHttpEntity entity) throws IOException, UnsupportedConversionException;
+
+    /**
+     * Perform an HTTP DELETE request with the given entity.
+     * <p>
+     * The entity will be converted if an appropriate {@link EntityWriter} can be found. If no
+     * writer can be found, an {@link UnsupportedConversionException} will be thrown.
+     *
+     * @param uri    URI of the request.
+     * @param entity Request entity.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
+     * @throws IOException                    When an underlying IO exception occurs.
+     * @throws URISyntaxException             When the syntax of the request is incorrect.
+     * @throws UnsupportedConversionException When an error in entity conversion occurs.
+     */
+    HttpResponse delete(String uri, ConvertingHttpEntity entity) throws IOException, URISyntaxException, UnsupportedConversionException;
+
+    /**
      * Perform an HTTP OPTIONS request.
      *
      * @param request Request properties to use with the HTTP request.
@@ -566,6 +666,225 @@ public interface HttpClient {
      * @throws URISyntaxException When the syntax of the request is incorrect.
      */
     HttpResponse head(String uri) throws IOException, URISyntaxException;
+
+    /**
+     * Perform an HTTP HEAD request with the given input stream.
+     *
+     * @param request     Request properties to use with the HTTP request.
+     * @param inputStream An {@link InputStream} containing the response body.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
+     * @throws IOException When an underlying IO exception occurs.
+     */
+    HttpResponse head(HttpRequest request, InputStream inputStream) throws IOException;
+
+    /**
+     * Perform an HTTP HEAD request with the given input stream.
+     *
+     * @param uri         URI of the request.
+     * @param inputStream An {@link InputStream} containing the response body.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
+     * @throws IOException        When an underlying IO exception occurs.
+     * @throws URISyntaxException When the syntax of the request is incorrect.
+     */
+    HttpResponse head(String uri, InputStream inputStream) throws IOException, URISyntaxException;
+
+    /**
+     * Perform an HTTP HEAD request with the given entity.
+     *
+     * @param request Request properties to use with the HTTP request.
+     * @param entity  An HTTP entity.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
+     * @throws IOException When an underlying IO exception occurs.
+     */
+    HttpResponse head(HttpRequest request, HttpEntity entity) throws IOException;
+
+    /**
+     * Perform an HTTP HEAD request with the given entity.
+     *
+     * @param uri    URI of the request.
+     * @param entity An HTTP entity.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
+     * @throws IOException        When an underlying IO exception occurs.
+     * @throws URISyntaxException When the syntax of the request is incorrect.
+     */
+    HttpResponse head(String uri, HttpEntity entity) throws IOException, URISyntaxException;
+
+    /**
+     * Perform an HTTP HEAD request with the given entity.
+     * <p>
+     * The entity will be converted if an appropriate {@link EntityWriter} can be found. If no
+     * writer can be found, an {@link UnsupportedConversionException} will be thrown.
+     *
+     * @param request Request properties to use with the HTTP request.
+     * @param entity  Request entity.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
+     * @throws IOException                    When an underlying IO exception occurs.
+     * @throws UnsupportedConversionException When an error in entity conversion occurs.
+     */
+    HttpResponse head(HttpRequest request, Object entity) throws IOException, UnsupportedConversionException;
+
+    /**
+     * Perform an HTTP HEAD request with the given entity.
+     * <p>
+     * The entity will be converted if an appropriate {@link EntityWriter} can be found. If no
+     * writer can be found, an {@link UnsupportedConversionException} will be thrown.
+     *
+     * @param uri    URI of the request.
+     * @param entity Request entity.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
+     * @throws IOException                    When an underlying IO exception occurs.
+     * @throws URISyntaxException             When the syntax of the request is incorrect.
+     * @throws UnsupportedConversionException When an error in entity conversion occurs.
+     */
+    HttpResponse head(String uri, Object entity) throws IOException, URISyntaxException, UnsupportedConversionException;
+
+    /**
+     * Perform an HTTP HEAD request with the given entity.
+     * <p>
+     * The entity will be converted if an appropriate {@link EntityWriter} can be found. If no
+     * writer can be found, an {@link UnsupportedConversionException} will be thrown.
+     *
+     * @param request Request properties to use with the HTTP request.
+     * @param entity  Request entity.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
+     * @throws IOException                    When an underlying IO exception occurs.
+     * @throws UnsupportedConversionException When an error in entity conversion occurs.
+     */
+    HttpResponse head(HttpRequest request, ConvertingHttpEntity entity) throws IOException, UnsupportedConversionException;
+
+    /**
+     * Perform an HTTP HEAD request with the given entity.
+     * <p>
+     * The entity will be converted if an appropriate {@link EntityWriter} can be found. If no
+     * writer can be found, an {@link UnsupportedConversionException} will be thrown.
+     *
+     * @param uri    URI of the request.
+     * @param entity Request entity.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
+     * @throws IOException                    When an underlying IO exception occurs.
+     * @throws URISyntaxException             When the syntax of the request is incorrect.
+     * @throws UnsupportedConversionException When an error in entity conversion occurs.
+     */
+    HttpResponse head(String uri, ConvertingHttpEntity entity) throws IOException, URISyntaxException, UnsupportedConversionException;
+
+    /**
+     * Perform an HTTP PATCH request.
+     *
+     * @param request Request properties to use with the HTTP request.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
+     * @throws IOException When an underlying IO exception occurs.
+     */
+    HttpResponse patch(HttpRequest request) throws IOException;
+
+    /**
+     * Perform an HTTP PATCH request.
+     *
+     * @param uri URI of the request.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
+     * @throws IOException        When an underlying IO exception occurs.
+     * @throws URISyntaxException When the syntax of the request is incorrect.
+     */
+    HttpResponse patch(String uri) throws IOException, URISyntaxException;
+
+    /**
+     * Perform an HTTP PATCH request with the given input stream.
+     *
+     * @param request     Request properties to use with the HTTP request.
+     * @param inputStream An {@link InputStream} containing the response body.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
+     * @throws IOException When an underlying IO exception occurs.
+     */
+    HttpResponse patch(HttpRequest request, InputStream inputStream) throws IOException;
+
+    /**
+     * Perform an HTTP PATCH request with the given input stream.
+     *
+     * @param uri         URI of the request.
+     * @param inputStream An {@link InputStream} containing the response body.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
+     * @throws IOException        When an underlying IO exception occurs.
+     * @throws URISyntaxException When the syntax of the request is incorrect.
+     */
+    HttpResponse patch(String uri, InputStream inputStream) throws IOException, URISyntaxException;
+
+    /**
+     * Perform an HTTP PATCH request with the given entity.
+     *
+     * @param request Request properties to use with the HTTP request.
+     * @param entity  An HTTP entity.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
+     * @throws IOException When an underlying IO exception occurs.
+     */
+    HttpResponse patch(HttpRequest request, HttpEntity entity) throws IOException;
+
+    /**
+     * Perform an HTTP PATCH request with the given entity.
+     *
+     * @param uri    URI of the request.
+     * @param entity An HTTP entity.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
+     * @throws IOException        When an underlying IO exception occurs.
+     * @throws URISyntaxException When the syntax of the request is incorrect.
+     */
+    HttpResponse patch(String uri, HttpEntity entity) throws IOException, URISyntaxException;
+
+    /**
+     * Perform an HTTP PATCH request with the given entity.
+     * <p>
+     * The entity will be converted if an appropriate {@link EntityWriter} can be found. If no
+     * writer can be found, an {@link UnsupportedConversionException} will be thrown.
+     *
+     * @param request Request properties to use with the HTTP request.
+     * @param entity  Request entity.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
+     * @throws IOException                    When an underlying IO exception occurs.
+     * @throws UnsupportedConversionException When an error in entity conversion occurs.
+     */
+    HttpResponse patch(HttpRequest request, Object entity) throws IOException, UnsupportedConversionException;
+
+    /**
+     * Perform an HTTP PATCH request with the given entity.
+     * <p>
+     * The entity will be converted if an appropriate {@link EntityWriter} can be found. If no
+     * writer can be found, an {@link UnsupportedConversionException} will be thrown.
+     *
+     * @param uri    URI of the request.
+     * @param entity Request entity.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
+     * @throws IOException                    When an underlying IO exception occurs.
+     * @throws URISyntaxException             When the syntax of the request is incorrect.
+     * @throws UnsupportedConversionException When an error in entity conversion occurs.
+     */
+    HttpResponse patch(String uri, Object entity) throws IOException, URISyntaxException, UnsupportedConversionException;
+
+    /**
+     * Perform an HTTP PATCH request with the given entity.
+     * <p>
+     * The entity will be converted if an appropriate {@link EntityWriter} can be found. If no
+     * writer can be found, an {@link UnsupportedConversionException} will be thrown.
+     *
+     * @param request Request properties to use with the HTTP request.
+     * @param entity  Request entity.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
+     * @throws IOException                    When an underlying IO exception occurs.
+     * @throws UnsupportedConversionException When an error in entity conversion occurs.
+     */
+    HttpResponse patch(HttpRequest request, ConvertingHttpEntity entity) throws IOException, UnsupportedConversionException;
+
+    /**
+     * Perform an HTTP PATCH request with the given entity.
+     * <p>
+     * The entity will be converted if an appropriate {@link EntityWriter} can be found. If no
+     * writer can be found, an {@link UnsupportedConversionException} will be thrown.
+     *
+     * @param uri    URI of the request.
+     * @param entity Request entity.
+     * @return A {@link HttpResponse} object containing the properties of the server response.
+     * @throws IOException                    When an underlying IO exception occurs.
+     * @throws URISyntaxException             When the syntax of the request is incorrect.
+     * @throws UnsupportedConversionException When an error in entity conversion occurs.
+     */
+    HttpResponse patch(String uri, ConvertingHttpEntity entity) throws IOException, URISyntaxException, UnsupportedConversionException;
 
     /**
      * Perform an HTTP TRACE request.

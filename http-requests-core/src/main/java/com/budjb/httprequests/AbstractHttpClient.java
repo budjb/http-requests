@@ -53,8 +53,9 @@ public abstract class AbstractHttpClient implements HttpClient {
     /**
      * Implements the logic to make an actual request with an HTTP client library.
      *
-     * @param context    HTTP request context.
-     * @param httpEntity An HTTP entity. May be {@code null} if no request entity is required.
+     * @param context         HTTP request context.
+     * @param httpEntity      An HTTP entity. May be {@code null} if no request entity is required.
+     * @param filterProcessor Filter processor.
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException              When an underlying IO exception occurs.
      * @throws URISyntaxException       When a problem parsing a URI occurs.
@@ -338,6 +339,70 @@ public abstract class AbstractHttpClient implements HttpClient {
      * {@inheritDoc}
      */
     @Override
+    public HttpResponse delete(HttpRequest request, HttpEntity entity) throws IOException {
+        return execute(HttpMethod.DELETE, request, entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpResponse delete(String uri, HttpEntity entity) throws IOException, URISyntaxException {
+        return execute(HttpMethod.DELETE, uri, entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpResponse delete(HttpRequest request, InputStream inputStream) throws IOException {
+        return execute(HttpMethod.DELETE, request, inputStream);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpResponse delete(String uri, InputStream inputStream) throws IOException, URISyntaxException {
+        return execute(HttpMethod.DELETE, uri, inputStream);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpResponse delete(HttpRequest request, Object entity) throws IOException, UnsupportedConversionException {
+        return execute(HttpMethod.DELETE, request, entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpResponse delete(String uri, Object entity) throws UnsupportedConversionException, IOException, URISyntaxException {
+        return execute(HttpMethod.DELETE, uri, entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpResponse delete(HttpRequest request, ConvertingHttpEntity entity) throws IOException, UnsupportedConversionException {
+        return execute(HttpMethod.DELETE, request, entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpResponse delete(String uri, ConvertingHttpEntity entity) throws UnsupportedConversionException, IOException, URISyntaxException {
+        return execute(HttpMethod.DELETE, uri, entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public HttpResponse options(HttpRequest request) throws IOException {
         return execute(HttpMethod.OPTIONS, request);
     }
@@ -434,6 +499,70 @@ public abstract class AbstractHttpClient implements HttpClient {
      * {@inheritDoc}
      */
     @Override
+    public HttpResponse head(HttpRequest request, HttpEntity entity) throws IOException {
+        return execute(HttpMethod.HEAD, request, entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpResponse head(String uri, HttpEntity entity) throws IOException, URISyntaxException {
+        return execute(HttpMethod.HEAD, uri, entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpResponse head(HttpRequest request, InputStream inputStream) throws IOException {
+        return execute(HttpMethod.HEAD, request, inputStream);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpResponse head(String uri, InputStream inputStream) throws IOException, URISyntaxException {
+        return execute(HttpMethod.HEAD, uri, inputStream);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpResponse head(HttpRequest request, Object entity) throws IOException, UnsupportedConversionException {
+        return execute(HttpMethod.HEAD, request, entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpResponse head(String uri, Object entity) throws UnsupportedConversionException, IOException, URISyntaxException {
+        return execute(HttpMethod.HEAD, uri, entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpResponse head(HttpRequest request, ConvertingHttpEntity entity) throws IOException, UnsupportedConversionException {
+        return execute(HttpMethod.HEAD, request, entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpResponse head(String uri, ConvertingHttpEntity entity) throws UnsupportedConversionException, IOException, URISyntaxException {
+        return execute(HttpMethod.HEAD, uri, entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public HttpResponse trace(HttpRequest request) throws IOException {
         return execute(HttpMethod.TRACE, request);
     }
@@ -444,6 +573,94 @@ public abstract class AbstractHttpClient implements HttpClient {
     @Override
     public HttpResponse trace(String uri) throws IOException, URISyntaxException {
         return execute(HttpMethod.TRACE, uri);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpResponse patch(HttpRequest request) throws IOException {
+        return execute(HttpMethod.PATCH, request);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpResponse patch(String uri) throws IOException, URISyntaxException {
+        return execute(HttpMethod.PATCH, uri);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpResponse patch(HttpRequest request, HttpEntity entity) throws IOException {
+        return execute(HttpMethod.PATCH, request, entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpResponse patch(String uri, HttpEntity entity) throws IOException, URISyntaxException {
+        return execute(HttpMethod.PATCH, uri, entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpResponse patch(HttpRequest request, InputStream inputStream) throws IOException {
+        return execute(HttpMethod.PATCH, request, inputStream);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpResponse patch(String uri, InputStream inputStream) throws IOException, URISyntaxException {
+        return execute(HttpMethod.PATCH, uri, inputStream);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpResponse patch(HttpRequest request, Object entity) throws IOException, UnsupportedConversionException {
+        return execute(HttpMethod.PATCH, request, entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpResponse patch(String uri, Object entity) throws UnsupportedConversionException, IOException, URISyntaxException {
+        return execute(HttpMethod.PATCH, uri, entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpResponse patch(HttpRequest request, ConvertingHttpEntity entity) throws IOException, UnsupportedConversionException {
+        return execute(HttpMethod.PATCH, request, entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpResponse patch(String uri, ConvertingHttpEntity entity) throws UnsupportedConversionException, IOException, URISyntaxException {
+        return execute(HttpMethod.PATCH, uri, entity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public EntityConverterManager getConverterManager() {
+        return converterManager;
     }
 
     /**
@@ -519,16 +736,6 @@ public abstract class AbstractHttpClient implements HttpClient {
 
             context.incrementRetries();
         }
-    }
-
-    /**
-     * Returns the entity converter manager.
-     *
-     * @return The entity converter manager.
-     */
-    @Override
-    public EntityConverterManager getConverterManager() {
-        return converterManager;
     }
 
     /**

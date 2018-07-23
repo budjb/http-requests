@@ -37,12 +37,12 @@ public enum HttpMethod {
     /**
      * HTTP DELETE.
      */
-    DELETE(false, true),
+    DELETE(true, true),
 
     /**
      * HTTP HEAD.
      */
-    HEAD(false, false),
+    HEAD(true, false),
 
     /**
      * HTTP TRACE.
@@ -52,7 +52,12 @@ public enum HttpMethod {
     /**
      * HTTP OPTIONS.
      */
-    OPTIONS(true, true);
+    OPTIONS(true, true),
+
+    /**
+     * HTTP PATCH.
+     */
+    PATCH(true, true);
 
     /**
      * Whether the method supports a request entity.

@@ -35,6 +35,8 @@ public class HttpClientFilterProcessor {
 
     /**
      * Base constructor.
+     *
+     * @param filters Filters to register with the filter processor.
      */
     public HttpClientFilterProcessor(List<HttpClientFilter> filters) {
         this.filters = filters;
