@@ -25,5 +25,5 @@ dependencies {
     compile project(':http-requests-core')
     compile 'org.apache.httpcomponents:httpclient:4.5.2' // TODO: put version in properties
 
-    testCompile project(':http-requests-test')
+    testCompile project(':http-requests-functional-test')
 }

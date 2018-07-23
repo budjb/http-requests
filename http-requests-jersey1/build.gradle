@@ -25,5 +25,5 @@ dependencies {
     compile project(':http-requests-core')
     compile 'com.sun.jersey:jersey-client:1.19.4' // TODO: put version in properties
 
-    testCompile project(':http-requests-test')
+    testCompile project(':http-requests-functional-test')
 }

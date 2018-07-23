@@ -27,5 +27,5 @@ dependencies {
     compile 'org.glassfish.jersey.core:jersey-common:2.27'
     compile 'org.glassfish.jersey.inject:jersey-hk2:2.27'
 
-    testCompile project(':http-requests-test')
+    testCompile project(':http-requests-functional-test')
 }
