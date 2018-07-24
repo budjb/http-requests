@@ -19,7 +19,7 @@ apply plugin: 'com.jfrog.bintray'
 bintray {
     user = System.getenv(bintrayUsernameEnvVar)
     key = System.getenv(bintrayKeyEnvVar)
-    publish = false
+    publish = true
 
     pkg {
         websiteUrl = githubHttpsUrl
@@ -43,7 +43,7 @@ bintray {
                 passphrase = System.getenv('GPG_PASSWORD')
             }
             mavenCentralSync {
-                sync = false
+                sync = true
                 user = System.getenv(sonatypeUsernameEnvVar)
                 password = System.getenv(sonatypePasswordEnvVar)
             }
