@@ -91,7 +91,6 @@ public class HttpEntity implements Closeable {
 
     /**
      * Inspects the given input stream and ensures it is non-null and that there are contents.
-     * TODO: do we actually need to validate there are contents?
      *
      * @param inputStream Input stream containing the entity.
      * @return The entity.

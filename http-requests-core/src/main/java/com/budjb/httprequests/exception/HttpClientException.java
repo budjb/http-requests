@@ -14,26 +14,25 @@
  * limitations under the License.
  */
 
-buildscript {
-    repositories {
-        maven { setUrl('http://repo.spring.io/plugins-release') }
+package com.budjb.httprequests.exception;
+
+/**
+ * A base exception type used in the HTTP request library.
+ */
+public class HttpClientException extends RuntimeException {
+    public HttpClientException() {
+        super();
     }
-    dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
-        classpath "io.spring.gradle:dependency-management-plugin:${springDependencyManagementVersion}"
+
+    public HttpClientException(String msg) {
+        super(msg);
+    }
+
+    public HttpClientException(String msg, Throwable throwable) {
+        super(msg, throwable);
+    }
+
+    public HttpClientException(Throwable throwable) {
+        super(throwable);
     }
 }
-
-allprojects {
-    group group
-    version version
-
-    apply plugin: 'idea'
-
-    repositories {
-        mavenCentral()
-        jcenter()
-        mavenLocal()
-    }
-}
-

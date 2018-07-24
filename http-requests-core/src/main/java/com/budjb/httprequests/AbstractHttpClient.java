@@ -16,6 +16,7 @@
 package com.budjb.httprequests;
 
 import com.budjb.httprequests.converter.EntityConverterManager;
+import com.budjb.httprequests.exception.HttpClientException;
 import com.budjb.httprequests.exception.UnsupportedConversionException;
 import com.budjb.httprequests.filter.HttpClientFilterProcessor;
 
@@ -703,7 +704,7 @@ public abstract class AbstractHttpClient implements HttpClient {
                 newRequest = (HttpRequest) request.clone();
             }
             catch (CloneNotSupportedException e) {
-                throw new RuntimeException(e); // TODO: a better exception
+                throw new HttpClientException(e);
             }
 
             context.setRequest(newRequest);
@@ -722,7 +723,7 @@ public abstract class AbstractHttpClient implements HttpClient {
                 throw e;
             }
             catch (Exception e) {
-                throw new RuntimeException(e); // TODO: a better exception
+                throw new HttpClientException(e);
             }
 
             context.setResponse(response);

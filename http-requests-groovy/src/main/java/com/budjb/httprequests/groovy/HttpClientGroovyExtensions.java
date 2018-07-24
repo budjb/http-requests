@@ -34,6 +34,7 @@ public class HttpClientGroovyExtensions {
     /**
      * Execute an HTTP request with the given method and request parameters and without a request entity.
      *
+     * @param self    The HttpClient over which we operate.
      * @param method  HTTP method to use with the HTTP request.
      * @param closure A closure that configures the HTTP request.
      * @return A {@link HttpResponse} object containing the properties of the server response.
@@ -46,6 +47,7 @@ public class HttpClientGroovyExtensions {
     /**
      * Executes an HTTP request with the given method, request parameters, and input stream.
      *
+     * @param self        The HttpClient over which we operate.
      * @param method      HTTP method to use with the HTTP request.
      * @param closure     A closure that configures the HTTP request.
      * @param inputStream An {@link InputStream} containing the response body.
@@ -59,6 +61,7 @@ public class HttpClientGroovyExtensions {
     /**
      * Executes an HTTP request with the given method, request parameters, and entity.
      *
+     * @param self    The HttpClient over which we operate.
      * @param method  HTTP method to use with the HTTP request.
      * @param closure A closure that configures the HTTP request.
      * @param entity  An HTTP entity.
@@ -75,6 +78,7 @@ public class HttpClientGroovyExtensions {
      * The entity will be converted if an appropriate {@link EntityWriter} can be found. If no
      * writer can be found, an {@link UnsupportedConversionException} will be thrown.
      *
+     * @param self    The HttpClient over which we operate.
      * @param method  HTTP method to use with the HTTP request.
      * @param closure A closure that configures the HTTP request.
      * @param entity  Request entity.
@@ -92,6 +96,7 @@ public class HttpClientGroovyExtensions {
      * The entity will be converted if an appropriate {@link EntityWriter} can be found. If no
      * writer can be found, an {@link UnsupportedConversionException} will be thrown.
      *
+     * @param self    The HttpClient over which we operate.
      * @param method  HTTP method to use with the HTTP request.
      * @param closure A closure that configures the HTTP request.
      * @param entity  Request entity.
@@ -106,6 +111,7 @@ public class HttpClientGroovyExtensions {
     /**
      * Perform an HTTP GET request.
      *
+     * @param self    The HttpClient over which we operate.
      * @param closure A closure that configures the HTTP request.
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException When an underlying IO exception occurs.
@@ -117,6 +123,7 @@ public class HttpClientGroovyExtensions {
     /**
      * Perform an HTTP DELETE request.
      *
+     * @param self    The HttpClient over which we operate.
      * @param closure A closure that configures the HTTP request.
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException When an underlying IO exception occurs.
@@ -128,6 +135,7 @@ public class HttpClientGroovyExtensions {
     /**
      * Perform an HTTP DELETE request with the given request entity.
      *
+     * @param self    The HttpClient over which we operate.
      * @param closure A closure that configures the HTTP request.
      * @param entity  An HTTP entity.
      * @return A {@link HttpResponse} object containing the properties of the server response.
@@ -140,6 +148,7 @@ public class HttpClientGroovyExtensions {
     /**
      * Perform an HTTP DELETE request with the given input stream.
      *
+     * @param self        The HttpClient over which we operate.
      * @param closure     A closure that configures the HTTP request.
      * @param inputStream An {@link InputStream} containing the response body.
      * @return A {@link HttpResponse} object containing the properties of the server response.
@@ -155,6 +164,7 @@ public class HttpClientGroovyExtensions {
      * The entity will be converted if an appropriate {@link EntityWriter} can be found. If no
      * writer can be found, an {@link UnsupportedConversionException} will be thrown.
      *
+     * @param self    The HttpClient over which we operate.
      * @param closure A closure that configures the HTTP request.
      * @param entity  Request entity.
      * @return A {@link HttpResponse} object containing the properties of the server response.
@@ -171,6 +181,7 @@ public class HttpClientGroovyExtensions {
      * The entity will be converted if an appropriate {@link EntityWriter} can be found. If no
      * writer can be found, an {@link UnsupportedConversionException} will be thrown.
      *
+     * @param self    The HttpClient over which we operate.
      * @param closure A closure that configures the HTTP request.
      * @param entity  Request entity.
      * @return A {@link HttpResponse} object containing the properties of the server response.
@@ -184,6 +195,7 @@ public class HttpClientGroovyExtensions {
     /**
      * Perform an HTTP POST request.
      *
+     * @param self    The HttpClient over which we operate.
      * @param closure A closure that configures the HTTP request.
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException When an underlying IO exception occurs.
@@ -195,6 +207,7 @@ public class HttpClientGroovyExtensions {
     /**
      * Perform an HTTP POST request with the given request entity.
      *
+     * @param self    The HttpClient over which we operate.
      * @param closure A closure that configures the HTTP request.
      * @param entity  An HTTP entity.
      * @return A {@link HttpResponse} object containing the properties of the server response.
@@ -207,6 +220,7 @@ public class HttpClientGroovyExtensions {
     /**
      * Perform an HTTP POST request with the given input stream.
      *
+     * @param self        The HttpClient over which we operate.
      * @param closure     A closure that configures the HTTP request.
      * @param inputStream An {@link InputStream} containing the response body.
      * @return A {@link HttpResponse} object containing the properties of the server response.
@@ -222,6 +236,7 @@ public class HttpClientGroovyExtensions {
      * The entity will be converted if an appropriate {@link EntityWriter} can be found. If no
      * writer can be found, an {@link UnsupportedConversionException} will be thrown.
      *
+     * @param self    The HttpClient over which we operate.
      * @param closure A closure that configures the HTTP request.
      * @param entity  Request entity.
      * @return A {@link HttpResponse} object containing the properties of the server response.
@@ -238,6 +253,7 @@ public class HttpClientGroovyExtensions {
      * The entity will be converted if an appropriate {@link EntityWriter} can be found. If no
      * writer can be found, an {@link UnsupportedConversionException} will be thrown.
      *
+     * @param self    The HttpClient over which we operate.
      * @param closure A closure that configures the HTTP request.
      * @param entity  Request entity.
      * @return A {@link HttpResponse} object containing the properties of the server response.
@@ -251,6 +267,7 @@ public class HttpClientGroovyExtensions {
     /**
      * Perform an HTTP PUT request.
      *
+     * @param self    The HttpClient over which we operate.
      * @param closure A closure that configures the HTTP request.
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException When an underlying IO exception occurs.
@@ -262,6 +279,7 @@ public class HttpClientGroovyExtensions {
     /**
      * Perform an HTTP PUT request with the given request entity.
      *
+     * @param self    The HttpClient over which we operate.
      * @param closure A closure that configures the HTTP request.
      * @param entity  An HTTP entity.
      * @return A {@link HttpResponse} object containing the properties of the server response.
@@ -274,6 +292,7 @@ public class HttpClientGroovyExtensions {
     /**
      * Perform an HTTP PUT request with the given input stream.
      *
+     * @param self        The HttpClient over which we operate.
      * @param closure     A closure that configures the HTTP request.
      * @param inputStream An {@link InputStream} containing the response body.
      * @return A {@link HttpResponse} object containing the properties of the server response.
@@ -289,6 +308,7 @@ public class HttpClientGroovyExtensions {
      * The entity will be converted if an appropriate {@link EntityWriter} can be found. If no
      * writer can be found, an {@link UnsupportedConversionException} will be thrown.
      *
+     * @param self    The HttpClient over which we operate.
      * @param closure A closure that configures the HTTP request.
      * @param entity  Request entity.
      * @return A {@link HttpResponse} object containing the properties of the server response.
@@ -305,6 +325,7 @@ public class HttpClientGroovyExtensions {
      * The entity will be converted if an appropriate {@link EntityWriter} can be found. If no
      * writer can be found, an {@link UnsupportedConversionException} will be thrown.
      *
+     * @param self    The HttpClient over which we operate.
      * @param closure A closure that configures the HTTP request.
      * @param entity  Request entity.
      * @return A {@link HttpResponse} object containing the properties of the server response.
@@ -318,6 +339,7 @@ public class HttpClientGroovyExtensions {
     /**
      * Perform an HTTP OPTIONS request.
      *
+     * @param self    The HttpClient over which we operate.
      * @param closure A closure that configures the HTTP request.
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException When an underlying IO exception occurs.
@@ -329,6 +351,7 @@ public class HttpClientGroovyExtensions {
     /**
      * Perform an HTTP OPTIONS request with the given request entity.
      *
+     * @param self    The HttpClient over which we operate.
      * @param closure A closure that configures the HTTP request.
      * @param entity  An HTTP entity.
      * @return A {@link HttpResponse} object containing the properties of the server response.
@@ -341,6 +364,7 @@ public class HttpClientGroovyExtensions {
     /**
      * Perform an HTTP OPTIONS request with the given input stream.
      *
+     * @param self        The HttpClient over which we operate.
      * @param closure     A closure that configures the HTTP request.
      * @param inputStream An {@link InputStream} containing the response body.
      * @return A {@link HttpResponse} object containing the properties of the server response.
@@ -356,6 +380,7 @@ public class HttpClientGroovyExtensions {
      * The entity will be converted if an appropriate {@link EntityWriter} can be found. If no
      * writer can be found, an {@link UnsupportedConversionException} will be thrown.
      *
+     * @param self    The HttpClient over which we operate.
      * @param closure A closure that configures the HTTP request.
      * @param entity  Request entity.
      * @return A {@link HttpResponse} object containing the properties of the server response.
@@ -372,6 +397,7 @@ public class HttpClientGroovyExtensions {
      * The entity will be converted if an appropriate {@link EntityWriter} can be found. If no
      * writer can be found, an {@link UnsupportedConversionException} will be thrown.
      *
+     * @param self    The HttpClient over which we operate.
      * @param closure A closure that configures the HTTP request.
      * @param entity  Request entity.
      * @return A {@link HttpResponse} object containing the properties of the server response.
@@ -385,6 +411,7 @@ public class HttpClientGroovyExtensions {
     /**
      * Perform an HTTP HEAD request.
      *
+     * @param self    The HttpClient over which we operate.
      * @param closure A closure that configures the HTTP request.
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException When an underlying IO exception occurs.
@@ -396,6 +423,7 @@ public class HttpClientGroovyExtensions {
     /**
      * Perform an HTTP HEAD request with the given request entity.
      *
+     * @param self    The HttpClient over which we operate.
      * @param closure A closure that configures the HTTP request.
      * @param entity  An HTTP entity.
      * @return A {@link HttpResponse} object containing the properties of the server response.
@@ -408,6 +436,7 @@ public class HttpClientGroovyExtensions {
     /**
      * Perform an HTTP HEAD request with the given input stream.
      *
+     * @param self        The HttpClient over which we operate.
      * @param closure     A closure that configures the HTTP request.
      * @param inputStream An {@link InputStream} containing the response body.
      * @return A {@link HttpResponse} object containing the properties of the server response.
@@ -423,6 +452,7 @@ public class HttpClientGroovyExtensions {
      * The entity will be converted if an appropriate {@link EntityWriter} can be found. If no
      * writer can be found, an {@link UnsupportedConversionException} will be thrown.
      *
+     * @param self    The HttpClient over which we operate.
      * @param closure A closure that configures the HTTP request.
      * @param entity  Request entity.
      * @return A {@link HttpResponse} object containing the properties of the server response.
@@ -439,6 +469,7 @@ public class HttpClientGroovyExtensions {
      * The entity will be converted if an appropriate {@link EntityWriter} can be found. If no
      * writer can be found, an {@link UnsupportedConversionException} will be thrown.
      *
+     * @param self    The HttpClient over which we operate.
      * @param closure A closure that configures the HTTP request.
      * @param entity  Request entity.
      * @return A {@link HttpResponse} object containing the properties of the server response.
@@ -452,6 +483,7 @@ public class HttpClientGroovyExtensions {
     /**
      * Perform an HTTP PATCH request.
      *
+     * @param self    The HttpClient over which we operate.
      * @param closure A closure that configures the HTTP request.
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException When an underlying IO exception occurs.
@@ -463,6 +495,7 @@ public class HttpClientGroovyExtensions {
     /**
      * Perform an HTTP PATCH request with the given request entity.
      *
+     * @param self    The HttpClient over which we operate.
      * @param closure A closure that configures the HTTP request.
      * @param entity  An HTTP entity.
      * @return A {@link HttpResponse} object containing the properties of the server response.
@@ -475,6 +508,7 @@ public class HttpClientGroovyExtensions {
     /**
      * Perform an HTTP PATCH request with the given input stream.
      *
+     * @param self        The HttpClient over which we operate.
      * @param closure     A closure that configures the HTTP request.
      * @param inputStream An {@link InputStream} containing the response body.
      * @return A {@link HttpResponse} object containing the properties of the server response.
@@ -490,6 +524,7 @@ public class HttpClientGroovyExtensions {
      * The entity will be converted if an appropriate {@link EntityWriter} can be found. If no
      * writer can be found, an {@link UnsupportedConversionException} will be thrown.
      *
+     * @param self    The HttpClient over which we operate.
      * @param closure A closure that configures the HTTP request.
      * @param entity  Request entity.
      * @return A {@link HttpResponse} object containing the properties of the server response.
@@ -506,6 +541,7 @@ public class HttpClientGroovyExtensions {
      * The entity will be converted if an appropriate {@link EntityWriter} can be found. If no
      * writer can be found, an {@link UnsupportedConversionException} will be thrown.
      *
+     * @param self    The HttpClient over which we operate.
      * @param closure A closure that configures the HTTP request.
      * @param entity  Request entity.
      * @return A {@link HttpResponse} object containing the properties of the server response.
@@ -519,6 +555,7 @@ public class HttpClientGroovyExtensions {
     /**
      * Perform an HTTP TRACE request.
      *
+     * @param self    The HttpClient over which we operate.
      * @param closure A closure that configures the HTTP request.
      * @return A {@link HttpResponse} object containing the properties of the server response.
      * @throws IOException When an underlying IO exception occurs.

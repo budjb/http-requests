@@ -17,6 +17,7 @@ package com.budjb.httprequests.filter.bundled;
 
 import com.budjb.httprequests.*;
 import com.budjb.httprequests.exception.EntityException;
+import com.budjb.httprequests.exception.HttpClientException;
 import com.budjb.httprequests.filter.LifecycleFilter;
 import com.budjb.httprequests.filter.OutputStreamFilter;
 
@@ -205,7 +206,7 @@ public abstract class LoggingFilter implements OutputStreamFilter, LifecycleFilt
             response.setEntity(new HttpEntity(inputStream, entity.getContentType(), entity.getCharSet()));
         }
         catch (IOException | EntityException e) {
-            throw new RuntimeException(e); // TODO: do better
+            throw new HttpClientException(e);
         }
     }
 

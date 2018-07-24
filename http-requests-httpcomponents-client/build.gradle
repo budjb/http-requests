@@ -23,7 +23,7 @@ ext {
 
 dependencies {
     compile project(':http-requests-core')
-    compile 'org.apache.httpcomponents:httpclient:4.5.2' // TODO: put version in properties
+    compile "org.apache.httpcomponents:httpclient:${httpComponentsClientVersion}"
 
     testCompile project(':http-requests-functional-test')
 }

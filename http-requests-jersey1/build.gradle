@@ -23,7 +23,7 @@ ext {
 
 dependencies {
     compile project(':http-requests-core')
-    compile 'com.sun.jersey:jersey-client:1.19.4' // TODO: put version in properties
+    compile "com.sun.jersey:jersey-client:${jersey1Version}"
 
     testCompile project(':http-requests-functional-test')
 }

@@ -16,7 +16,7 @@
 
 package com.budjb.httprequests.exception;
 
-public class EntityConverterException extends RuntimeException {
+public class EntityConverterException extends HttpClientException {
     public EntityConverterException() {
         super();
     }

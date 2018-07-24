@@ -19,17 +19,17 @@ apply plugin: 'com.jfrog.bintray'
 bintray {
     user = System.getenv(bintrayUsernameEnvVar)
     key = System.getenv(bintrayKeyEnvVar)
-    publish = true
+    publish = false
 
     pkg {
         websiteUrl = githubHttpsUrl
         issueTrackerUrl = "${githubHttpsUrl}/issues"
         vcsUrl = githubGitUrl
-        githubRepo = 'budjb/spring-distributed-scheduler'
+        githubRepo = 'budjb/http-requests'
 
         desc = projectDescription
         labels = ['REST', 'HTTP', 'java']
-        repo = 'spring'
+        repo = 'maven'
         name = project.name
         licenses = ['Apache-2.0']
         publications = ['library']
@@ -42,11 +42,11 @@ bintray {
                 sign = true
                 passphrase = System.getenv('GPG_PASSWORD')
             }
-//            mavenCentralSync {
-//                sync = true
-//                user = 'userToken' // TODO
-//                password = 'paasword' // TODO
-//            }
+            mavenCentralSync {
+                sync = false
+                user = System.getenv(sonatypeUsernameEnvVar)
+                password = System.getenv(sonatypePasswordEnvVar)
+            }
         }
     }
 }

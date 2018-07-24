@@ -23,9 +23,9 @@ ext {
 
 dependencies {
     compile project(':http-requests-core')
-    compile 'org.glassfish.jersey.core:jersey-client:2.27' // TODO: put version in properties
-    compile 'org.glassfish.jersey.core:jersey-common:2.27'
-    compile 'org.glassfish.jersey.inject:jersey-hk2:2.27'
+    compile "org.glassfish.jersey.core:jersey-client:${jersey2Version}"
+    compile "org.glassfish.jersey.core:jersey-common:${jersey2Version}"
+    compile "org.glassfish.jersey.inject:jersey-hk2:${jersey2Version}"
 
     testCompile project(':http-requests-functional-test')
 }

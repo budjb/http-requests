@@ -22,5 +22,5 @@ ext {
 
 dependencies {
     compile project(':http-requests-core')
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.9.6' // TODO: put into gradle properties
+    compile "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
 }

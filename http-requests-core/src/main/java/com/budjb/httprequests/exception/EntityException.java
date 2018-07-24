@@ -16,7 +16,7 @@
 
 package com.budjb.httprequests.exception;
 
-public abstract class EntityException extends RuntimeException {
+public abstract class EntityException extends HttpClientException {
     protected EntityException() {
         super();
     }
