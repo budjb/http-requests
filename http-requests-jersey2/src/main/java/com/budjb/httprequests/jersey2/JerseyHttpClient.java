@@ -37,7 +37,7 @@ public class JerseyHttpClient extends AbstractHttpClient {
      *
      * @param entityConverterManager Converter manager.
      */
-    protected JerseyHttpClient(EntityConverterManager entityConverterManager) {
+    JerseyHttpClient(EntityConverterManager entityConverterManager) {
         super(entityConverterManager);
     }
 

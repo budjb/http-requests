@@ -143,6 +143,9 @@ public class HttpComponentsHttpClient extends AbstractHttpClient {
             case TRACE:
                 return new HttpTrace(uri);
 
+            case PATCH:
+                return new HttpPatch(uri);
+
             default:
                 throw new IllegalArgumentException("HTTP method ${method.toString()} is unsupported");
         }

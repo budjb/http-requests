@@ -17,6 +17,7 @@ package com.budjb.httprequests.reference;
 
 import com.budjb.httprequests.*;
 import com.budjb.httprequests.converter.EntityConverterManager;
+import com.budjb.httprequests.exception.HttpMethodUnsupportedException;
 import com.budjb.httprequests.filter.HttpClientFilterProcessor;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -57,6 +58,10 @@ class ReferenceHttpClient extends AbstractHttpClient {
      */
     @Override
     protected HttpResponse execute(HttpContext context, HttpEntity httpEntity, HttpClientFilterProcessor filterProcessor) throws IOException, URISyntaxException, GeneralSecurityException {
+        if (context.getMethod() == HttpMethod.PATCH) {
+            throw new HttpMethodUnsupportedException(this, HttpMethod.PATCH);
+        }
+
         HttpRequest request = context.getRequest();
 
         URI uri = createURI(request);

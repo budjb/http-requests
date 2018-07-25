@@ -34,6 +34,19 @@ class EntityConverterManagerSpec extends Specification {
         manager.getAll().get(0).is converter
     }
 
+    def 'Getting all converters returns all converters that have been added to the manager'() {
+        setup:
+        EntityConverter c1 = Mock(EntityConverter)
+        EntityConverter c2 = Mock(EntityConverter)
+
+        EntityConverterManager manager = new EntityConverterManager()
+        manager.add(c1)
+        manager.add(c2)
+
+        expect:
+        manager.getAll() == [c1, c2]
+    }
+
     def 'After removing a converter, it is no longer contained in the manager'() {
         setup:
         EntityConverter converter = Mock(EntityConverter)
@@ -147,7 +160,7 @@ class EntityConverterManagerSpec extends Specification {
         0 * bad.write(*_)
         0 * reader.read(*_)
         1 * good.write(*_) >> inputStream
-        ((PushbackInputStream)result.inputStream).in.is inputStream
+        ((PushbackInputStream) result.inputStream).in.is inputStream
     }
 
     def 'When no reader is available to perform conversion, an UnsupportedConversionException is thrown'() {
