@@ -98,7 +98,7 @@ public class EntityConverterManager {
      * @throws UnsupportedConversionException when there are no entity writers that support the object type.
      */
     public HttpEntity write(Object entity) throws UnsupportedConversionException {
-        return write(entity, null, null);
+        return write(entity, null);
     }
 
     /**

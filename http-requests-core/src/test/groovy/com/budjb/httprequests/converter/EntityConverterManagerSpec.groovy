@@ -186,4 +186,107 @@ class EntityConverterManagerSpec extends Specification {
         then:
         thrown UnsupportedConversionException
     }
+
+    def 'When writing an entity with no content type or character set, null values are used'() {
+        setup:
+        EntityWriter converter = Mock(EntityWriter)
+        converter.supports(_) >> true
+
+        EntityConverterManager manager = new EntityConverterManager()
+        manager.add(converter)
+
+        when:
+        manager.write('foo')
+
+        then:
+        1 * converter.write('foo', null) >> new ByteArrayInputStream('foo'.getBytes())
+    }
+
+    def 'If an entity writer returns null, other entity writers are attempted'() {
+        setup:
+        ByteArrayInputStream inputStream = new ByteArrayInputStream('foo'.getBytes())
+
+        EntityWriter c1 = Mock(EntityWriter)
+        c1.supports(_) >> true
+
+        EntityWriter c2 = Mock(EntityWriter)
+        c2.supports(_) >> true
+        c2.write(*_) >> inputStream
+
+        EntityConverterManager manager = new EntityConverterManager()
+        manager.add(c1)
+        manager.add(c2)
+
+        when:
+        HttpEntity entity = manager.write('foo')
+
+        then:
+        entity.inputStream.in.is inputStream
+    }
+
+    def 'If an entity writer throws an exception, other entity writers are attempted'() {
+        setup:
+        ByteArrayInputStream inputStream = new ByteArrayInputStream('foo'.getBytes())
+
+        EntityWriter c1 = Mock(EntityWriter)
+        c1.supports(_) >> true
+        c1.write(*_) >> { throw new RuntimeException() }
+
+        EntityWriter c2 = Mock(EntityWriter)
+        c2.supports(_) >> true
+        c2.write(*_) >> inputStream
+
+        EntityConverterManager manager = new EntityConverterManager()
+        manager.add(c1)
+        manager.add(c2)
+
+        when:
+        HttpEntity entity = manager.write('foo')
+
+        then:
+        entity.inputStream.in.is inputStream
+    }
+
+    def 'If an entity reader throws an exception, other entity readers are attempted'() {
+        setup:
+        EntityReader c1 = Mock(EntityReader)
+        c1.supports(_) >> true
+        c1.read(*_) >> { throw new RuntimeException() }
+
+        EntityReader c2 = Mock(EntityReader)
+        c2.supports(_) >> true
+        c2.read(*_) >> 'foo'
+
+        EntityConverterManager manager = new EntityConverterManager()
+        manager.add(c1)
+        manager.add(c2)
+
+        HttpEntity entity = Mock(HttpEntity)
+        entity.getInputStream() >> Mock(InputStream)
+
+        when:
+        String result = manager.read(String, entity)
+
+        then:
+        result == 'foo'
+    }
+
+    def 'If an entity reader throws an IOException, the manager throws it'() {
+        setup:
+        EntityReader c1 = Mock(EntityReader)
+        c1.supports(_) >> true
+        c1.read(*_) >> { throw new IOException() }
+
+        EntityConverterManager manager = new EntityConverterManager()
+        manager.add(c1)
+
+        HttpEntity entity = Mock(HttpEntity)
+        entity.getInputStream() >> Mock(InputStream)
+
+        when:
+        manager.read(String, entity)
+
+        then:
+        thrown IOException
+    }
 }
