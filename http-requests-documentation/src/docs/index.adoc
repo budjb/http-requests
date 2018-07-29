@@ -1,6 +1,5 @@
 = HTTP Requests Library Documentation
 Bud Byrd
-2016-05-17
 :imagesdir: images
 :title-logo-image: logo.png
 
@@ -8,12 +7,14 @@ include::introduction.adoc[]
 
 include::installing.adoc[]
 
-include::usage.adoc[]
+include::components.adoc[]
 
 include::filters.adoc[]
 
 include::converters.adoc[]
 
-include::grails.adoc[]
+include::spring.adoc[]
+
+include::examples.adoc[]
 
 include::changelog.adoc[]

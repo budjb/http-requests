@@ -1,78 +1,81 @@
+/*
+ * Copyright 2016-2018 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+apply from: "${rootDir}/gradle/bintray.gradle"
+
 apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
 
 publishing {
     publications {
-        maven(MavenPublication) {
-            artifactId 'http-requests'
-            pom.withXml {
-                def xml = asNode()
+        library(MavenPublication) {
+            groupId project.group
+            artifactId project.name
+            version project.version
 
-                xml.children().last() + {
-                    def builder = delegate
+            pom {
+                name = project.name
+                description = projectDescription
+                url = githubHttpsUrl
 
-                    builder.name "HTTP Requests BOM"
-                    builder.description projectDescription
-                    builder.url "https://bintray.com/budjb/maven/http-requests"
-                    builder.licenses {
-                        builder.license {
-                            builder.name "Apache License, Version 2.0"
-                            builder.url 'http://www.apache.org/licenses/LICENSE-2.0'
-                        }
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
                     }
-                    builder.scm {
-                        builder.url 'scm:git@github.com:budjb/http-requests.git'
-                        builder.connection 'scm:git@github.com:budjb/http-requests.git'
-                        builder.developerConnection 'scm:git@github.com:budjb/http-requests.git'
+                }
+                developers {
+                    developer {
+                        id = 'budjb'
+                        name = 'Bud Byrd'
+                        email = 'bud.byrd@gmail.com'
                     }
+                }
+                scm {
+                    url = githubHttpsUrl
+                    connection = "scm:git:" + githubHttpsUrl + ".git"
+                    developerConnection = "scm:git:" + githubHttpsUrl + ".git"
+                }
+                issueManagement {
+                    system = 'GitHub Issues'
+                    url = githubHttpsUrl + "/issues"
+                }
 
-                    builder.developers {
-                        builder.developer {
-                            builder.id "budjb"
-                            builder.name "Bud Byrd"
-                        }
-                    }
+                withXml {
+                    asNode().children().last() + {
+                        def builder = delegate
 
-                    builder.dependencyManagement {
-                        builder.dependencies {
-                            for (sub in rootProject.subprojects) {
-                                if (sub.name in ['http-requests-documentation', 'http-requests-bom']) {
-                                    continue
-                                }
+                        builder.dependencyManagement {
+                            builder.dependencies {
+                                for (sub in rootProject.subprojects) {
+                                    if (!sub.plugins.hasPlugin('java') || !sub.plugins.hasPlugin('maven-publish')) {
+                                        continue
+                                    }
 
-                                builder.dependency {
-                                    builder.groupId sub.group
-                                    builder.artifactId sub.name
-                                    builder.version sub.version
+                                    builder.dependency {
+                                        builder.groupId sub.group
+                                        builder.artifactId sub.name
+                                        builder.version sub.version
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
-        }
-    }
-}
-
-bintray {
-    user = System.getenv('BINTRAY_USER')
-    key = System.getenv('BINTRAY_KEY')
-    publications = ['maven']
-    publish = true
-    pkg {
-        repo = 'maven'
-        name = 'http-requests'
-        desc = projectDescription
-        websiteUrl = 'https://github.com/budjb/http-requests'
-        issueTrackerUrl = 'https://github.com/budjb/http-requests/issues'
-        vcsUrl = 'https://github.com/budjb/http-requests.git'
-        licenses = ['Apache-2.0']
-        publicDownloadNumbers = true
-        githubRepo = 'budjb/http-requests'
-        githubReleaseNotesFile = 'README.md'
-        version {
-            released = new Date()
-            vcsTag = project.version
         }
     }
 }

@@ -1,45 +1,59 @@
 == Entity Converters
 
-Entity converters are responsible for converting request and response entities to and from raw byte arrays. This
+Entity converters are responsible for marshalling request and response entities to and from a byte stream. This
 prevents applications from having to make separate calls to helper methods or classes to do the conversion.
 
-Much like filter, an entity converter can be registered with both the `HttpClientFactory` and `HttpClient` objects.
-Any entity converter registered with the factory will automatically be added to any clients it creates. Entity
-converters can be interacted with on both the factory and the client with the following methods.
-
-* `addEntityConverter`
-* `removeEntityConveter`
-* `getEntityConverters`
-* `clearEntityConverters`
+Entity converters are registered with an `EntityConverterManager`, which is a requirement to create an
+`HttpClientFactory`. This allows the `HttpClient` to marshal objects to use as request entities. The manager is
+subsequently passed to `HttpResponse` objects so that it too may marshal response objects.
 
 === Entity Readers
 
-Entity readers are responsible for converting the raw byte array of a response entity into some other type of object.
+Entity readers are responsible for marshalling the byte stream of a response entity into some other type of object.
 Applications can create a new entity reader for a custom object type that contains the logic to read relevant
-information from the byte array entity and create the custom object from it, populated with the data from the response.
+information from the byte stream and create the custom object from it, bound with the data from the response.
 
-Entity reader implementations should implement the `EntityReader` interface.
+Entity readers should implement the `EntityReader` interface.
 
 === Entity Writers
 
-Entity writers are responsible for converting an object into a raw byte array for use in a request. Much like the entity
+Entity writers are responsible for marshalling an object into a byte stream for use in a request. Much like entity
 readers, entity writers provide applications a method to convert custom objects for use in a request without having to
 handle that logic separately from the request call.
 
-Entity writer implementations should implement the `EntityWriter` interface.
+Entity writers should implement the `EntityWriter` interface.
 
-NOTE: Entity writers have the option to modify the request by adding the `Content-Type` of the entity it successfully
-converted, if a `Content-Type` makes sense. This only happens if a `Content-Type` had not been previously set on the
-request.
+NOTE: Entity writers have the option to provide a default content type if it was able to marshal the entity. The
+default content type is only used if one was not otherwise provided with the entity.
 
 === Built-In Converters
 
-The library contains several built-in entity converters that are, by default, automatically registered with all client
-instances. Those built-ins include:
+The library contains several out of the box entity converters that may be used without including any other dependencies.
 
-* `byte[]` reader and writer.
-* `String` reader and writer.
-* `GString` writer.
-* `Map` reader and writer.
-* `List` reader and writer.
-* `FormData` reader and writer.
+* `ByteArrayEntityReader`
+* `ByteArrayEntityWriter`
+* `FormDataEntityWriter`
+* `StringEntityReader`
+* `StringEntityWriter`
+
+=== Jackson Converters
+
+The `http-requests-jackson` library adds entity converters for `List` and `Map` objects using the
+Jackson[https://github.com/FasterXML/jackson] library. The following entity converters are available:
+
+* `JacksonListReader`
+* `JacksonMapReader`
+* `JacksonMapListWriter`
+
+=== Groovy Converters
+
+The `http-requests-groovy` library adds entity converters specific to Groovy class types. The following
+entity converters are available:
+
+* `GStringEntityWriter`
+* `JsonEntityWriter`
+* `JsonEntityReader`
+* `XmlSlurperEntityReader`
+
+NOTE: If the Groovy JSON converters are in use, the Jackson library is redundant. The groovy variants utilize
+`JsonSlurper` and `JsonBuilder`.

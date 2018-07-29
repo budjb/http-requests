@@ -1,9 +1,0 @@
-apply from: "${rootProject.projectDir}/gradle/application.gradle"
-apply from: "${rootProject.projectDir}/gradle/publishing.gradle"
-
-dependencies {
-    compile project(':http-requests-core')
-    compile 'org.springframework.boot:spring-boot-starter-web:1.3.3.RELEASE'
-    compile 'org.springframework:spring-test:4.2.5.RELEASE'
-    compile 'org.spockframework:spock-spring:1.0-groovy-2.4'
-}

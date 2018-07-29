@@ -1,0 +1,180 @@
+=== HttpClient
+
+The `HttpClient` contains many methods used to initiate requests. The `HttpClient` should not be created directly, but
+rather the use of the `createHttpClient` method in `HttpClientFactory`.
+
+Methods in the client are named after the HTTP verb or method to be used for the request.
+
+.Supported HTTP Methods
+* GET
+* POST
+* PUT
+* DELETE
+* TRACE
+* OPTIONS
+* HEAD
+* PATCH
+
+==== Client Methods
+
+Each HTTP verb has a corresponding method in `HttpClient`. Each method takes either an `HttpRequest`, or a `String` for
+simple requests. All methods in the client have the following methods.
+
+.HttpClient Common Method Structure
+[source,java]
+----
+/**
+ * Perform an HTTP request.
+ *
+ * @param request Request properties to use with the HTTP request.
+ * @return A {@link HttpResponse} object containing the properties of the server response.
+ * @throws IOException When an underlying IO exception occurs.
+ */
+HttpResponse method(HttpRequest request) throws IOException;
+
+/**
+ * Perform an HTTP request.
+ *
+ * @param uri URI of the request.
+ * @return A {@link HttpResponse} object containing the properties of the server response.
+ * @throws IOException        When an underlying IO exception occurs.
+ * @throws URISyntaxException When the syntax of the request is incorrect.
+ */
+HttpResponse method(String uri) throws IOException, URISyntaxException;
+----
+
+Some HTTP verbs support request entities (or bodies). Specifically, all HTTP verbs *except* GET and TRACE support
+request entities. Entities may be provided with a few different types.
+
+NOTE: Certain HTTP verbs, such as `PATCH` and `DELETE`, have limited support both in provider HTTP clients and in
+HTTP servers.
+
+.Request Entity Types
+[grid="rows"]
+|===
+| Type                   | Description
+
+| `HttpEntity`           | Contains an object that has already been serialized into an `InputStream`, and optionally
+                           content type information.
+| `InputStream`          | Contains an object that has already been serialized, with no content type information.
+| `ConvertingHttpEntity` | Contains an object that will be serialized with the `EntityConverterManager`, and optionally
+                           content type information.
+| `Object`               | An object that will be serialized with the `EntityConverterManager`.
+|===
+
+HTTP verbs that support entities have additional methods defined in the `HttpClient`, with the following structure.
+
+[source,java]
+----
+/**
+ * Perform an HTTP request with the given request entity.
+ *
+ * @param request Request properties to use with the HTTP request.
+ * @param entity  An HTTP entity.
+ * @return A {@link HttpResponse} object containing the properties of the server response.
+ * @throws IOException When an underlying IO exception occurs.
+ */
+HttpResponse method(HttpRequest request, HttpEntity entity) throws IOException;
+
+/**
+ * Perform an HTTP request with the given request entity.
+ *
+ * @param uri    URI of the request.
+ * @param entity An HTTP entity.
+ * @return A {@link HttpResponse} object containing the properties of the server response.
+ * @throws IOException        When an underlying IO exception occurs.
+ * @throws URISyntaxException When the syntax of the request is incorrect.
+ */
+HttpResponse method(String uri, HttpEntity entity) throws IOException, URISyntaxException;
+
+/**
+ * Perform an HTTP request with the given input stream.
+ *
+ * @param request     Request properties to use with the HTTP request.
+ * @param inputStream An {@link InputStream} containing the response body.
+ * @return A {@link HttpResponse} object containing the properties of the server response.
+ * @throws IOException When an underlying IO exception occurs.
+ */
+HttpResponse method(HttpRequest request, InputStream inputStream) throws IOException;
+
+/**
+ * Perform an HTTP request with the given input stream.
+ *
+ * @param uri         URI of the request.
+ * @param inputStream An {@link InputStream} containing the response body.
+ * @return A {@link HttpResponse} object containing the properties of the server response.
+ * @throws IOException        When an underlying IO exception occurs.
+ * @throws URISyntaxException When the syntax of the request is incorrect.
+ */
+HttpResponse method(String uri, InputStream inputStream) throws IOException, URISyntaxException;
+
+/**
+ * Perform an HTTP request with the given entity.
+ *
+ * The entity will be converted if an appropriate {@link EntityWriter} can be found. If no
+ * writer can be found, an {@link UnsupportedConversionException} will be thrown.
+ *
+ * @param request Request properties to use with the HTTP request.
+ * @param entity  Request entity.
+ * @return A {@link HttpResponse} object containing the properties of the server response.
+ * @throws IOException                    When an underlying IO exception occurs.
+ * @throws UnsupportedConversionException When an error in entity conversion occurs.
+ */
+HttpResponse method(HttpRequest request, ConvertingHttpEntity entity) throws IOException, UnsupportedConversionException;
+
+/**
+ * Perform an HTTP request with the given entity.
+ *
+ * The entity will be converted if an appropriate {@link EntityWriter} can be found. If no
+ * writer can be found, an {@link UnsupportedConversionException} will be thrown.
+ *
+ * @param uri    URI of the request.
+ * @param entity Request entity.
+ * @return A {@link HttpResponse} object containing the properties of the server response.
+ * @throws IOException                    When an underlying IO exception occurs.
+ * @throws URISyntaxException             When the syntax of the request is incorrect.
+ * @throws UnsupportedConversionException When an error in entity conversion occurs.
+ */
+HttpResponse method(HttpRequest request, ConvertingHttpEntity entity) throws IOException, UnsupportedConversionException;
+
+/**
+ * Perform an HTTP request with the given entity.
+ *
+ * The entity will be converted if an appropriate {@link EntityWriter} can be found. If no
+ * writer can be found, an {@link UnsupportedConversionException} will be thrown.
+ *
+ * @param request Request properties to use with the HTTP request.
+ * @param entity  Request entity.
+ * @return A {@link HttpResponse} object containing the properties of the server response.
+ * @throws IOException                    When an underlying IO exception occurs.
+ * @throws UnsupportedConversionException When an error in entity conversion occurs.
+ */
+HttpResponse method(HttpRequest request, Object entity) throws IOException, UnsupportedConversionException;
+
+/**
+ * Perform an HTTP request with the given entity.
+ *
+ * The entity will be converted if an appropriate {@link EntityWriter} can be found. If no
+ * writer can be found, an {@link UnsupportedConversionException} will be thrown.
+ *
+ * @param uri    URI of the request.
+ * @param entity Request entity.
+ * @return A {@link HttpResponse} object containing the properties of the server response.
+ * @throws IOException                    When an underlying IO exception occurs.
+ * @throws URISyntaxException             When the syntax of the request is incorrect.
+ * @throws UnsupportedConversionException When an error in entity conversion occurs.
+ */
+HttpResponse method(String uri, Object entity) throws IOException, URISyntaxException, UnsupportedConversionException;
+----
+
+.Example Without Request Entity
+[source,java]
+----
+HttpResponse response = client.get("http://example.com/foo/bar");
+----
+
+.Example With Request Entity
+[source,java]
+----
+HttpResponse response = client.post("http://example.com/foo/bar", "content");
+----

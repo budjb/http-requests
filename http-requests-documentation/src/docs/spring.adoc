@@ -1,0 +1,14 @@
+== Spring Boot Integration
+
+The `http-requests-spring` is available to automatically configure the various library components to the application
+context as Spring beans. It supports automatic entity converter registry for all entity converters that are registered
+as beans, and it automatically configures the `HttpClientFactory` instance as a bean depending on which provider is
+present on the classpath.
+
+NOTE: Auto configuration must be enabled for the HTTP requests components to be automatically registered.
+This can be enabled with the `EnableAutoConfiguration` annotation on the main application class or a `Configuration`
+class. Alternatively, the `HttpRequestsAutoConfiguration` configuration class may be configured as a bean to accomplish
+automatic configuration of the library.
+
+With the Spring support added, other beans may inject the `HttpClientFactory` (with the name `httpClientFactory`) bean
+as a dependency.
