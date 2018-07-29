@@ -1,0 +1,62 @@
+=== Handling Responses
+
+`HttpClient` request methods return an `HttpResponse` object that contains information about the response.
+
+==== HttpResponse Properties
+
+[grid="rows", cols=[1,1,3]
+|===
+| Property  | Type            | Description
+
+| `status`  | `Integer`       | HTTP status code of the response.
+| `headers` | `MultiValueMap` | Response headers.
+| `entity`  | `HttpEntity`    | Response entity (may be `null`).
+|===
+
+IMPORTANT: To ensure that all resources used during the request are released, it is critical that the response is
+closed via the `HttpRequest.close()` method once the response is no longer needed.
+
+==== Response Entities
+
+The response entity can be retrieved by using the `getEntity()` method of the `HttpResponse`, which return an
+`HttpEntity` containing the entity. By default, the response entity, if available, is buffered and the response is
+closed. Subsequent calls to retrieve the response entity will reproduce the entity an unlimited amount of times. If the
+request properties disabled this functionality, the response's entity can be read only once, but it does not require the memory space to buffer the entity in the `HttpResponse` object. Additionally, it
+is important to close the response when this functionality is disabled.
+
+IMPORTANT: When `bufferResponseEntity` is `false`, it is very important that the `HttpResponse` is closed
+when it is no longer needed. If it is not closed, underlying system resources may not be freed up. The `close()` method
+can be called on the `HttpResponse` to properly clean up the request.
+
+The `HttpResponse` supports <<Entity Converters,entity conversion>> using the `getEntity(Class<?> type)` method. If an
+entity reader is registered that supports the requested type, it will be converted and returned.
+
+.Retrieving the Response Entity as an InputStream
+[source,java]
+----
+HttpResponse response = client.get("https://example.com/api/foo_resource");
+
+try {
+    InputStream inputStream = response.getEntity();
+    // do some work with the input stream
+}
+finally {
+    response.close()
+}
+----
+
+.Retrieving the Response Entity as a String
+[source,java]
+----
+HttpResponse response = client.get("https://example.com/api/foo_resource");
+
+try {
+    String inputStream = response.getEntity(String.class);
+}
+finally {
+    response.close();
+}
+----
+
+NOTE: The above example assumes that an entity converter that can read the entity into a `String` is registered with
+the `EntityConverterManager` that the `HttpClientFactory` was built with.

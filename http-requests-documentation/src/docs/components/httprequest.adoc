@@ -1,0 +1,81 @@
+=== HttpRequest
+
+The `HttpRequest` object is used to configure an HTTP request. The properties contained within `HttpRequest` both define
+a request and influence the behavior of the HTTP client.
+
+.HttpRequest Properties
+[grid="rows", cols="1,1,1,5"]
+|===
+| Property                | Type            | Default Value | Description
+
+| `uri`                   | `String`        |               | The URI of the request, including the protocol,
+                                                              port, host, and path.
+| `headers`               | `MultiValueMap` |               | Request headers. Individual header names can
+                                                              contain multiple values.
+| `queryParameters`       | `MultiValueMap` |               | Query parameters of the request. Individual query
+                                                              parameters can contain multiple values.
+| `connectionTimeout`     | `Integer`       | 0             | The amount of time, in milliseconds, the request
+                                                              should wait for the connection to time out. A value
+                                                              `0` means there is no timeout.
+| `readTimeout`           | `Integer`       | 0             | The amount of time, in milliseconds, the request
+                                                              should wait to time out while waiting for content.
+                                                              A value`0` means there is no timeout.
+| `sslValidated`          | `Boolean`       | `true`        | Whether SSL certification trust chains and host
+                                                              names should be validated.
+| `followRedirects`       | `Boolean`       | `true`        | Whether the HTTP client should follow redirect
+                                                              responses received from the host.
+| `bufferResponseEntity`  | `Boolean`       | `true`        | If `true`, the entity is read completely from
+                                                              the response and the response is
+                                                              closed. This allows the entity to be retrieved
+                                                              multiple times.
+| `filters`               |                 |               | Filters to apply to the request.
+|===
+
+==== Building an HttpRequest
+
+The `HttpRequest` supports a fluent syntax, where calls to setter methods may be chained.
+
+Using the builder syntax, an `HttpRequest` object may be created like the following:
+
+.HttpRequest Example
+[source,java]
+HttpRequest request = new HttpRequest()
+    .setUri("http://example.com")
+    .setHeader("Accept", "application/json")
+    .setFollowRedirects(false);
+
+==== Behavior Modification
+
+As mentioned before, some of the `HttpRequest` properties influence the behavior of the HTTP client. This section will
+identify those properties and their behavior.
+
+===== followRedirects
+
+By default, the HTTP client will follow redirect responses sent by the server by repeating the request against the new
+HTTP URI. If this behavior should be avoided, it can be disabled by setting `followRedirects` to false.
+
+NOTE: When this happens, the `HttpResponse` object will likely not contain much information other than the HTTP status
+code.
+
+===== bufferResponseEntity
+
+When this is enabled, the response entity (if there is one) is automatically read from the HTTP connection's
+`InputStream` into a byte array stored in the `HttpResponse` object, and the stream is closed. This allows the entity
+to be retrieved multiple times. When disabled, the response `InputStream` may typically only be read only once.
+
+IMPORTANT: It is very important that the response is closed if this functionality is disabled, or the underlying system
+resources may not be freed up. This is true even when an HTTP status exception is thrown via the
+`HttpStatusExceptionFilter`, which includes the `HttpResponse` in the thrown exception.
+
+===== sslValidated
+
+WARNING: Disabling this functionality makes HTTP requests inherently insecure and is not recommended in situations where
+host identity verification is important, such as production environments.
+
+By default, all SSL and TLS connections go through the standard validation steps, and may throw an `IOException` if
+SSL validation fails. Sometimes, authors may wish to bypass this functionality when they know SSL validation will fail
+but they still trust the remote host. When this property is set to true, SSL validation will not occur and the request
+should succeed unless there's a more serious SSL issue encountered.
+
+TIP: Disabling SSL validation is a great tool for quickly deploying development environments with self-signed
+certificates that are not stored in Java keystores.

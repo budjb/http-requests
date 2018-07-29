@@ -1,0 +1,86 @@
+== Examples
+
+=== Using the Library
+
+This example walks through creating the various components of the library and how they are used. The example is
+admittedly verbose, so that each component is elaborated upon. In real world applications, the initialization code and
+requests are much more likely to be separated.
+
+[source,java]
+----
+// The entity converter manager is built and contains any entity converters
+// needed by the application.
+EntityConverterManager entityConverterManager = new EntityConverterManager();
+entityConverterManager.add(new StringEntityReader());
+
+// The HttpClientFactory is built, using the built-in Java client.
+// The converter manager is passed in as a dependency.
+HttpClientFactory httpClientFactory = ReferenceHttpClientFactory(entityConverterManager);
+
+// The factory may be stored in the holder if other parts of the application need it.
+//HttpClientFactoryHolder.setHttpClientFactory(httpClientFactory);
+
+// An HttpClient is created from the factory.
+HttpClient client = httpClientFactory.createHttpClient();
+
+try {
+    // Make the HTTP request, and capture the response.
+    HttpResponse response = client.get("https://reqres.in/api/users");
+
+    // Marshal the response entity as a String (since the StringEntityReader was registered
+    // with the EntityConverterManager above).
+    String result = response.getEntity(String.class);
+
+    // Print the result.
+    System.out.println("HTTP response is:\n" + result);
+}
+catch (Exception e) {
+    System.out.println("unexpected exception occurred");
+    e.printStackTrace();
+}
+----
+
+=== Using Spring Integration
+
+Using the Spring Boot integration removes the need for applications to bootstrap the `HttpClientFactory`, due to the
+automatic configuration of the library's beans. The above example is significantly simplified in the Spring Boot
+example below. Notice that the code does not create an `EntityConverterManager`, register entity converters with it, or
+create the `HttpClientFactory`. This is all handled via the Spring library.
+
+[source,java]
+----
+@SpringBootApplication
+public class SpringBootDemoApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(SpringBootDemoApplication.class, args);
+    }
+
+    /**
+     * The command line runner is a simple way to run some code just as the application
+     * has started up.
+     *
+     * For this example, the commandLineRunner bean simply takes the httpClientFactory
+     * bean as a dependency and makes a request.
+     */
+    @Bean
+    CommandLineRunner commandLineRunner(HttpClientFactory httpClientFactory) {
+        return args -> {
+            // Create the client.
+            HttpClient client = httpClientFactory.createHttpClient();
+
+            // Make the request.
+            HttpResponse response = client.get("https://reqres.in/api/users");
+
+            // Marshal the response entity as a String.
+            String result = response.getEntity(String.class);
+
+            // Print the result.
+            System.out.println("HTTP response is:\n" + result);
+        };
+    }
+}
+----
+
+=== Additional Samples
+
+More samples can be found in the https://github.com/budjb/http-requests-samples[samples project] on GitHub.

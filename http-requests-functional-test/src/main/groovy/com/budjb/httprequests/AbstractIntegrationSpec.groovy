@@ -18,7 +18,7 @@ package com.budjb.httprequests
 import com.budjb.httprequests.converter.EntityConverterManager
 import com.budjb.httprequests.converter.bundled.*
 import com.budjb.httprequests.filter.jackson.JacksonListReader
-import com.budjb.httprequests.filter.jackson.JacksonMapListWriter
+import com.budjb.httprequests.filter.jackson.JacksonMapWriter
 import com.budjb.httprequests.filter.jackson.JacksonMapReader
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Value
@@ -69,7 +69,7 @@ abstract class AbstractIntegrationSpec extends Specification {
         converterManager.add(new ByteArrayEntityReader())
         converterManager.add(new JacksonMapReader(objectMapper))
         converterManager.add(new JacksonListReader(objectMapper))
-        converterManager.add(new JacksonMapListWriter(objectMapper))
+        converterManager.add(new JacksonMapWriter(objectMapper))
         converterManager.add(new FormDataEntityWriter())
 
         httpClientFactory = createHttpClientFactory(converterManager)

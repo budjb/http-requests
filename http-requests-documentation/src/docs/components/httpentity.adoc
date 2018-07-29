@@ -1,0 +1,5 @@
+=== HttpEntity
+
+An `HttpEntity` is the container object for an entity to be used for a request or returned with a response. The
+`HttpEntity` class itself contains an `InputStream`, which contains the actual content of the entity, and optionally
+a content type and character set.

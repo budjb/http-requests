@@ -21,13 +21,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.List;
 import java.util.Map;
 
 /**
  * A map JSON writer that utilizes Jackson.
  */
-public class JacksonMapListWriter implements EntityWriter {
+public class JacksonMapWriter implements EntityWriter {
     /**
      * Jackson object mapper.
      */
@@ -38,7 +37,7 @@ public class JacksonMapListWriter implements EntityWriter {
      *
      * @param objectMapper Jackson object mapper.
      */
-    public JacksonMapListWriter(ObjectMapper objectMapper) {
+    public JacksonMapWriter(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
@@ -55,7 +54,7 @@ public class JacksonMapListWriter implements EntityWriter {
      */
     @Override
     public boolean supports(Class<?> type) {
-        return Map.class.isAssignableFrom(type) || List.class.isAssignableFrom(type);
+        return Map.class.isAssignableFrom(type);
     }
 
     /**

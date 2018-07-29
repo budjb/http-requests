@@ -1,64 +1,37 @@
 == Filters
 
-The `HttpClient` supports the use of filter objects so that applications can react to certain events in the lifecycle
-of an HTTP request.
+Filters may be added to the `HttpRequest` to modify or react to certain events in the lifecycle of an HTTP request.
+There are various filter types available, each providing an injection point into the request lifecycle, as explained
+below.
 
-Filters can be added to the `HttpClientFactory` or to the `HttpClient` directly. Any filters registered with the
-`HttpClientFactory` will automatically be assigned to any `HttpClient` instance the factory creates. For both objects,
-the following methods are available to work with filters.
+.HTTP Request Filter Chain
+image::filter-lifecycle.png[HTTP Request Filter Chain, role="thumb"]
 
-* `addFilter`
-* `removeFilter`
-* `clearFilters`
-* `getFilters`
-
-=== HttpClientRequestFilter
+=== RequestFilter
 
 Applications may need to intercept an HTTP request directly before the request is actually made to modify the request
-parameters. Any request filter that is registered with the `HttpClient` will be called directly before the request
-is made.
+in some manner. A great example of a use of this filter is the built-in `BasicAuthFilter`
 
-A great example of a use of this filter is the built-in `BasicAuthFilter`
-
-[source,groovy]
+[source,java]
 ----
-// given a client has been created...
-client.addFilter(new BasicAuthFilter('username', 'password'))
+// Adding a BasicAuthFilter to the request will automatically apply the required
+// headers for Basic Authentication.
+HttpRequest request = new HttpRequest("https://example.com");
+request.addFilter(new BasicAuthFilter('username', 'password'));
 ----
 
-The `BasicAuthFilter` is built with the credentials for the request, and the request is updated with that information
-just before the request is actually made.
-
-=== HttpClientRequestEntityFilter
+=== OutputStreamFilter
 
 This filter allows applications to modify the `OutputStream` sent to the actual HTTP connection before it is sent.
 An example of a built-in filter that uses this functionality is the `GZIPFilter`, which wraps the output stream
 in a `GZIPOutputStream`.
 
-=== HttpClientLifecycleFilter
-
-This filter is actually a trait that provides several integration points related to the lifecycle of the request.
-The trait provides base implementations of each available method so that only the methods a filter cares about must
-be overridden. The methods available are as follows.
-
-* `onRequest` is available to inspect the request properties and the `OutputStream`, but it should not change anything.
-  This filter method differs from the request filter in that the former is meant to modify the request, while this
-  filter is meant to inspect it once all changes have been made.
-* `onResponse` is similar in purpose to `onRequest`, but is called once a response has been received.
-* `onComplete` is called once the HTTP request has completed and no further retries have been requested. This is the
-  final filter opportunity before the HTTP request call returns to the caller.
-
 === HttpClientResponseFilter
 
 The response filter is called after a response has been received from the HTTP request. This filter provides an
-opportunity to modify the `HttpResponse`.
+opportunity to modify the `HttpResponse` before it is returned.
 
-=== HttpClientResponseEntityFilter
-
-The response entity filter is called after a response has been received from the HTTP request. This filter provides an
-opportunity to modify the response's entity `InputStream`.
-
-=== HttpClientRetryFilter
+=== RetryFilter
 
 The retry filter allows applications to determine if a request should be retried based on some criteria. If any
 one retry filter determines that the request should be retried, the request will be submitted again until no more
@@ -73,13 +46,20 @@ authentication token.
 TIP: There is a built-in `AuthenticationTokenHeaderFilter` class that creates a framework for this type of
 authentication scheme.
 
-=== Filter Chain
+=== LifecycleFilter
 
-The graphic below illustrates the order in which the filters explained above are called during the process of making
-an HTTP request.
+This filter provides several integration points related to the lifecycle of the request. The interfaces includes
+default, empty implementations of each available method so that only the methods a filter need only override the methods
+it requires. Each of the methods in this interface as passed an `HttpContext`, which contains the request, method,
+request entity, the response, and a property repository. This allows filters to maintain some state during the course
+of the request. The methods available are as follows.
 
-.HTTP Request Filter Chain
-image::filters.png[HTTP Request Filter Chain, role="thumb"]
+* `onStart` is called before any processing of the request is started.
+* `onRequest` is called directly before the request is executed, and is the last chance to modify the request before it
+  is sent over the wire.
+* `onResponse` is similar in purpose to `onRequest`, but is called once a response has been received.
+* `onComplete` is called once the HTTP request has completed and no further retries have been requested. This is the
+  final filter opportunity before the response is returned to the caller.
 
 === Built-In Filters
 

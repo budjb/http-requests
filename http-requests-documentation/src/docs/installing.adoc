@@ -1,33 +1,74 @@
 == Installing
-The library is split into several module libraries, which can all be found on
-https://bintray.com/bintray/jcenter[jCenter]. The library contains a core module, which contains the bulk of the code
-and logic provided by the library. There are also implementation-specific libraries that provide adapters to popular
-HTTP client libraries, called providers. The table below lists out all of the modules that exist for the HTTP Requests
-library and what their purposes are.
+The library is split into several libraries, which can all be found on https://bintray.com/bintray/jcenter[jCenter]
+and https://search.maven.org[Maven Central]. The library contains a core module, which contains the interfaces and base
+implementations of the library. There are also libraries that provide support for popular HTTP client libraries, as well
+as various extensions that provide additional functionality. The table below lists out all of the libraries that exist
+for the HTTP Requests library and what their purposes are.
 
 .HTTP Requests Library Modules
 [grid="rows"]
 |===
 | Module                                | Purpose
 
-| `http-requests`                       | A bill-of-materials POM for all libraries.
-| `http-requests-core`                  | Contains the core logic and interfaces that implementation modules will use, in addition to a built-in HTTP client implementation.
-| `http-requests-jersey1`               | Provides a *Jersey 1.x* implementation of the HTTP requests library.
-| `http-requests-jersey2`               | Provides a *Jersey 2.x* implementation of the HTTP requests library.
-| `http-requests-httpcomponents-client` | Provides an Apache HttpComponents Client implementation of the HTTP requests library.
-| `http-requests-test`                  | Contains the functional test cases that validate the functionality of an implementation library.
-| `http-requests-grails`                | A *Grails 3.x* plugin that sets up and exposes an `HttpClientFactory` bean.
+| `http-requests-bom`                   | A bill-of-materials POM for all libraries.
+| `http-requests-core`                  | Contains the core interfaces of the library, in addition to a built-in HTTP
+                                          client implementation built on top of Java's `HttpURLConnection`.
+| `http-requests-jersey1`               | Adds support for Jersey 1.x.
+| `http-requests-jersey2`               | Adds support for Jersey 2.x.
+| `http-requests-httpcomponents-client` | Adds support for Apache HttpComponents Client.
+| `http-requests-jackson`               | Adds entity converters for `Map` and `List` types using the Jackson library.
+| `http-requests-spring`                | Enables automatic configuration of the HTTP requests components as Spring
+                                          beans.
+| `http-requests-groovy`                | Adds Groovy DSLs to the library and Groovy-specific entity converters.
 |===
 
 NOTE: All modules are deployed under the group `com.budjb`.
 
-As an example, using gradle and opting to use the Jersey 1.x implementation, a dependency should be added like below:
+As an example, opting to add Jersey 2.x support and Jackson converters, Gradle might be configured like below:
 
 .build.gradle
 [source,groovy,subs="attributes"]
-dependencies {
-    compile "com.budjb:http-requests-jersey1:{version}"
+----
+apply plugin: "java"
+
+repositories {
+    mavenCentral()
 }
 
-Additionally, the bill-of-materials POM is available to keep dependencies in sync without the need to specify
+dependencies {
+    compile "com.budjb:http-requests-jersey2:{version}"
+    compile "com.budjb:http-requests-jackson:{version}"
+}
+----
+
+Additionally, the bill of materials POM is available to keep dependencies in sync without the need to specify
 their version numbers.
+
+.build.gradle
+[source,groovy,subs="attributes"]
+----
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "io.spring.gradle:dependency-management-plugin:1.0.6.RELEASE"
+    }
+}
+
+apply plugin: "java"
+apply plugin: "io.spring.dependency-management"
+
+repositories {
+    mavenCentral()
+}
+
+dependencyManagement {
+    imports { mavenBom "com.budjb:http-requests-bom:{version}" }
+}
+
+dependencies {
+    compile "com.budjb:http-requests-jersey2"
+    compile "com.budjb:http-requests-jackson"
+}
+----

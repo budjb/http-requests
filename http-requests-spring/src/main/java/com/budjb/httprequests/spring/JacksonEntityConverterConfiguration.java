@@ -17,8 +17,9 @@
 package com.budjb.httprequests.spring;
 
 import com.budjb.httprequests.filter.jackson.JacksonListReader;
-import com.budjb.httprequests.filter.jackson.JacksonMapListWriter;
+import com.budjb.httprequests.filter.jackson.JacksonListWriter;
 import com.budjb.httprequests.filter.jackson.JacksonMapReader;
+import com.budjb.httprequests.filter.jackson.JacksonMapWriter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -26,7 +27,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConditionalOnClass({ObjectMapper.class, JacksonMapListWriter.class, JacksonListReader.class, JacksonMapReader.class})
+@ConditionalOnClass({ObjectMapper.class, JacksonMapWriter.class, JacksonListReader.class, JacksonMapReader.class})
 public class JacksonEntityConverterConfiguration {
     @Bean
     @ConditionalOnMissingBean
@@ -35,8 +36,13 @@ public class JacksonEntityConverterConfiguration {
     }
 
     @Bean
-    public JacksonMapListWriter jacksonMapListWriter(ObjectMapper objectMapper) {
-        return new JacksonMapListWriter(objectMapper);
+    public JacksonMapWriter jacksonMapWriter(ObjectMapper objectMapper) {
+        return new JacksonMapWriter(objectMapper);
+    }
+
+    @Bean
+    public JacksonListWriter jacksonListWriter(ObjectMapper objectMapper) {
+        return new JacksonListWriter(objectMapper);
     }
 
     @Bean

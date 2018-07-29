@@ -5,28 +5,10 @@ The spirit of this library is to make it trivial to do easy things with HTTP req
 common use cases for an HTTP client, but does not aim to be a complete HTTP client implementation.
 
 At its core, the library defines a framework for making requests. A built-in implementation of this framework based on
-Java's built-in HTTP classes is included to make the library extremely lightweight, with its only external dependencies
-being `groovy` and `SLF4J`. There are also several implementation providers available that use popular HTTP client
-libraries, such as Jersey and Apache HTTP Components Client. When one of these providers is used, the library serves
-as an adapter, making the use of these popular libraries much easier and your code more concise.
+Java's built-in HTTP classes is included to make the library extremely lightweight, with its only external dependency
+being SLF4J. There are also several providers available that use popular HTTP client libraries, such as Jersey and
+Apache HTTP Components Client. When one of these providers is used, the library serves as a facade, making the use of
+these popular libraries much easier and your code more concise.
 
-=== Features
-At a high level, the library provides the following features, and more.
-
-* Configure and submit HTTP requests without knowing how to use the underlying HTTP client implementation.
-* Supports common request features, including query parameters, headers, and request entities.
-* Supports the following HTTP methods:
-  - GET
-  - POST
-  - PUT
-  - DELETE
-  - OPTIONS
-  - TRACE
-  - HEAD
-* Optionally disable SSL trust and hostname validation.
-* Log HTTP conversations.
-* Ability to create filters that affect the HTTP request during the various phases of its lifecycle.
-* Ability to create custom entity converters for custom object types.
-* Built-in entity converters for common object types.
-* HTTP status exceptions for non-successful response status codes available.
-* Requests can be built using a builder syntax or Groovy DSL closures.
+Indeed, the driving philosophy behind this project is to serve as a facade for HTTP requests, so that library authors
+may perform HTTP operations without dictating what HTTP library is required, much like SLF4J does for logging.

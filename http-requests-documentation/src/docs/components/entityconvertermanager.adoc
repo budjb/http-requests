@@ -1,0 +1,19 @@
+=== EntityConverterManager
+
+The `EntityConverterManager` serves as both a place to aggregate entity converters and as an entry point to object
+marshalling.
+
+.Example Usage
+[source,java]
+----
+EntityConverterManager converterManager = new EntityConverterManager();
+
+converterManager.add(new ExampleWriter());
+converterManager.add(new ExampleReader());
+----
+
+The converter manager may be used directly to marshal objects to and from `InputStream` instances, but it is intended
+to be a support component of `HttpClient`. Therefore, the converter manager is a requirement to build an
+`HttpClientFactory`.
+
+NOTE: More information can be found in the section that covers <<Entity Converters,entity converters>>.

@@ -1,0 +1,34 @@
+=== HttpClientFactory
+
+An `HttpClient` is used to make requests, but should not be created directly. HTTP client providers contain
+implementations of `HttpClient` specific to the HTTP client being wrapped. In order to ensure that authors do not need
+to worry about what type of `HttpClient` needs to be created, an `HttpClientFactory` should be used to create the client
+instances using the `createHttpClient()` method.
+
+The `HttpClientFactory` interface is implemented by provider libraries and can be created directly. As an example,
+the Jersey 1.x module's factory can be used to create a Jersey-specific `HttpClient` instance.
+
+[source,java]
+----
+// Note that EntityConverterManager is required by HttpClientFactory implementations
+HttpClientFactory factory = new JerseyHttpClientFactory(entityConverterManager);
+HttpClient client = factory.createHttpClient();
+----
+
+TIP: The `HttpClientFactory` can be registered as a Spring bean when applications utilize Spring Framework so that it
+may be injected as necessary. If Spring is not in use, the `HttpClientFactoryHolder` may be used as a singleton holder
+for the `HttpClientFactory` instance.
+
+Each provider library declares its own `HttpClientFactory` implementation, which can be looked up in the following
+table.
+
+.HttpClientFactory Classes By Provider
+[grid="rows"]
+|===
+| Provider                            | HttpClientFactory Class |
+
+| http-requests-core                  | `com.budjb.httprequests.reference.ReferenceHttpClientFactory` |
+| http-requests-jersey1               | `com.budjb.httprequests.jersey1.JerseyHttpClientFactory` |
+| http-requests-jersey2               | `com.budjb.httprequests.jersey2.JerseyHttpClientFactory` |
+| http-requests-httpcomponents-client | `com.budjb.httprequests.httpcomponents.client.HttpComponentsClientFactory` |
+|===
