@@ -420,7 +420,7 @@ public class HttpRequest implements Cloneable {
         String scheme = uri.getScheme();
         String host = uri.getHost();
         int port = uri.getPort();
-        String path = uri.getPath();
+        String path = uri.getRawPath();
         String query = uri.getQuery();
 
         StringBuilder builder = new StringBuilder(scheme).append("://").append(host);

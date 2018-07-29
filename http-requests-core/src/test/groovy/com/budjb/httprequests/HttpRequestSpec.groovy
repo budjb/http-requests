@@ -133,4 +133,17 @@ class HttpRequestSpec extends Specification {
         request.queryParameters == [going: ['away']]
     }
     */
+
+    def 'When a request is cloned, paths with special characters (those starting with \'%\') are cloned correctly'() {
+        setup:
+        HttpRequest request = new HttpRequest('http://localhost/the%20bads?foo=bar%20baz')
+
+        when:
+        request = (HttpRequest) request.clone()
+
+        then:
+        notThrown URISyntaxException
+        request.getUri() == 'http://localhost/the%20bads'
+        request.queryParameters == ['foo': ['bar baz']]
+    }
 }

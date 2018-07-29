@@ -42,6 +42,9 @@ relatively lengthy.
 * Add entity support to HTTP DELETE. Whether this works or not is dependent on the underlying HTTP client *and*
   the HTTP server the request is sent to.
 * All artifacts are now deployed to both jcenter and Maven Central.
+* Added query parameter support to the `LoggingFilter` (https://github.com/budjb/http-requests/issues/10[#10]).
+* Fixed `HttpRequest` clone issue where paths with special characters would cause a URISyntaxException
+  (https://github.com/budjb/http-requests/issues/7[#7]).
 
 === Version 1
 Major version 1 of the library is the first revision of the interface of the `http-requests` library.
