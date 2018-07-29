@@ -4,3 +4,6 @@ http-requests-*
 gradle/
 .gradle/
 build/
+*.iml
+*.ipr
+*.iws
