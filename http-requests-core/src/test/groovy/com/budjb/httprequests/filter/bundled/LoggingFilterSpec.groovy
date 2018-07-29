@@ -55,14 +55,21 @@ class LoggingFilterSpec extends Specification {
 
     def 'onRequest creates and stores a StringBuilder, and renders the request'() {
         setup:
-        MultiValuedMap map = new MultiValuedMap()
-        map.set('foo', 'bar')
-        map.set('hi', 'there')
-        map.set('Accept', 'text/plain')
+        MultiValuedMap queryParameters = new MultiValuedMap()
+        queryParameters.add('foo', 'bar')
+        queryParameters.add('foo', 'baz')
+        queryParameters.add('foo', 'bar&baz bear')
+        queryParameters.set('meh', '')
+
+        MultiValuedMap headers = new MultiValuedMap()
+        headers.set('foo', 'bar')
+        headers.set('hi', 'there')
+        headers.set('Accept', 'text/plain')
 
         HttpRequest request = Mock(HttpRequest)
         request.getUri() >> 'http://foo.bar.com'
-        request.getHeaders() >> map
+        request.getHeaders() >> headers
+        request.getQueryParameters() >> queryParameters
 
         HttpEntity entity = Mock(HttpEntity)
         entity.getFullContentType() >> 'text/plain'
@@ -73,7 +80,7 @@ class LoggingFilterSpec extends Specification {
         context.requestEntity = entity
 
         String expected = 'Sending HTTP client request with the following data:\n' +
-            '> GET http://foo.bar.com\n' +
+            '> GET http://foo.bar.com?foo=bar&foo=baz&foo=bar%26baz+bear&meh=\n' +
             '> Content-Type: text/plain\n' +
             '> Accept: text/plain\n' +
             '> foo: bar\n' +

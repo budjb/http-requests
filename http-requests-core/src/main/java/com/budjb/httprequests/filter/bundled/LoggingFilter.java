@@ -24,6 +24,9 @@ import com.budjb.httprequests.filter.OutputStreamFilter;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A filter that captures both the request and response and logs it.
@@ -112,7 +115,25 @@ public abstract class LoggingFilter implements OutputStreamFilter, LifecycleFilt
 
         stringBuilder.append("Sending HTTP client request with the following data:\n");
         try {
-            stringBuilder.append("> ").append(method.toString()).append(" ").append(new URI(request.getUri()).toASCIIString()).append("\n");
+            stringBuilder.append("> ").append(method.toString()).append(" ").append(new URI(request.getUri()).toASCIIString());
+
+            if (request.getQueryParameters().size() > 0) {
+                List<String> pairs = new ArrayList<>();
+
+                for (String key : request.getQueryParameters().keySet()) {
+                    for (String value : request.getQueryParameters().get(key)) {
+                        try {
+                            pairs.add(URLEncoder.encode(key, "UTF-8") + "=" + URLEncoder.encode(value, "UTF-8"));
+                        }
+                        catch (UnsupportedEncodingException e) {
+                            throw new HttpClientException(e);
+                        }
+                    }
+                }
+
+                stringBuilder.append("?").append(String.join("&", pairs));
+            }
+            stringBuilder.append("\n");
         }
         catch (URISyntaxException e) {
             throw new RuntimeException(e);
