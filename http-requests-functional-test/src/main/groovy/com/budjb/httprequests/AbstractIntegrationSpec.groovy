@@ -18,6 +18,7 @@ package com.budjb.httprequests
 import com.budjb.httprequests.converter.EntityConverterManager
 import com.budjb.httprequests.converter.bundled.*
 import com.budjb.httprequests.filter.jackson.JacksonListReader
+import com.budjb.httprequests.filter.jackson.JacksonListWriter
 import com.budjb.httprequests.filter.jackson.JacksonMapWriter
 import com.budjb.httprequests.filter.jackson.JacksonMapReader
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -70,6 +71,7 @@ abstract class AbstractIntegrationSpec extends Specification {
         converterManager.add(new JacksonMapReader(objectMapper))
         converterManager.add(new JacksonListReader(objectMapper))
         converterManager.add(new JacksonMapWriter(objectMapper))
+        converterManager.add(new JacksonListWriter(objectMapper))
         converterManager.add(new FormDataEntityWriter())
 
         httpClientFactory = createHttpClientFactory(converterManager)
