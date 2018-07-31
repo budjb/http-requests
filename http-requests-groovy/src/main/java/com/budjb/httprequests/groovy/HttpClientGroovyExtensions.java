@@ -41,7 +41,7 @@ public class HttpClientGroovyExtensions {
      * @throws IOException When an underlying IO exception occurs.
      */
     public static HttpResponse execute(HttpClient self, HttpMethod method, @DelegatesTo(HttpRequestDelegate.class) Closure closure) throws IOException {
-        return self.execute(method, build(closure));
+        return self.execute(method, HttpClientStaticGroovyExtensions.build(null, closure));
     }
 
     /**
@@ -55,7 +55,7 @@ public class HttpClientGroovyExtensions {
      * @throws IOException When an underlying IO exception occurs.
      */
     public static HttpResponse execute(HttpClient self, HttpMethod method, @DelegatesTo(HttpRequestDelegate.class) Closure closure, InputStream inputStream) throws IOException {
-        return self.execute(method, build(closure), inputStream);
+        return self.execute(method, HttpClientStaticGroovyExtensions.build(null, closure), inputStream);
     }
 
     /**
@@ -69,7 +69,7 @@ public class HttpClientGroovyExtensions {
      * @throws IOException When an underlying IO exception occurs.
      */
     public static HttpResponse execute(HttpClient self, HttpMethod method, @DelegatesTo(HttpRequestDelegate.class) Closure closure, HttpEntity entity) throws IOException {
-        return self.execute(method, build(closure), entity);
+        return self.execute(method, HttpClientStaticGroovyExtensions.build(null, closure), entity);
     }
 
     /**
@@ -87,7 +87,7 @@ public class HttpClientGroovyExtensions {
      * @throws UnsupportedConversionException When an error in entity conversion occurs.
      */
     public static HttpResponse execute(HttpClient self, HttpMethod method, @DelegatesTo(HttpRequestDelegate.class) Closure closure, Object entity) throws IOException, UnsupportedConversionException {
-        return self.execute(method, build(closure), entity);
+        return self.execute(method, HttpClientStaticGroovyExtensions.build(null, closure), entity);
     }
 
     /**
@@ -105,7 +105,7 @@ public class HttpClientGroovyExtensions {
      * @throws UnsupportedConversionException When an error in entity conversion occurs.
      */
     public static HttpResponse execute(HttpClient self, HttpMethod method, @DelegatesTo(HttpRequestDelegate.class) Closure closure, ConvertingHttpEntity entity) throws IOException, UnsupportedConversionException {
-        return self.execute(method, build(closure), entity);
+        return self.execute(method, HttpClientStaticGroovyExtensions.build(null, closure), entity);
     }
 
     /**
@@ -562,20 +562,5 @@ public class HttpClientGroovyExtensions {
      */
     public static HttpResponse trace(HttpClient self, @DelegatesTo(HttpRequestDelegate.class) Closure closure) throws IOException {
         return execute(self, HttpMethod.TRACE, closure);
-    }
-
-    /**
-     * Runs the given closure to build an {@link HttpRequest}.
-     *
-     * @param closure A closure that configures the HTTP request.
-     * @return The resulting HTTP request object.
-     */
-    private static HttpRequest build(@DelegatesTo(HttpRequestDelegate.class) Closure closure) {
-        HttpRequest request = new HttpRequest();
-        closure = (Closure) closure.clone();
-        closure.setResolveStrategy(Closure.DELEGATE_FIRST);
-        closure.setDelegate(request);
-        closure.call();
-        return request;
     }
 }

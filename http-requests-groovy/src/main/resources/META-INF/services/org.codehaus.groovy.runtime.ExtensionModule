@@ -17,3 +17,4 @@
 moduleName=Groovy extensions for the http-requests library.
 moduleVersion=2.0.0
 extensionClasses=com.budjb.httprequests.groovy.HttpClientGroovyExtensions
+staticExtensionClasses=com.budjb.httprequests.groovy.HttpClientStaticGroovyExtensions
