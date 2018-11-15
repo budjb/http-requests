@@ -23,6 +23,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.entity.ContentType;
+import org.apache.http.impl.client.CloseableHttpClient;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -37,9 +38,14 @@ class HttpComponentsResponse extends HttpResponse {
     private final CloseableHttpResponse response;
 
     /**
+     * The underlying Apache client. This is only tracked here so that it can be properly closed.
+     */
+    private final CloseableHttpClient httpClient;
+
+    /**
      * Constructor.
      */
-    HttpComponentsResponse(HttpRequest request, EntityConverterManager converterManager, CloseableHttpResponse response) throws IOException {
+    HttpComponentsResponse(HttpRequest request, EntityConverterManager converterManager, CloseableHttpResponse response, CloseableHttpClient httpClient) throws IOException {
         super(
             converterManager,
             request,
@@ -49,6 +55,7 @@ class HttpComponentsResponse extends HttpResponse {
         );
 
         this.response = response;
+        this.httpClient = httpClient;
 
         if (!hasEntity()) {
             close();
@@ -114,5 +121,6 @@ class HttpComponentsResponse extends HttpResponse {
     public void close() throws IOException {
         super.close();
         response.close();
+        httpClient.close();
     }
 }

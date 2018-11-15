@@ -4,6 +4,10 @@ The changelog will be updated with release notes for each release of the library
 
 === Version 2
 
+==== Version 2.0.1
+
+* Close the underlying Apache HTTP client when the `HttpResponse` is closed.
+
 ==== Version 2.0.0
 
 The version 2.0 upgrade involved refactoring of the components of the library, with the aim of simplifying

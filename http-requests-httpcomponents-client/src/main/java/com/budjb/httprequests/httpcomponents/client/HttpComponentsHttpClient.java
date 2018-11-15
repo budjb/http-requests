@@ -85,7 +85,7 @@ public class HttpComponentsHttpClient extends AbstractHttpClient {
             ((HttpEntityEnclosingRequest) httpRequest).setEntity(entity);
         }
 
-        return new HttpComponentsResponse(request, getConverterManager(), client.execute(httpRequest));
+        return new HttpComponentsResponse(request, getConverterManager(), client.execute(httpRequest), client);
     }
 
     /**
