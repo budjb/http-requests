@@ -677,65 +677,70 @@ public abstract class AbstractHttpClient implements HttpClient {
         HttpContext context = new HttpContext();
         HttpClientFilterProcessor filterProcessor = new HttpClientFilterProcessor(request.getFilters());
 
-        filterProcessor.onStart(context);
+        try {
+            filterProcessor.onStart(context);
 
-        context.setMethod(method);
+            context.setMethod(method);
 
-        HttpEntity originalEntity = null;
-        boolean hasRetryFilters = filterProcessor.hasRetryFilters();
+            HttpEntity originalEntity = null;
+            boolean hasRetryFilters = filterProcessor.hasRetryFilters();
 
-        // Requests whose client contains a retry filter must have their entity buffered.
-        // If it is not, the retried request will either throw an error due to the entity
-        // input stream being closed, or the entity will not actually transmit. So, requests
-        // that could potentially be retried are automatically buffered so we can copy their
-        // entities multiple times.
-        if (entity != null && hasRetryFilters) {
-            originalEntity = entity;
-            originalEntity.buffer();
+            // Requests whose client contains a retry filter must have their entity buffered.
+            // If it is not, the retried request will either throw an error due to the entity
+            // input stream being closed, or the entity will not actually transmit. So, requests
+            // that could potentially be retried are automatically buffered so we can copy their
+            // entities multiple times.
+            if (entity != null && hasRetryFilters) {
+                originalEntity = entity;
+                originalEntity.buffer();
+            }
+
+            while (true) {
+                if (entity != null && originalEntity != null) {
+                    entity = new HttpEntity(originalEntity.getInputStream(), originalEntity.getContentType(), originalEntity.getCharSet());
+                }
+
+                HttpRequest newRequest;
+                try {
+                    newRequest = (HttpRequest) request.clone();
+                }
+                catch (CloneNotSupportedException e) {
+                    throw new HttpClientException(e);
+                }
+
+                context.setRequest(newRequest);
+                context.setResponse(null);
+
+                filterProcessor.filterHttpRequest(newRequest);
+                filterProcessor.onRequest(context);
+
+                // Note that OutputStreamFilter#filter should be called by the client implementation,
+                // and will occur during the execution started below.
+                HttpResponse response;
+                try {
+                    response = execute(context, entity, filterProcessor);
+                }
+                catch (IOException e) {
+                    throw e;
+                }
+                catch (Exception e) {
+                    throw new HttpClientException(e);
+                }
+
+                context.setResponse(response);
+                filterProcessor.filterHttpResponse(response);
+                filterProcessor.onResponse(context);
+
+                if (!filterProcessor.isRetryRequired(context)) {
+                    filterProcessor.onComplete(context);
+                    return context.getResponse();
+                }
+
+                context.incrementRetries();
+            }
         }
-
-        while (true) {
-            if (entity != null && originalEntity != null) {
-                entity = new HttpEntity(originalEntity.getInputStream(), originalEntity.getContentType(), originalEntity.getCharSet());
-            }
-
-            HttpRequest newRequest;
-            try {
-                newRequest = (HttpRequest) request.clone();
-            }
-            catch (CloneNotSupportedException e) {
-                throw new HttpClientException(e);
-            }
-
-            context.setRequest(newRequest);
-            context.setResponse(null);
-
-            filterProcessor.filterHttpRequest(newRequest);
-            filterProcessor.onRequest(context);
-
-            // Note that OutputStreamFilter#filter should be called by the client implementation,
-            // and will occur during the execution started below.
-            HttpResponse response;
-            try {
-                response = execute(context, entity, filterProcessor);
-            }
-            catch (IOException e) {
-                throw e;
-            }
-            catch (Exception e) {
-                throw new HttpClientException(e);
-            }
-
-            context.setResponse(response);
-            filterProcessor.filterHttpResponse(response);
-            filterProcessor.onResponse(context);
-
-            if (!filterProcessor.isRetryRequired(context)) {
-                filterProcessor.onComplete(context);
-                return context.getResponse();
-            }
-
-            context.incrementRetries();
+        finally {
+            filterProcessor.close();
         }
     }
 

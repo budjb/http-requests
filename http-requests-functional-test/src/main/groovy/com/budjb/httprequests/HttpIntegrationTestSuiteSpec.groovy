@@ -17,10 +17,12 @@ package com.budjb.httprequests
 
 import com.budjb.httprequests.application.TestApp
 import com.budjb.httprequests.exception.HttpInternalServerErrorException
+import com.budjb.httprequests.filter.HttpClientFilter
 import com.budjb.httprequests.filter.RetryFilter
 import com.budjb.httprequests.filter.bundled.BasicAuthFilter
 import com.budjb.httprequests.filter.bundled.GZIPFilter
 import com.budjb.httprequests.filter.bundled.HttpStatusExceptionFilter
+import com.budjb.httprequests.filter.bundled.Slf4jLoggingFilter
 import org.springframework.boot.test.context.SpringBootTest
 import spock.lang.Ignore
 import spock.lang.Unroll
@@ -538,5 +540,42 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         response.status == 200
         response.hasEntity()
         response.getEntity(String) == 'test payload'
+    }
+
+    def 'When logging a request with a GET HTTP method, a NullPointerException is not thrown'() {
+        setup:
+        HttpRequest request = new HttpRequest()
+        request.uri = "${baseUrl}/testBasicGet"
+        request.addFilter(new Slf4jLoggingFilter())
+
+        when:
+        httpClientFactory.createHttpClient().get(request)
+
+        then:
+        notThrown NullPointerException
+    }
+
+    def 'When a request is made with a filter that is closeable, it is closed'() {
+        setup:
+        CloseableFilter filter = new CloseableFilter()
+
+        HttpRequest request = new HttpRequest()
+        request.uri = "${baseUrl}/testBasicGet"
+        request.addFilter(filter)
+
+        when:
+        httpClientFactory.createHttpClient().get(request)
+
+        then:
+        filter.closed
+    }
+
+    static class CloseableFilter implements HttpClientFilter, Closeable {
+        boolean closed = false
+
+        @Override
+        void close() throws IOException {
+            closed = true
+        }
     }
 }

@@ -152,7 +152,7 @@ class ReferenceHttpClient extends AbstractHttpClient {
 
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(uri.getScheme()).append("://").append(uri.getHost());
-        if (!(uri.getScheme().equalsIgnoreCase("https") && uri.getPort() == 443) && !(uri.getScheme().equalsIgnoreCase("http") && uri.getPort() == 80)) {
+        if (uri.getPort() != -1 && !(uri.getScheme().equalsIgnoreCase("https") && uri.getPort() == 443) && !(uri.getScheme().equalsIgnoreCase("http") && uri.getPort() == 80)) {
             stringBuilder.append(':').append(uri.getPort());
         }
         stringBuilder.append(uri.getPath());

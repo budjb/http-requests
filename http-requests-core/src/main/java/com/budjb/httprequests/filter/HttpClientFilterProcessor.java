@@ -18,7 +18,10 @@ package com.budjb.httprequests.filter;
 import com.budjb.httprequests.HttpContext;
 import com.budjb.httprequests.HttpRequest;
 import com.budjb.httprequests.HttpResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.Closeable;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,6 +31,11 @@ import java.util.stream.Collectors;
  * various callbacks.
  */
 public class HttpClientFilterProcessor {
+    /**
+     * Logger.
+     */
+    private final Logger log = LoggerFactory.getLogger(HttpClientFilterProcessor.class);
+
     /**
      * List of registered filters.
      */
@@ -43,7 +51,7 @@ public class HttpClientFilterProcessor {
     }
 
     /**
-     * Return a list of all registered {@link RequestFilter} instances.
+     * Returns a list of all registered {@link RequestFilter} instances.
      *
      * @return All registered {@link RequestFilter} instances.
      */
@@ -52,7 +60,7 @@ public class HttpClientFilterProcessor {
     }
 
     /**
-     * Return a list of all registered {@link ResponseFilter} instances.
+     * Returns a list of all registered {@link ResponseFilter} instances.
      *
      * @return A list of all registered {@link ResponseFilter} instances.
      */
@@ -61,7 +69,7 @@ public class HttpClientFilterProcessor {
     }
 
     /**
-     * Return a list of all registered {@link OutputStreamFilter} instances.
+     * Returns a list of all registered {@link OutputStreamFilter} instances.
      *
      * @return A list of all registered {@link OutputStreamFilter} instances.
      */
@@ -70,7 +78,7 @@ public class HttpClientFilterProcessor {
     }
 
     /**
-     * Return a list of all registered {@link LifecycleFilter} instances.
+     * Returns a list of all registered {@link LifecycleFilter} instances.
      *
      * @return A list of all registered {@link LifecycleFilter} instances.
      */
@@ -79,12 +87,21 @@ public class HttpClientFilterProcessor {
     }
 
     /**
-     * Return a list of all registered {@link LifecycleFilter} instances.
+     * Returns a list of all registered {@link LifecycleFilter} instances.
      *
      * @return A list of all registered {@link LifecycleFilter} instances.
      */
     private List<RetryFilter> getRetryFilters() {
         return filters.stream().filter(f -> f instanceof RetryFilter).map(f -> (RetryFilter) f).collect(Collectors.toList());
+    }
+
+    /**
+     * Returns a list of all registered filters that are instances of {@link java.io.Closeable}.
+     *
+     * @return A list of all registered filters that are instances of {@link java.io.Closeable}.
+     */
+    private List<Closeable> getCloseableFilters() {
+        return filters.stream().filter(f -> f instanceof Closeable).map(f -> (Closeable) f).collect(Collectors.toList());
     }
 
     /**
@@ -179,5 +196,19 @@ public class HttpClientFilterProcessor {
         }
 
         return retry;
+    }
+
+    /**
+     * Closes any filters that implement {@link Closeable}. Every filter is guaranteed to be closed.
+     */
+    public void close() {
+        for (Closeable closeable : getCloseableFilters()) {
+            try {
+                closeable.close();
+            }
+            catch (Exception e) {
+                log.error("Unhandled exception caught while closing filter " + getClass().getName(), e);
+            }
+        }
     }
 }

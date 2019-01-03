@@ -33,7 +33,7 @@ import java.util.List;
  * <p>
  * This class is based on Jersey Client 1.x's {@code LoggingFilter}.
  */
-public abstract class LoggingFilter implements OutputStreamFilter, LifecycleFilter {
+public abstract class LoggingFilter implements OutputStreamFilter, LifecycleFilter, Closeable {
     /**
      * The maximum number of bytes to logger from request and response entities.
      */
@@ -160,6 +160,10 @@ public abstract class LoggingFilter implements OutputStreamFilter, LifecycleFilt
      * @param stringBuilder       {@link StringBuilder} instance to logger to.
      */
     private void logRequestEntity(LoggingOutputStream loggingOutputStream, StringBuilder stringBuilder) {
+        if (loggingOutputStream == null) {
+            return;
+        }
+
         byte[] output = loggingOutputStream.getLoggingStream().toByteArray();
 
         if (output.length == 0) {
@@ -283,5 +287,13 @@ public abstract class LoggingFilter implements OutputStreamFilter, LifecycleFilt
                 loggingStream.write(b);
             }
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void close() {
+        context.remove();
     }
 }
