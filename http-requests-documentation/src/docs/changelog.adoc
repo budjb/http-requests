@@ -4,6 +4,13 @@ The changelog will be updated with release notes for each release of the library
 
 === Version 2
 
+==== Version 2.0.3
+
+* Fix a bug where the reference HTTP client threw an `IOException` when an error HTTP status code was returned
+  with no response entity.
+* Fix a bug where calling `HttpResponse.getEntity(Class)` threw a `NullPointerException` when no response
+  entity was returned.
+
 ==== Version 2.0.2
 
 * Add `Closeable` support for filters. Any filter that implements `Closeable` are guaranteed to be closed.

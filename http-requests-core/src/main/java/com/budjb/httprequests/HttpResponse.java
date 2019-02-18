@@ -159,6 +159,10 @@ public abstract class HttpResponse implements Closeable {
      * @throws IOException                    When an IO exception occurs.
      */
     public <T> T getEntity(Class<T> type) throws UnsupportedConversionException, IOException {
+        if (entity == null) {
+            return null;
+        }
+
         T object = converterManager.read(type, entity);
         entity.close();
         return object;
