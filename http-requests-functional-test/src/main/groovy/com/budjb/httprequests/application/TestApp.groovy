@@ -178,4 +178,9 @@ class TestApp {
         }
         return new ResponseEntity<byte[]>(body, headers, HttpStatus.OK)
     }
+
+    @RequestMapping(value = '/test404')
+    ResponseEntity<String> test404() {
+        return new ResponseEntity<String>(null, HttpStatus.NOT_FOUND)
+    }
 }

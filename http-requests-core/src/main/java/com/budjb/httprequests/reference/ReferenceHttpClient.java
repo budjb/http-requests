@@ -94,9 +94,11 @@ class ReferenceHttpClient extends AbstractHttpClient {
             outputStream.close();
         }
 
+        connection.connect();
+
         int status = connection.getResponseCode();
         MultiValuedMap headers = new MultiValuedMap(connection.getHeaderFields().entrySet().stream().filter(e -> e.getKey() != null).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
-        InputStream inputStream = connection.getErrorStream() != null ? connection.getErrorStream() : connection.getInputStream();
+        InputStream inputStream = getEntityStream(status, connection);
         String contentType = headers.getFlat("Content-Type");
         return new ReferenceHttpResponse(request, getConverterManager(), status, headers, inputStream, contentType);
     }
@@ -161,5 +163,22 @@ class ReferenceHttpClient extends AbstractHttpClient {
         }
 
         return new URI(stringBuilder.toString());
+    }
+
+    /**
+     * Returns the appropriate entity {@link InputStream} based on the HTTP status of the response.
+     *
+     * @param status     HTTP status of the response.
+     * @param connection HTTP connection
+     * @return The entity stream.
+     * @throws IOException when an IO exception occurs.
+     */
+    private InputStream getEntityStream(int status, HttpURLConnection connection) throws IOException {
+        if (status < 400) {
+            return connection.getInputStream();
+        }
+        else {
+            return connection.getErrorStream();
+        }
     }
 }

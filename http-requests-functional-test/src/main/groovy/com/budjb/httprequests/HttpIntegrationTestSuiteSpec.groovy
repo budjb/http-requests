@@ -570,6 +570,16 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         filter.closed
     }
 
+
+    def 'When a URL does not exist and the response has no entity, a 404 status code should be captured with no exception'() {
+        when:
+        HttpResponse response = httpClientFactory.createHttpClient().get("${baseUrl}/test404")
+
+        then:
+        response.status == 404
+        response.getEntity(String) == null
+    }
+
     static class CloseableFilter implements HttpClientFilter, Closeable {
         boolean closed = false
 
