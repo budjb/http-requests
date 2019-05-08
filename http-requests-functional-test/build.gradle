@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-apply from: "${rootDir}/gradle/spring-dependency-management.gradle"
+apply from: "${rootDir}/gradle/library.gradle"
+
+apply plugin: "groovy"
+apply plugin: "java"
 
 dependencies {
-    compile project(':http-requests-core')
-    compile project(':http-requests-jackson')
+    implementation platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
 
-    compile 'org.springframework.boot:spring-boot-starter-web'
-    compile 'org.springframework.boot:spring-boot-starter-test'
-    compile 'org.spockframework:spock-spring:1.1-groovy-2.4'
+    implementation project(":http-requests-core")
+    implementation project(":http-requests-jackson")
+
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-test"
+    implementation "org.spockframework:spock-spring:${spockVersion}"
+    implementation "org.spockframework:spock-core:${spockVersion}"
 }

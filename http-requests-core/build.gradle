@@ -14,20 +14,10 @@
  * limitations under the License.
  */
 
-apply from: "${rootDir}/gradle/spring-dependency-management.gradle"
 apply from: "${rootDir}/gradle/library-publish.gradle"
 
-ext {
-    excludeSpringDependencyManagement = true
-}
-
 dependencies {
-    compile 'org.slf4j:slf4j-api:1.7.25'
+    api "org.slf4j:slf4j-api:1.7.25"
 
-    testCompile project(':http-requests-functional-test')
-    testCompile "org.codehaus.groovy:groovy-all:${groovyVersion}"
-    testCompile "org.spockframework:spock-core:1.1-groovy-2.4"
-    testCompile "org.hamcrest:hamcrest-core:1.3"
-    testCompile "cglib:cglib-nodep:3.2.7"
-    testCompile "org.objenesis:objenesis:2.6"
+    testImplementation project(":http-requests-functional-test")
 }

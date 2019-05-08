@@ -73,11 +73,11 @@ publishing {
                     system = 'GitHub Issues'
                     url = githubHttpsUrl + "/issues"
                 }
-                if (excludeSpringDependencyManagement) {
-                    withXml {
-                        asNode().dependencyManagement*.replaceNode {}
-                    }
-                }
+//                if (excludeSpringDependencyManagement) {
+//                    withXml {
+//                        asNode().dependencyManagement*.replaceNode {}
+//                    }
+//                }
             }
         }
     }

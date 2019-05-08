@@ -25,15 +25,11 @@ buildscript {
     }
 }
 
-allprojects {
-    group group
-    version version
-
+configure(subprojects) {
     apply plugin: 'idea'
 
     repositories {
         mavenCentral()
-        jcenter()
         mavenLocal()
     }
 }

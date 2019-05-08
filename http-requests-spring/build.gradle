@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-apply from: "${rootDir}/gradle/spring-dependency-management.gradle"
 apply from: "${rootDir}/gradle/library-publish.gradle"
 
-ext {
-    excludeSpringDependencyManagement = false
-}
-
 dependencies {
-    compile project(':http-requests-core')
-    compile 'org.springframework.boot:spring-boot-starter'
+    api platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
+    api project(":http-requests-core")
+    api "org.springframework.boot:spring-boot-starter"
 
-    compileOnly project(':http-requests-httpcomponents-client')
-    compileOnly project(':http-requests-jersey1')
-    compileOnly project(':http-requests-jersey2')
-    compileOnly project(':http-requests-jackson')
-    compileOnly project(':http-requests-groovy')
+    compileOnly project(":http-requests-httpcomponents-client")
+    compileOnly project(":http-requests-jersey1")
+    compileOnly project(":http-requests-jersey2")
+    compileOnly project(":http-requests-jackson")
+    compileOnly project(":http-requests-groovy")
 }

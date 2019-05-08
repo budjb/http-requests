@@ -14,16 +14,11 @@
  * limitations under the License.
  */
 
-apply from: "${rootDir}/gradle/spring-dependency-management.gradle"
 apply from: "${rootDir}/gradle/library-publish.gradle"
 
-ext {
-    excludeSpringDependencyManagement = true
-}
-
 dependencies {
-    compile project(':http-requests-core')
-    compile "org.apache.httpcomponents:httpclient:${httpComponentsClientVersion}"
+    api project(":http-requests-core")
+    api "org.apache.httpcomponents:httpclient:${httpComponentsClientVersion}"
 
-    testCompile project(':http-requests-functional-test')
+    testImplementation project(":http-requests-functional-test")
 }
