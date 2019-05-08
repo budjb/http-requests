@@ -19,6 +19,5 @@ apply from: "${rootDir}/gradle/library-publish.gradle"
 dependencies {
     api project(":http-requests-core")
     api "org.apache.httpcomponents:httpclient:${httpComponentsClientVersion}"
-
     testImplementation project(":http-requests-functional-test")
 }

@@ -19,6 +19,5 @@ apply from: "${rootDir}/gradle/library.gradle"
 dependencies {
     api project(":http-requests-core")
     api "com.sun.jersey:jersey-client:${jersey1Version}"
-
     testImplementation project(":http-requests-functional-test")
 }

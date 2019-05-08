@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-buildscript {
-    repositories {
-        maven { setUrl('http://repo.spring.io/plugins-release') }
-    }
-    dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
-        classpath "io.spring.gradle:dependency-management-plugin:${springDependencyManagementVersion}"
-        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.8.1'
-    }
+plugins {
+    id "org.asciidoctor.jvm.convert" version "2.2.0" apply false
+    id "com.jfrog.bintray" version "1.8.4" apply false
 }
 
-configure(subprojects) {
-    apply plugin: 'idea'
+apply plugin: 'idea'
 
+configure(subprojects) {
     repositories {
         mavenCentral()
         mavenLocal()

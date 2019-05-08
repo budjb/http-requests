@@ -17,7 +17,6 @@
 apply from: "${rootDir}/gradle/library-publish.gradle"
 
 dependencies {
-    api "org.slf4j:slf4j-api:1.7.25"
-
+    api "org.slf4j:slf4j-api:1.7.26"
     testImplementation project(":http-requests-functional-test")
 }
