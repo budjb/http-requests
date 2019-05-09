@@ -485,7 +485,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
     @Unroll
     def 'When #writeType is sent, the entity was properly written and received'() {
         when:
-        def response = httpClientFactory.createHttpClient().post "${baseUrl}/echo", input
+        def response = httpClientFactory.createHttpClient().post "${baseUrl}/echo", inp
 
         then:
         response.getEntity(String) == output
@@ -500,7 +500,7 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         notThrown(Exception)
 
         where:
-        writeType  | input                                  | output            | readType | contentType
+        writeType  | inp                                    | output            | readType | contentType
         'Map'      | [foo: ['bar']]                         | '{"foo":["bar"]}' | Map      | 'application/json'
         'List'     | ['foo', 'bar']                         | '["foo","bar"]'   | List     | 'application/json'
         'String'   | "Hello, world!"                        | "Hello, world!"   | String   | 'text/plain'

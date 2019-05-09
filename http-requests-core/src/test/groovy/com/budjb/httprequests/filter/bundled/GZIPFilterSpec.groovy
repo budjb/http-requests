@@ -27,8 +27,7 @@ import spock.lang.Specification
 class GZIPFilterSpec extends Specification {
     def 'When the GZIP filter is used, the input is compressed and the proper header is set'() {
         setup:
-        EntityConverterManager converterManager = new EntityConverterManager()
-        converterManager.add(new StringEntityWriter())
+        EntityConverterManager converterManager = new EntityConverterManager([new StringEntityWriter()])
         MockHttpClient client = (MockHttpClient) new MockHttpClientFactory(converterManager).createHttpClient()
         HttpRequest request = new HttpRequest('http://foo.bar.com').addFilter(new GZIPFilter())
 

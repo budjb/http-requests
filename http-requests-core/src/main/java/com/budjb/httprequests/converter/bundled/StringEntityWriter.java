@@ -15,6 +15,7 @@
  */
 package com.budjb.httprequests.converter.bundled;
 
+import com.budjb.httprequests.Ordered;
 import com.budjb.httprequests.converter.EntityWriter;
 
 import java.io.ByteArrayInputStream;
@@ -24,7 +25,7 @@ import java.nio.charset.Charset;
 /**
  * An entity writer that converts a String.
  */
-public class StringEntityWriter implements EntityWriter {
+public class StringEntityWriter implements EntityWriter, Ordered {
     /**
      * Returns a Content-Type of the converted object that will be set in the HTTP request.
      * <p>
@@ -65,5 +66,13 @@ public class StringEntityWriter implements EntityWriter {
         }
 
         return new ByteArrayInputStream(((String) entity).getBytes(characterSet));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getOrder() {
+        return Ordered.LOWEST_PRIORITY + 10;
     }
 }

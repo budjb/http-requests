@@ -16,12 +16,26 @@
 
 apply from: "${rootDir}/gradle/bintray.gradle"
 
+apply plugin: "java-platform"
 apply plugin: 'maven-publish'
-apply plugin: 'com.jfrog.bintray'
+
+dependencies {
+    constraints {
+        api project(':http-requests-core')
+        api project(':http-requests-groovy')
+        api project(':http-requests-httpcomponents-client')
+        api project(':http-requests-jackson')
+        api project(':http-requests-jersey1')
+        api project(':http-requests-jersey2')
+        api project(':http-requests-spring')
+    }
+}
 
 publishing {
     publications {
         library(MavenPublication) {
+            from components.javaPlatform
+
             groupId project.group
             artifactId project.name
             version project.version
@@ -52,28 +66,6 @@ publishing {
                 issueManagement {
                     system = 'GitHub Issues'
                     url = githubHttpsUrl + "/issues"
-                }
-
-                withXml {
-                    asNode().children().last() + {
-                        def builder = delegate
-
-                        builder.dependencyManagement {
-                            builder.dependencies {
-                                for (sub in rootProject.subprojects) {
-                                    if (!sub.plugins.hasPlugin('java') || !sub.plugins.hasPlugin('maven-publish')) {
-                                        continue
-                                    }
-
-                                    builder.dependency {
-                                        builder.groupId sub.group
-                                        builder.artifactId sub.name
-                                        builder.version sub.version
-                                    }
-                                }
-                            }
-                        }
-                    }
                 }
             }
         }

@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-apply from: "${rootDir}/gradle/spring-dependency-management.gradle"
 apply from: "${rootDir}/gradle/library-publish.gradle"
 
-ext {
-    excludeSpringDependencyManagement = true
-}
-
 dependencies {
-    compile project(':http-requests-core')
-    compile "org.glassfish.jersey.core:jersey-client:${jersey2Version}"
-    compile "org.glassfish.jersey.core:jersey-common:${jersey2Version}"
-    compile "org.glassfish.jersey.inject:jersey-hk2:${jersey2Version}"
-
-    testCompile project(':http-requests-functional-test')
+    api project(":http-requests-core")
+    api "org.glassfish.jersey.core:jersey-client:${jersey2Version}"
+    api "org.glassfish.jersey.core:jersey-common:${jersey2Version}"
+    api "org.glassfish.jersey.inject:jersey-hk2:${jersey2Version}"
+    testImplementation project(":http-requests-functional-test")
 }

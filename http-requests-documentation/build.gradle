@@ -14,14 +14,20 @@
  * limitations under the License.
  */
 
-apply plugin: 'org.asciidoctor.convert'
+apply plugin: 'org.asciidoctor.jvm.convert'
 
 asciidoctor {
-    sourceDir new File("$projectDir/src/docs")
+    baseDir file("src/docs")
+    sourceDir file("src/docs")
+
     sources {
         include 'index.adoc'
     }
-    backends 'html5'
+
+    outputOptions {
+        backends 'html5'
+    }
+
     attributes 'copyright': 'Apache License, Version 2.0',
         'toc': 'left',
         'toclevels': 2,

@@ -16,11 +16,7 @@
 
 apply from: "${rootDir}/gradle/library-publish.gradle"
 
-ext {
-    excludeSpringDependencyManagement = true
-}
-
 dependencies {
-    compile project(':http-requests-core')
-    compile "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+    api project(":http-requests-core")
+    api "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
 }

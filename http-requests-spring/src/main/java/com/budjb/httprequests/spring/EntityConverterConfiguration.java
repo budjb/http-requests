@@ -30,9 +30,7 @@ public class EntityConverterConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public EntityConverterManager entityConverterManager(List<EntityConverter> entityConverters) {
-        EntityConverterManager converterManager = new EntityConverterManager();
-        entityConverters.forEach(converterManager::add);
-        return converterManager;
+        return new EntityConverterManager(entityConverters);
     }
 
     @Bean

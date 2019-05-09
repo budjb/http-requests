@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 the original author or authors.
+ * Copyright 2016-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,30 @@
  * limitations under the License.
  */
 
-apply from: "${rootDir}/gradle/library.gradle"
+package com.budjb.httprequests;
 
-apply plugin: 'io.spring.dependency-management'
+public interface Ordered {
+    /**
+     * Default priority.
+     */
+    int DEFAULT_PRIORITY = 0;
 
-dependencyManagement {
-    imports { mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}") }
+    /**
+     * Lowest priority.
+     */
+    int LOWEST_PRIORITY = Integer.MIN_VALUE;
+
+    /**
+     * Highest priority.
+     */
+    int HIGHEST_PRIORITY = Integer.MAX_VALUE;
+
+    /**
+     * Returns an order used for comparison and sorting.
+     *
+     * @return An order used for comparison and sorting.
+     */
+    default int getOrder() {
+        return DEFAULT_PRIORITY;
+    }
 }

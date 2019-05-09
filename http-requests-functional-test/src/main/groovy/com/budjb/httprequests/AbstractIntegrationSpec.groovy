@@ -19,8 +19,8 @@ import com.budjb.httprequests.converter.EntityConverterManager
 import com.budjb.httprequests.converter.bundled.*
 import com.budjb.httprequests.filter.jackson.JacksonListReader
 import com.budjb.httprequests.filter.jackson.JacksonListWriter
-import com.budjb.httprequests.filter.jackson.JacksonMapWriter
 import com.budjb.httprequests.filter.jackson.JacksonMapReader
+import com.budjb.httprequests.filter.jackson.JacksonMapWriter
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Value
 import spock.lang.Ignore
@@ -63,16 +63,17 @@ abstract class AbstractIntegrationSpec extends Specification {
     def setup() {
         ObjectMapper objectMapper = new ObjectMapper()
 
-        EntityConverterManager converterManager = new EntityConverterManager()
-        converterManager.add(new StringEntityReader())
-        converterManager.add(new StringEntityWriter())
-        converterManager.add(new ByteArrayEntityWriter())
-        converterManager.add(new ByteArrayEntityReader())
-        converterManager.add(new JacksonMapReader(objectMapper))
-        converterManager.add(new JacksonListReader(objectMapper))
-        converterManager.add(new JacksonMapWriter(objectMapper))
-        converterManager.add(new JacksonListWriter(objectMapper))
-        converterManager.add(new FormDataEntityWriter())
+        EntityConverterManager converterManager = new EntityConverterManager([
+            new StringEntityReader(),
+            new StringEntityWriter(),
+            new ByteArrayEntityWriter(),
+            new ByteArrayEntityReader(),
+            new JacksonMapReader(objectMapper),
+            new JacksonListReader(objectMapper),
+            new JacksonMapWriter(objectMapper),
+            new JacksonListWriter(objectMapper),
+            new FormDataEntityWriter()
+        ])
 
         httpClientFactory = createHttpClientFactory(converterManager)
     }

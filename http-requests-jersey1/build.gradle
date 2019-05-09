@@ -14,16 +14,10 @@
  * limitations under the License.
  */
 
-apply from: "${rootDir}/gradle/library-publish.gradle"
-apply from: "${rootDir}/gradle/spring-dependency-management.gradle"
-
-ext {
-    excludeSpringDependencyManagement = true
-}
+apply from: "${rootDir}/gradle/library.gradle"
 
 dependencies {
-    compile project(':http-requests-core')
-    compile "com.sun.jersey:jersey-client:${jersey1Version}"
-
-    testCompile project(':http-requests-functional-test')
+    api project(":http-requests-core")
+    api "com.sun.jersey:jersey-client:${jersey1Version}"
+    testImplementation project(":http-requests-functional-test")
 }

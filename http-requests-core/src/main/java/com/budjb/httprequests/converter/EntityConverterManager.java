@@ -17,13 +17,14 @@ package com.budjb.httprequests.converter;
 
 import com.budjb.httprequests.ConvertingHttpEntity;
 import com.budjb.httprequests.HttpEntity;
+import com.budjb.httprequests.Ordered;
 import com.budjb.httprequests.exception.UnsupportedConversionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,15 +37,17 @@ public class EntityConverterManager {
     /**
      * List of registered entity converters.
      */
-    private final List<EntityConverter> converters = new ArrayList<>();
+    private final List<EntityConverter> converters;
 
-    /**
-     * Adds an entity converter to the manager.
-     *
-     * @param converter Converter to add to the manager.
-     */
-    public void add(EntityConverter converter) {
-        converters.add(converter);
+    public EntityConverterManager(List<EntityConverter> entityConverters) {
+        Comparator<EntityConverter> comparator = (o1, o2) -> {
+            int l = (o1 instanceof Ordered) ? ((Ordered) o1).getOrder() : 0;
+            int r = (o2 instanceof Ordered) ? ((Ordered) o2).getOrder() : 0;
+
+            return Integer.compare(r, l);
+        };
+
+        converters = entityConverters.stream().sorted(comparator).collect(Collectors.toList());
     }
 
     /**
@@ -54,22 +57,6 @@ public class EntityConverterManager {
      */
     public List<EntityConverter> getAll() {
         return converters;
-    }
-
-    /**
-     * Remove an entity converter.
-     *
-     * @param converter Entity converter to remove.
-     */
-    public void remove(EntityConverter converter) {
-        converters.remove(converter);
-    }
-
-    /**
-     * Remove all entity converters.
-     */
-    public void clear() {
-        converters.clear();
     }
 
     /**
