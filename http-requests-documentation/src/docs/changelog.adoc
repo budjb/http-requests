@@ -2,26 +2,32 @@
 
 The changelog will be updated with release notes for each release of the library.
 
-=== Version 2
+2.0.4::
 
-==== Version 2.0.3
+* Update Gradle version and build dependencies.
+* Update library dependencies to latest.
+* Make `EntityConverterManager` immutable. Converters need to be passed into its constructor going forward.
+* Introduce entity converter ordering to ensure that certain converters have higherh or lower priority
+  than others.
+
+2.0.3::
 
 * Fix a bug where the reference HTTP client threw an `IOException` when an error HTTP status code was returned
   with no response entity.
 * Fix a bug where calling `HttpResponse.getEntity(Class)` threw a `NullPointerException` when no response
   entity was returned.
 
-==== Version 2.0.2
+2.0.2::
 
 * Add `Closeable` support for filters. Any filter that implements `Closeable` are guaranteed to be closed.
 * Fix bug where the `LoggingFilter` threw a `NullPointerException` when no request entity is present.
 * Do not apply a port if none was specified using the reference HTTP client.
 
-==== Version 2.0.1
+2.0.1::
 
 * Close the underlying Apache HTTP client when the `HttpResponse` is closed.
 
-==== Version 2.0.0
+2.0.0::
 
 The version 2.0 upgrade involved refactoring of the components of the library, with the aim of simplifying
 the codebase and making the project more maintainable. Due to this, the change log for this version is
@@ -63,14 +69,11 @@ relatively lengthy.
 * Fixed `HttpRequest` clone issue where paths with special characters would cause a URISyntaxException
   (https://github.com/budjb/http-requests/issues/7[#7]).
 
-=== Version 1
-Major version 1 of the library is the first revision of the interface of the `http-requests` library.
-
-==== Version 1.0.2
+1.0.2::
 * Remove default character set from the `HttpRequest`.
 * Change default conversion character set from `UTF-8` to `ISO-8859-1` (per HTTP 1.1 spec).
 
-==== Version 1.0.1
+1.0.1::
 * Add missing `@DelegatesTo` annotation to a method taking a closure.
 * If a retry filter is registered with the client, the request entity is automatically
   buffered so that it can be resent with subsequent requests.
@@ -80,5 +83,5 @@ Major version 1 of the library is the first revision of the interface of the `ht
 * Modify Grails 3.x plugin so that the classpath scanner prefers the non-built-in HttpClientFactory if another
   provider is found.
 
-==== Version 1.0.0
+1.0.0::
 * Initial non-beta release of the library.
