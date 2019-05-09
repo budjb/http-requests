@@ -23,8 +23,7 @@ import spock.lang.Specification
 class HttpResponseSpec extends Specification {
     def 'When a charset is provided, the resulting string is built using it'() {
         setup:
-        EntityConverterManager converterManager = new EntityConverterManager()
-        converterManager.add(new StringEntityReader())
+        EntityConverterManager converterManager = new EntityConverterManager([new StringEntityReader()])
 
         HttpEntity httpEntity = new HttpEntity(new ByteArrayInputStream('åäö'.getBytes()), 'text/plain', 'euc-jp')
         HttpResponse response = new MockHttpResponse(
@@ -50,7 +49,7 @@ class HttpResponseSpec extends Specification {
         headers.add("peek", "boo")
 
         HttpResponse response = new MockHttpResponse(
-            new EntityConverterManager(),
+            new EntityConverterManager([]),
             new HttpRequest(),
             200,
             headers,
@@ -74,7 +73,7 @@ class HttpResponseSpec extends Specification {
     def 'When the response contains no entity, hasEntity() returns false'() {
         setup:
         HttpResponse response = new MockHttpResponse(
-            new EntityConverterManager(),
+            new EntityConverterManager([]),
             new HttpRequest(),
             200,
             new MultiValuedMap(),
@@ -90,7 +89,7 @@ class HttpResponseSpec extends Specification {
         HttpRequest request = new HttpRequest().setBufferResponseEntity(false)
         HttpEntity entity = new HttpEntity(new ByteArrayInputStream([1, 2, 3] as byte[]))
         HttpResponse response = new MockHttpResponse(
-            new EntityConverterManager(),
+            new EntityConverterManager([]),
             request,
             200,
             new MultiValuedMap(),

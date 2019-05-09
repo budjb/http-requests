@@ -15,6 +15,7 @@
  */
 package com.budjb.httprequests.converter.bundled;
 
+import com.budjb.httprequests.Ordered;
 import com.budjb.httprequests.StreamUtils;
 import com.budjb.httprequests.converter.EntityReader;
 
@@ -24,7 +25,7 @@ import java.nio.charset.Charset;
 /**
  * An entity reader that converts an entity into a String. The character set of the entity is respected.
  */
-public class StringEntityReader implements EntityReader {
+public class StringEntityReader implements EntityReader, Ordered {
     /**
      * Determines if the reader supports converting an entity to the given class type.
      *
@@ -54,5 +55,13 @@ public class StringEntityReader implements EntityReader {
         }
 
         return StreamUtils.readString(entity, charset);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getOrder() {
+        return Ordered.LOWEST_PRIORITY + 10;
     }
 }

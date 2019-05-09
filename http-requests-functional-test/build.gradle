@@ -18,15 +18,19 @@ apply from: "${rootDir}/gradle/library.gradle"
 
 apply plugin: "groovy"
 apply plugin: "java"
+apply plugin: "java-library"
 
 dependencies {
-    implementation platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
+    api platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
 
-    implementation project(":http-requests-core")
-    implementation project(":http-requests-jackson")
+    api project(":http-requests-core")
+    api project(":http-requests-jackson")
+    api project(":http-requests-spring")
 
-    implementation "org.springframework.boot:spring-boot-starter-web"
-    implementation "org.springframework.boot:spring-boot-starter-test"
-    implementation "org.spockframework:spock-spring:${spockVersion}"
-    implementation "org.spockframework:spock-core:${spockVersion}"
+    api "org.codehaus.groovy:groovy:${groovyVersion}"
+
+    api "org.springframework.boot:spring-boot-starter-web"
+    api "org.springframework.boot:spring-boot-starter-test"
+    api "org.spockframework:spock-spring:${spockVersion}"
+    api "org.spockframework:spock-core:${spockVersion}"
 }

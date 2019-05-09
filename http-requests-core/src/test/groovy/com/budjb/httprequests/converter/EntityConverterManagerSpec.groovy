@@ -24,12 +24,9 @@ class EntityConverterManagerSpec extends Specification {
     def 'When an EntityConverter is added, the manager contains it'() {
         setup:
         EntityConverter converter = Mock(EntityConverter)
-        EntityConverterManager manager = new EntityConverterManager()
+        EntityConverterManager manager = new EntityConverterManager([converter])
 
-        when:
-        manager.add(converter)
-
-        then:
+        expect:
         manager.getAll().size() == 1
         manager.getAll().get(0).is converter
     }
@@ -39,44 +36,10 @@ class EntityConverterManagerSpec extends Specification {
         EntityConverter c1 = Mock(EntityConverter)
         EntityConverter c2 = Mock(EntityConverter)
 
-        EntityConverterManager manager = new EntityConverterManager()
-        manager.add(c1)
-        manager.add(c2)
+        EntityConverterManager manager = new EntityConverterManager([c1, c2])
 
         expect:
         manager.getAll() == [c1, c2]
-    }
-
-    def 'After removing a converter, it is no longer contained in the manager'() {
-        setup:
-        EntityConverter converter = Mock(EntityConverter)
-        EntityConverterManager manager = new EntityConverterManager()
-        manager.add(converter)
-
-        expect:
-        manager.getAll().contains(converter)
-
-        when:
-        manager.remove(converter)
-
-        then:
-        !manager.getAll().contains(converter)
-    }
-
-    def 'After clearing the manager, no converters are contained in the manager'() {
-        setup:
-        EntityConverter ec1 = Mock(EntityConverter)
-        EntityConverter ec2 = Mock(EntityConverter)
-
-        EntityConverterManager manager = new EntityConverterManager()
-        manager.add(ec1)
-        manager.add(ec2)
-
-        when:
-        manager.clear()
-
-        then:
-        manager.getAll().size() == 0
     }
 
     def 'When getting entity readers, only entity converters that are readers are returned'() {
@@ -84,9 +47,7 @@ class EntityConverterManagerSpec extends Specification {
         EntityWriter ec1 = Mock(EntityWriter)
         EntityReader ec2 = Mock(EntityReader)
 
-        EntityConverterManager manager = new EntityConverterManager()
-        manager.add(ec1)
-        manager.add(ec2)
+        EntityConverterManager manager = new EntityConverterManager([ec1, ec2])
 
         when:
         List<EntityReader> readers = manager.getEntityReaders()
@@ -101,9 +62,7 @@ class EntityConverterManagerSpec extends Specification {
         EntityWriter ec1 = Mock(EntityWriter)
         EntityReader ec2 = Mock(EntityReader)
 
-        EntityConverterManager manager = new EntityConverterManager()
-        manager.add(ec1)
-        manager.add(ec2)
+        EntityConverterManager manager = new EntityConverterManager([ec1, ec2])
 
         when:
         List<EntityWriter> writers = manager.getEntityWriters()
@@ -119,10 +78,7 @@ class EntityConverterManagerSpec extends Specification {
         EntityReader bad = Mock(EntityReader)
         EntityWriter writer = Mock(EntityWriter)
 
-        EntityConverterManager converterManager = new EntityConverterManager()
-        converterManager.add(bad)
-        converterManager.add(good)
-        converterManager.add(writer)
+        EntityConverterManager converterManager = new EntityConverterManager([bad, good, writer])
 
         good.supports(String) >> true
 
@@ -144,10 +100,7 @@ class EntityConverterManagerSpec extends Specification {
         EntityWriter bad = Mock(EntityWriter)
         EntityReader reader = Mock(EntityReader)
 
-        EntityConverterManager converterManager = new EntityConverterManager()
-        converterManager.add(bad)
-        converterManager.add(good)
-        converterManager.add(reader)
+        EntityConverterManager converterManager = new EntityConverterManager([bad, good, reader])
 
         good.supports(String) >> true
 
@@ -165,7 +118,7 @@ class EntityConverterManagerSpec extends Specification {
 
     def 'When no reader is available to perform conversion, an UnsupportedConversionException is thrown'() {
         setup:
-        EntityConverterManager converterManager = new EntityConverterManager()
+        EntityConverterManager converterManager = new EntityConverterManager([])
 
         HttpEntity entity = new HttpEntity(new ByteArrayInputStream([1, 2, 3] as byte[]), null, null)
 
@@ -178,7 +131,7 @@ class EntityConverterManagerSpec extends Specification {
 
     def 'When no writer is available to perform conversion, an UnsupportedConversionException is thrown'() {
         setup:
-        EntityConverterManager converterManager = new EntityConverterManager()
+        EntityConverterManager converterManager = new EntityConverterManager([])
 
         when:
         converterManager.write('Hello!', null, null)
@@ -192,8 +145,7 @@ class EntityConverterManagerSpec extends Specification {
         EntityWriter converter = Mock(EntityWriter)
         converter.supports(_) >> true
 
-        EntityConverterManager manager = new EntityConverterManager()
-        manager.add(converter)
+        EntityConverterManager manager = new EntityConverterManager([converter])
 
         when:
         manager.write('foo')
@@ -213,9 +165,7 @@ class EntityConverterManagerSpec extends Specification {
         c2.supports(_) >> true
         c2.write(*_) >> inputStream
 
-        EntityConverterManager manager = new EntityConverterManager()
-        manager.add(c1)
-        manager.add(c2)
+        EntityConverterManager manager = new EntityConverterManager([c1, c2])
 
         when:
         HttpEntity entity = manager.write('foo')
@@ -236,9 +186,7 @@ class EntityConverterManagerSpec extends Specification {
         c2.supports(_) >> true
         c2.write(*_) >> inputStream
 
-        EntityConverterManager manager = new EntityConverterManager()
-        manager.add(c1)
-        manager.add(c2)
+        EntityConverterManager manager = new EntityConverterManager([c1, c2])
 
         when:
         HttpEntity entity = manager.write('foo')
@@ -257,9 +205,7 @@ class EntityConverterManagerSpec extends Specification {
         c2.supports(_) >> true
         c2.read(*_) >> 'foo'
 
-        EntityConverterManager manager = new EntityConverterManager()
-        manager.add(c1)
-        manager.add(c2)
+        EntityConverterManager manager = new EntityConverterManager([c1, c2])
 
         HttpEntity entity = Mock(HttpEntity)
         entity.getInputStream() >> Mock(InputStream)
@@ -277,8 +223,7 @@ class EntityConverterManagerSpec extends Specification {
         c1.supports(_) >> true
         c1.read(*_) >> { throw new IOException() }
 
-        EntityConverterManager manager = new EntityConverterManager()
-        manager.add(c1)
+        EntityConverterManager manager = new EntityConverterManager([c1])
 
         HttpEntity entity = Mock(HttpEntity)
         entity.getInputStream() >> Mock(InputStream)

@@ -25,13 +25,16 @@ import com.budjb.httprequests.mock.MockHttpClient
 import com.budjb.httprequests.mock.MockHttpClientFactory
 import spock.lang.Specification
 
+import java.time.LocalDate
+
 class AuthenticationTokenHeaderFilterSpec extends Specification {
     MockHttpClient client
 
     def setup() {
-        EntityConverterManager converterManager = new EntityConverterManager()
-        converterManager.add(new StringEntityWriter())
-        converterManager.add(new ByteArrayEntityWriter())
+        EntityConverterManager converterManager = new EntityConverterManager([
+            new StringEntityWriter(),
+            new ByteArrayEntityWriter()
+        ])
         HttpClientFactory httpClientFactory = new MockHttpClientFactory(converterManager)
         client = (MockHttpClient) httpClientFactory.createHttpClient()
     }
@@ -105,7 +108,7 @@ class AuthenticationTokenHeaderFilterSpec extends Specification {
         AuthenticationTokenHeaderFilter filter = new AuthenticationTokenHeaderFilter() {
             {
                 setAuthenticationToken('foo')
-                setTimeout(new Date() - 1)
+                setTimeout(java.sql.Date.valueOf(LocalDate.now().minusDays(1)))
             }
 
             @Override
