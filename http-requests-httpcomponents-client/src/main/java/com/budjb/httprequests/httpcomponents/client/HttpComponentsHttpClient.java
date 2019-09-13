@@ -56,11 +56,25 @@ public class HttpComponentsHttpClient extends AbstractHttpClient {
 
         URIBuilder uriBuilder = new URIBuilder(request.getUri());
 
-        request.getQueryParameters().forEach((k, v) -> v.forEach(value -> uriBuilder.addParameter(k, value)));
+        request.getQueryParameters().forEach((k, v) -> {
+            if (v.size() == 0) {
+                uriBuilder.addParameter(k, null);
+            }
+            else {
+                v.forEach(value -> uriBuilder.addParameter(k, value));
+            }
+        });
 
         HttpUriRequest httpRequest = createHttpRequest(method, uriBuilder.build());
 
-        request.getHeaders().forEach((k, v) -> v.forEach(value -> httpRequest.addHeader(k, value)));
+        request.getHeaders().forEach((k, v) -> {
+            if (v.size() == 0) {
+                httpRequest.addHeader(k, null);
+            }
+            else {
+                v.forEach(value -> httpRequest.addHeader(k, value));
+            }
+        });
 
         if (httpEntity != null && httpRequest instanceof HttpEntityEnclosingRequest) {
             ContentType contentType = null;

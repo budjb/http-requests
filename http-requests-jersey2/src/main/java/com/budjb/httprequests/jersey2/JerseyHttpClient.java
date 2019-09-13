@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
+import java.util.List;
 
 public class JerseyHttpClient extends AbstractHttpClient {
     /**
@@ -129,8 +130,15 @@ public class JerseyHttpClient extends AbstractHttpClient {
      */
     private WebTarget applyQueryParameters(WebTarget target, MultiValuedMap queryParameters) {
         for (String name : queryParameters.keySet()) {
-            for (String value : queryParameters.get(name)) {
-                target = target.queryParam(name, value);
+            List<String> values = queryParameters.get(name);
+
+            if (values.size() == 0) {
+                target = target.queryParam(name, "");
+            }
+            else {
+                for (String value : queryParameters.get(name)) {
+                    target = target.queryParam(name, value);
+                }
             }
         }
 
@@ -146,8 +154,15 @@ public class JerseyHttpClient extends AbstractHttpClient {
      */
     private Invocation.Builder applyHeaders(Invocation.Builder builder, MultiValuedMap headers) {
         for (String name : headers.keySet()) {
-            for (String value : headers.get(name)) {
-                builder = builder.header(name, value);
+            List<String> values = headers.get(name);
+
+            if (values.size() == 0) {
+                builder = builder.header(name, "");
+            }
+            else {
+                for (String value : headers.get(name)) {
+                    builder = builder.header(name, value);
+                }
             }
         }
 

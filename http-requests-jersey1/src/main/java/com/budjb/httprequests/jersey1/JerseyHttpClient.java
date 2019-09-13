@@ -27,6 +27,7 @@ import com.sun.jersey.client.urlconnection.HTTPSProperties;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
+import java.util.List;
 
 /**
  * An implementation of {@link HttpClient} that uses the Jersey Client 1.x library.
@@ -138,8 +139,15 @@ public class JerseyHttpClient extends AbstractHttpClient {
      */
     private WebResource applyQueryParameters(WebResource resource, MultiValuedMap queryParameters) {
         for (String name : queryParameters.keySet()) {
-            for (String value : queryParameters.get(name)) {
-                resource = resource.queryParam(name, value);
+            List<String> values = queryParameters.get(name);
+
+            if (values.size() == 0) {
+                resource = resource.queryParam(name, "");
+            }
+            else {
+                for (String value : queryParameters.get(name)) {
+                    resource = resource.queryParam(name, value);
+                }
             }
         }
 
@@ -155,8 +163,15 @@ public class JerseyHttpClient extends AbstractHttpClient {
      */
     private WebResource.Builder applyHeaders(WebResource.Builder builder, MultiValuedMap headers) {
         for (String name : headers.keySet()) {
-            for (String value : headers.get(name)) {
-                builder = builder.header(name, value);
+            List<String> values = headers.get(name);
+
+            if (values.size() == 0) {
+                builder = builder.header(name, "");
+            }
+            else {
+                for (String value : headers.get(name)) {
+                    builder = builder.header(name, value);
+                }
             }
         }
 
