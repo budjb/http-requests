@@ -16,6 +16,7 @@
 package com.budjb.httprequests.application
 
 import groovy.json.JsonBuilder
+import groovy.json.JsonOutput
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.http.HttpHeaders
@@ -125,11 +126,13 @@ class TestApp {
 
     @RequestMapping(value = '/testParams', produces = 'application/json')
     String testParams(@RequestParam MultiValueMap<String, String> params) {
+        println JsonOutput.prettyPrint(JsonOutput.toJson(params))
         return new JsonBuilder(params).toString()
     }
 
     @RequestMapping(value = '/testHeaders', produces = 'application/json')
     String testHeaders(@RequestHeader MultiValueMap<String, String> headers) {
+        println JsonOutput.prettyPrint(JsonOutput.toJson(headers))
         return new JsonBuilder(headers).toString()
     }
 

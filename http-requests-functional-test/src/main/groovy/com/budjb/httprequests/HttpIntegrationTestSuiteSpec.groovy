@@ -570,7 +570,6 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         filter.closed
     }
 
-
     def 'When a URL does not exist and the response has no entity, a 404 status code should be captured with no exception'() {
         when:
         HttpResponse response = httpClientFactory.createHttpClient().get("${baseUrl}/test404")
@@ -578,6 +577,32 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         then:
         response.status == 404
         response.getEntity(String) == null
+    }
+
+    def 'Query parameters that have been set but contain no values are still sent with the request URI'() {
+        setup:
+        HttpRequest request = new HttpRequest("${baseUrl}/testParams")
+        request.setQueryParameter('foo', null)
+
+        when:
+        Map response = httpClientFactory.createHttpClient().get(request).getEntity(Map)
+
+        then:
+        response.containsKey('foo')
+        !((List) response.get('foo'))[0]
+    }
+
+    def 'Headers that have been set but contain no value are still sent with the request'() {
+        setup:
+        HttpRequest request = new HttpRequest("${baseUrl}/testHeaders")
+        request.setHeader('x-foo', null)
+
+        when:
+        Map response = httpClientFactory.createHttpClient().get(request).getEntity(Map)
+
+        then:
+        response.containsKey('x-foo')
+        !((List) response.get('x-foo'))[0]
     }
 
     static class CloseableFilter implements HttpClientFilter, Closeable {

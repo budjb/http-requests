@@ -2,6 +2,10 @@
 
 The changelog will be updated with release notes for each release of the library.
 
+2.0.5::
+
+* Add handling for `null` values in multi-valued maps (which affects request headers, query parameters, and form fields).
+
 2.0.4::
 
 * Update Gradle version and build dependencies.
