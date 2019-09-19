@@ -2,6 +2,11 @@
 
 The changelog will be updated with release notes for each release of the library.
 
+2.0.6::
+
+* Make the build compatible with JDK 8.
+* Fix publishing for the jersey version 1 library.
+
 2.0.5::
 
 * Add handling for `null` values in multi-valued maps (which affects request headers, query parameters, and form fields).
