@@ -2,6 +2,12 @@
 
 The changelog will be updated with release notes for each release of the library.
 
+2.0.7::
+
+* Ensure that a Content-Type specified in the request is preferred over the one provided
+  in the HTTP entity. This ensures that any Content-Type provided by a converter will not take
+  precedence over a user-specified one.
+
 2.0.6::
 
 * Make the build compatible with JDK 8.

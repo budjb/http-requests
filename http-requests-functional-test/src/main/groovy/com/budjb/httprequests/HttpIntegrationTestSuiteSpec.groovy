@@ -605,6 +605,18 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         !((List) response.get('x-foo'))[0]
     }
 
+    def 'A Content-Type contained in the request is preferred over the one in the entity'() {
+        setup:
+        HttpRequest request = new HttpRequest("${baseUrl}/echo")
+        request.setHeader('content-type', 'foo/bar')
+
+        when:
+        def response = httpClientFactory.createHttpClient().post(request, 'foo')
+
+        then:
+        response.getHeader('content-type') == 'foo/bar'
+    }
+
     static class CloseableFilter implements HttpClientFilter, Closeable {
         boolean closed = false
 
