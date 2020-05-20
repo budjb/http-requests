@@ -68,7 +68,9 @@ public class JerseyHttpClient extends AbstractHttpClient {
 
         Entity<InputStream> entity = null;
         if (httpEntity != null) {
-            entity = Entity.entity(httpEntity.getInputStream(), MediaType.valueOf(httpEntity.getFullContentType()));
+            entity = Entity.entity(httpEntity.getInputStream(), MediaType.valueOf(
+                request.getHeaders().containsKey("Content-Type") ? request.getHeaders().getFlat("Content-Type") : httpEntity.getFullContentType()
+            ));
         }
 
         Response clientResponse;

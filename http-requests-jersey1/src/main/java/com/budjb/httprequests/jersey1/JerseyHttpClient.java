@@ -65,7 +65,7 @@ public class JerseyHttpClient extends AbstractHttpClient {
 
         builder = applyHeaders(builder, request.getHeaders());
 
-        if (entity != null && entity.getFullContentType() != null) {
+        if (!request.getHeaders().containsKey("Content-Type") && entity != null && entity.getFullContentType() != null) {
             builder = builder.type(entity.getFullContentType());
         }
 
