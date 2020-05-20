@@ -20,6 +20,7 @@ for the HTTP Requests library and what their purposes are.
 | `http-requests-spring`                | Enables automatic configuration of the HTTP requests components as Spring
                                           beans.
 | `http-requests-groovy`                | Adds Groovy DSLs to the library and Groovy-specific entity converters.
+| `http-requests-mock`                  | Adds support for mocking HTTP requests in unit tests.
 |===
 
 NOTE: All modules are deployed under the group `com.budjb`.

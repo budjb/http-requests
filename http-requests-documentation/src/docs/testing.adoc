@@ -1,0 +1,132 @@
+== Testing
+
+Since it is not ideal to make actual HTTP requests while performing unit tests,
+a mock library exists that allows tests to inject responses for expected HTTP requests
+made by the code being tested. Using the built-in request mocking functionality avoids
+the need to use dynamically generated mocking and stubbing libraries such as Mockito
+or Spock.
+
+=== Request Mocks
+
+A request mock contains the details about a potential HTTP request that should have a
+mocked response. The `RequestMock` object contains most of the same properties that
+a typical `HttpRequest` does, such as request URI, headers, and query parameters,
+as well as some additional properties, such as the HTTP method that should match.
+
+It also includes properties about the response, such as response status code, headers,
+and the response entity.
+
+The minimal requirement for a mock to match a request is that the URI must match the
+request. If a mock has other details set, such as request headers, HTTP method,  or
+query parameters, those also must match. If they are not specified in the mock, they
+are not considered as part of the match criteria. This allows tests to be as specific
+or not as they need to be.
+
+Mocks that match requests will have their counters incremented each time a match occurs.
+The `RequestMock` object exposes these details via the `called` and `getCalledCount`
+methods.
+
+NOTE: If a no matching mock is found for an HTTP request, and `UnmatchedRequestMockException`
+will be thrown.
+
+=== MockHttpClientFactory
+
+The `MockHttpClientFactory` class may be used in tests and injected into those objects
+being tested. This factory implementation exposes the same interface as the other provider
+libraries, and adds some additional methods specific to testing. Request mocks are
+created via the `createMock` method, which returns and tracks an empty mock which may
+be configured.
+
+The factory exposes a method `allMocksCalled` that will return whether all created mocks
+have been called at least once.
+
+=== Example
+
+Below is a simple Java object that makes an API request and returns the payload,
+which is expected to be a simple `String`.
+
+[source,java]
+----
+/**
+* A test object that makes use of the HTTP requests library to fetch
+* a string result from the API located at http://localhost/api.
+*/
+class TestObject {
+    private final HttpClientFactory httpClientFactory;
+
+    public TestObject(HttpClientFactory httpClientFactory) {
+        this.httpClientFactory = httpClientFactory;
+    }
+
+    public String makeApiCall() {
+        return httpClientFactory.createHttpClient.get("http://localhost/api").getEntity(String.class);
+    }
+}
+
+
+----
+
+This class may be tested using a framework, such as Junit or Spock. A Spock
+example follows:
+
+[source,groovy]
+----
+class FunctionalSpec extends Specification {
+    /**
+     * Mock HTTP client factory.
+     */
+    MockHttpClientFactory httpClientFactory
+
+    /**
+     * Entity converter manager.
+     */
+    EntityConverterManager entityConverterManager
+
+    /**
+     * Configure the environment before each test.
+     */
+    def setup() {
+        // Create an entity converter manager with the Groovy JSON converters
+        entityConverterManager = new EntityConverterManager([
+            new JsonEntityWriter(),
+            new JsonEntityReader()
+        ])
+
+        // Create the mock HTTP client factory with the entity converter manager above
+        httpClientFactory = new MockHttpClientFactory(entityConverterManager)
+    }
+
+    def 'A simple mocked GET request returns the expected response entity'() {
+        setup:
+        // Create a mock for a specific URL with a response payload
+        RequestMock mock = httpClientFactory
+            .createMock()
+            .setRequestUri('http://localhost/foo/bar')
+            .setResponseEntity([
+                foo: 'bar',
+                baz: 'boz'
+            ])
+
+        TestObject object = new TestObject(httpClientFactory)
+
+        when:
+        // Make the API call through the test object
+        def response = object.makeApiCall()
+
+        then:
+        // The mock should have been called at least once
+        mock.called()
+
+        // Since the above mock is the only one that was created, all mocks
+        // should have been called from the client factory.
+        httpClientFactory.allMocksCalled()
+
+        // The response should have been returned and converted properly
+        response == [
+            foo: 'bar',
+            baz: 'boz'
+        ]
+    }
+}
+----
+
