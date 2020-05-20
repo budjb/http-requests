@@ -14,7 +14,7 @@
 |===
 
 IMPORTANT: To ensure that all resources used during the request are released, it is critical that the response is
-closed via the `HttpRequest.close()` method once the response is no longer needed.
+closed via the `HttpResponse.close()` method once the response is no longer needed.
 
 ==== Response Entities
 
