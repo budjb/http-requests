@@ -24,11 +24,17 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class EntityConverterManager {
+    /**
+     * Empty entity converter manager.
+     */
+    public static final EntityConverterManager empty = new EntityConverterManager(Collections.emptyList());
+
     /**
      * Logger.
      */
@@ -39,6 +45,9 @@ public class EntityConverterManager {
      */
     private final List<EntityConverter> converters;
 
+    /**
+     * Creates an entity converter manager containing the provided list of converters.
+     */
     public EntityConverterManager(List<EntityConverter> entityConverters) {
         Comparator<EntityConverter> comparator = (o1, o2) -> {
             int l = (o1 instanceof Ordered) ? ((Ordered) o1).getOrder() : 0;
