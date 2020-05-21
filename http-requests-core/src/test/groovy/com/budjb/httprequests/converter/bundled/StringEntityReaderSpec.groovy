@@ -24,9 +24,9 @@ class StringEntityReaderSpec extends Specification {
         StringEntityReader reader = new StringEntityReader()
 
         expect:
-        reader.supports(String)
-        !reader.supports(String[])
-        !reader.supports(Object)
+        reader.supports(String, null, null)
+        !reader.supports(String[], null, null)
+        !reader.supports(Object, null, null)
     }
 
     def 'StringEntityReader returns a String'() {
@@ -35,6 +35,6 @@ class StringEntityReaderSpec extends Specification {
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream([102, 111, 111, 98, 97, 114] as byte[])
 
         expect:
-        reader.read(byteArrayInputStream, null, null) == 'foobar'
+        reader.read(String, byteArrayInputStream, null, null) == 'foobar'
     }
 }

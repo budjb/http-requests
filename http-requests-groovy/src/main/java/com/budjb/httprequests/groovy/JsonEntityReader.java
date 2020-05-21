@@ -29,7 +29,7 @@ public class JsonEntityReader implements EntityReader {
      * {@inheritDoc}
      */
     @Override
-    public boolean supports(Class<?> type) {
+    public boolean supports(Class<?> type, String contentType, String charset) {
         return List.class.isAssignableFrom(type) || Map.class.isAssignableFrom(type);
     }
 
@@ -37,10 +37,11 @@ public class JsonEntityReader implements EntityReader {
      * {@inheritDoc}
      */
     @Override
-    public Object read(InputStream entity, String contentType, String charset) {
+    @SuppressWarnings("unchecked")
+    public <T> T read(Class<? extends T> clazz, InputStream entity, String contentType, String charset) {
         if (charset == null) {
             charset = Charset.defaultCharset().toString();
         }
-        return new JsonSlurper().parse(entity, charset);
+        return (T) new JsonSlurper().parse(entity, charset);
     }
 }

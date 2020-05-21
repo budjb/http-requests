@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 the original author or authors.
+ * Copyright 2016-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,29 +16,22 @@
 
 package com.budjb.httprequests.filter.jackson;
 
+import com.budjb.httprequests.Ordered;
 import com.budjb.httprequests.converter.EntityWriter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
-/**
- * A map JSON writer that utilizes Jackson.
- */
-public class JacksonMapWriter implements EntityWriter {
-    /**
-     * Jackson object mapper.
-     */
-    private final ObjectMapper objectMapper;
-
+public class JacksonEntityWriter extends JacksonEntityConverter implements EntityWriter, Ordered {
     /**
      * Constructor.
      *
      * @param objectMapper Jackson object mapper.
      */
-    public JacksonMapWriter(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
+    public JacksonEntityWriter(ObjectMapper objectMapper) {
+        super(objectMapper);
     }
 
     /**
@@ -54,7 +47,15 @@ public class JacksonMapWriter implements EntityWriter {
      */
     @Override
     public boolean supports(Class<?> type) {
-        return Map.class.isAssignableFrom(type);
+        AtomicReference<Throwable> causeRef = new AtomicReference<>();
+
+        if (getObjectMapper().canSerialize(type, causeRef)) {
+            return true;
+        }
+
+        logFailure("serializing", type, causeRef.get());
+
+        return false;
     }
 
     /**
@@ -62,6 +63,14 @@ public class JacksonMapWriter implements EntityWriter {
      */
     @Override
     public InputStream write(Object entity, String characterSet) throws Exception {
-        return new ByteArrayInputStream(objectMapper.writeValueAsBytes(entity));
+        return new ByteArrayInputStream(getObjectMapper().writeValueAsBytes(entity));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getOrder() {
+        return Ordered.LOWEST_PRIORITY + 5;
     }
 }

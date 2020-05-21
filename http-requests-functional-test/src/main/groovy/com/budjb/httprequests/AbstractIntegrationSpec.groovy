@@ -17,10 +17,8 @@ package com.budjb.httprequests
 
 import com.budjb.httprequests.converter.EntityConverterManager
 import com.budjb.httprequests.converter.bundled.*
-import com.budjb.httprequests.filter.jackson.JacksonListReader
-import com.budjb.httprequests.filter.jackson.JacksonListWriter
-import com.budjb.httprequests.filter.jackson.JacksonMapReader
-import com.budjb.httprequests.filter.jackson.JacksonMapWriter
+import com.budjb.httprequests.filter.jackson.JacksonEntityReader
+import com.budjb.httprequests.filter.jackson.JacksonEntityWriter
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Value
 import spock.lang.Ignore
@@ -68,10 +66,8 @@ abstract class AbstractIntegrationSpec extends Specification {
             new StringEntityWriter(),
             new ByteArrayEntityWriter(),
             new ByteArrayEntityReader(),
-            new JacksonMapReader(objectMapper),
-            new JacksonListReader(objectMapper),
-            new JacksonMapWriter(objectMapper),
-            new JacksonListWriter(objectMapper),
+            new JacksonEntityWriter(objectMapper),
+            new JacksonEntityReader(objectMapper),
             new FormDataEntityWriter()
         ])
 

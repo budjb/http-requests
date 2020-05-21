@@ -27,7 +27,7 @@ public class XmlSlurperEntityReader implements EntityReader {
      * {@inheritDoc}
      */
     @Override
-    public boolean supports(Class<?> type) {
+    public boolean supports(Class<?> type, String contentType, String charset) {
         return GPathResult.class.isAssignableFrom(type);
     }
 
@@ -35,7 +35,8 @@ public class XmlSlurperEntityReader implements EntityReader {
      * {@inheritDoc}
      */
     @Override
-    public Object read(InputStream entity, String contentType, String charset) throws Exception {
-        return new XmlSlurper(false, false).parse(entity);
+    @SuppressWarnings("unchecked")
+    public <T> T read(Class<? extends T> clazz, InputStream entity, String contentType, String charset) throws Exception {
+        return (T) new XmlSlurper(false, false).parse(entity);
     }
 }

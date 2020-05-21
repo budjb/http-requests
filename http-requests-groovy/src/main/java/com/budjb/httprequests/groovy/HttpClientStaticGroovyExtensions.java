@@ -27,11 +27,11 @@ public class HttpClientStaticGroovyExtensions {
      * @param closure A closure that configures the HTTP request.
      * @return The resulting HTTP request object.
      */
-    public static HttpRequest build(HttpRequest self, @DelegatesTo(HttpRequestDelegate.class) Closure closure) {
+    public static HttpRequest build(HttpRequest self, @DelegatesTo(HttpRequestDelegate.class) Closure<?> closure) {
         HttpRequest request = new HttpRequest();
         HttpRequestDelegate delegate = new HttpRequestDelegate(request);
 
-        closure = (Closure) closure.clone();
+        closure = (Closure<?>) closure.clone();
         closure.setResolveStrategy(Closure.DELEGATE_FIRST);
         closure.setDelegate(delegate);
         closure.call();

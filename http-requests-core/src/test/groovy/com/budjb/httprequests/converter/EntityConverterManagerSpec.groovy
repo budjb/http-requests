@@ -80,7 +80,7 @@ class EntityConverterManagerSpec extends Specification {
 
         EntityConverterManager converterManager = new EntityConverterManager([bad, good, writer])
 
-        good.supports(String) >> true
+        good.supports(String, _, _) >> true
 
         HttpEntity entity = new HttpEntity(new ByteArrayInputStream([1, 2, 3] as byte[]), null, null)
 
@@ -198,11 +198,11 @@ class EntityConverterManagerSpec extends Specification {
     def 'If an entity reader throws an exception, other entity readers are attempted'() {
         setup:
         EntityReader c1 = Mock(EntityReader)
-        c1.supports(_) >> true
+        c1.supports(*_) >> true
         c1.read(*_) >> { throw new RuntimeException() }
 
         EntityReader c2 = Mock(EntityReader)
-        c2.supports(_) >> true
+        c2.supports(*_) >> true
         c2.read(*_) >> 'foo'
 
         EntityConverterManager manager = new EntityConverterManager([c1, c2])
@@ -220,7 +220,7 @@ class EntityConverterManagerSpec extends Specification {
     def 'If an entity reader throws an IOException, the manager throws it'() {
         setup:
         EntityReader c1 = Mock(EntityReader)
-        c1.supports(_) >> true
+        c1.supports(*_) >> true
         c1.read(*_) >> { throw new IOException() }
 
         EntityConverterManager manager = new EntityConverterManager([c1])

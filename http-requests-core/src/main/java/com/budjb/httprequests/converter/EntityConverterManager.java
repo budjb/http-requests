@@ -173,11 +173,13 @@ public class EntityConverterManager {
     @SuppressWarnings("unchecked")
     public <T> T read(Class<?> type, HttpEntity entity) throws UnsupportedConversionException, IOException {
         InputStream inputStream = entity.getInputStream();
+        String contentType = entity.getContentType();
+        String charset = entity.getCharSet();
 
         for (EntityReader reader : getEntityReaders()) {
-            if (reader.supports(type)) {
+            if (reader.supports(type, contentType, charset)) {
                 try {
-                    T object = (T) reader.read(inputStream, entity.getContentType(), entity.getCharSet());
+                    T object = (T) reader.read(type, inputStream, contentType, charset);
 
                     if (object != null) {
                         return object;

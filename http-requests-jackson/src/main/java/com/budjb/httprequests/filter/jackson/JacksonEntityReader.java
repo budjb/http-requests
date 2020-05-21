@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 the original author or authors.
+ * Copyright 2016-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,25 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.budjb.httprequests.converter.bundled;
+
+package com.budjb.httprequests.filter.jackson;
 
 import com.budjb.httprequests.Ordered;
-import com.budjb.httprequests.StreamUtils;
 import com.budjb.httprequests.converter.EntityReader;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 
 import java.io.InputStream;
-import java.nio.charset.Charset;
+import java.util.concurrent.atomic.AtomicReference;
 
-/**
- * An entity reader that converts an entity into a String. The character set of the entity is respected.
- */
-public class StringEntityReader implements EntityReader, Ordered {
+public class JacksonEntityReader extends JacksonEntityConverter implements EntityReader, Ordered {
+    /**
+     * Constructor.
+     *
+     * @param objectMapper Jackson object mapper.
+     */
+    public JacksonEntityReader(ObjectMapper objectMapper) {
+        super(objectMapper);
+    }
+
     /**
      * {@inheritDoc}
      */
     @Override
     public boolean supports(Class<?> type, String contentType, String charset) {
-        return String.class.isAssignableFrom(type);
+        AtomicReference<Throwable> causeRef = new AtomicReference<>();
+
+        if (getObjectMapper().canSerialize(type, causeRef)) {
+            return true;
+        }
+
+        logFailure("de-serializing", type, causeRef.get());
+
+        return false;
     }
 
     /**
@@ -40,11 +57,9 @@ public class StringEntityReader implements EntityReader, Ordered {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T read(Class<? extends T> clazz, InputStream entity, String contentType, String charset) throws Exception {
-        if (charset == null) {
-            charset = Charset.defaultCharset().name();
-        }
-
-        return (T) StreamUtils.readString(entity, charset);
+        TypeFactory typeFactory = getObjectMapper().getTypeFactory();
+        JavaType javaType = typeFactory.constructType(clazz);
+        return (T) getObjectMapper().readValue(entity, javaType);
     }
 
     /**
@@ -52,6 +67,6 @@ public class StringEntityReader implements EntityReader, Ordered {
      */
     @Override
     public int getOrder() {
-        return Ordered.LOWEST_PRIORITY + 10;
+        return Ordered.LOWEST_PRIORITY + 5;
     }
 }

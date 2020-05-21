@@ -31,11 +31,7 @@ import java.util.Map;
  */
 public class FormDataEntityWriter implements EntityWriter {
     /**
-     * Returns a Content-Type of the converted object that will be set in the HTTP request.
-     * <p>
-     * If no Content-Type is known, null is returned.
-     *
-     * @return Content-Type of the converted object, or null if unknown.
+     * {@inheritDoc}
      */
     @Override
     public String getContentType() {
@@ -43,10 +39,7 @@ public class FormDataEntityWriter implements EntityWriter {
     }
 
     /**
-     * Determines whether the given class type is supported by the writer.
-     *
-     * @param type Type to convert.
-     * @return Whether the type is supported.
+     * {@inheritDoc}
      */
     @Override
     public boolean supports(Class<?> type) {
@@ -54,14 +47,7 @@ public class FormDataEntityWriter implements EntityWriter {
     }
 
     /**
-     * Convert the given entity.
-     * <p>
-     * If an error occurs, null may be returned so that another converter may attempt conversion.
-     *
-     * @param entity       Entity as an {@link InputStream}.
-     * @param characterSet The character set of the request.
-     * @return The converted object, or null if an error occurs.
-     * @throws Exception when an unexpected error occurs.
+     * {@inheritDoc}
      */
     @Override
     public InputStream write(Object entity, String characterSet) throws Exception {
