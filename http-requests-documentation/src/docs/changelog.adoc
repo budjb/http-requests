@@ -7,6 +7,8 @@ The changelog will be updated with release notes for each release of the library
 * Ensure that a Content-Type specified in the request is preferred over the one provided
   in the HTTP entity. This ensures that any Content-Type provided by a converter will not take
   precedence over a user-specified one.
+* Add http-requests-mock library to enable easier testing of code using
+  the http-requests libraries.
 
 2.0.6::
 

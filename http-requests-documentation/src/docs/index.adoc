@@ -17,4 +17,6 @@ include::spring.adoc[]
 
 include::examples.adoc[]
 
+include::testing.adoc[]
+
 include::changelog.adoc[]

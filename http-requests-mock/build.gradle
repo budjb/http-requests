@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 the original author or authors.
+ * Copyright 2016-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-rootProject.name = 'http-requests'
+apply from: "${rootDir}/gradle/library-publish.gradle"
 
-include 'http-requests-bom'
+apply plugin: "groovy"
 
-include 'http-requests-core'
-include 'http-requests-httpcomponents-client'
-include 'http-requests-jersey1'
-include 'http-requests-jersey2'
-include 'http-requests-groovy'
+dependencies {
+    api project(':http-requests-core')
 
-include 'http-requests-functional-test'
-include 'http-requests-jackson'
-
-include 'http-requests-spring'
-include 'http-requests-documentation'
-
-include 'http-requests-mock'
+    testImplementation "org.codehaus.groovy:groovy:${groovyVersion}"
+    testImplementation "org.spockframework:spock-core:${spockVersion}"
+    testImplementation project(':http-requests-groovy')
+}

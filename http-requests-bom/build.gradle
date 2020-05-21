@@ -24,6 +24,7 @@ dependencies {
         api project(':http-requests-core')
         api project(':http-requests-groovy')
         api project(':http-requests-httpcomponents-client')
+        api project(':http-requests-mock')
         api project(':http-requests-jackson')
         api project(':http-requests-jersey1')
         api project(':http-requests-jersey2')

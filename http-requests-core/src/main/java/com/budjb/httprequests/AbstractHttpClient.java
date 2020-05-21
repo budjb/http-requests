@@ -720,7 +720,7 @@ public abstract class AbstractHttpClient implements HttpClient {
                 try {
                     response = execute(context, entity, filterProcessor);
                 }
-                catch (IOException e) {
+                catch (IOException | HttpClientException e) {
                     throw e;
                 }
                 catch (Exception e) {
