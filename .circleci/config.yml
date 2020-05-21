@@ -1,0 +1,137 @@
+version: 2.1
+
+jobs:
+  test:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    environment:
+      JVM_OPTS: -Xmx3200m
+      TERM: dumb
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - gradle-dependencies-{{ .Revision }}
+      - run: ./gradlew check
+
+  build-and-publish:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    environment:
+      JVM_OPTS: -Xmx3200m
+      TERM: dumb
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - gradle-dependencies-{{ .Revision }}
+      - run:
+          name: Skip if version number was not updated.
+          command: |
+            VERSION=$(./gradlew properties | grep version | awk '{print $2}')
+            git fetch --all
+            if [ $(git tag | grep "$VERSION") ]; then
+              echo "Not publishing because the git tag $VERSION already exists."
+              circleci step halt
+            fi
+      - run: ./gradlew bintrayUpload
+
+  publish-docs:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    environment:
+      JVM_OPTS: -Xmx3200m
+      TERM: dumb
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - gradle-dependencies-{{ .Revision }}
+      - run:
+          name: Skip if version number was not updated.
+          command: |
+            VERSION=$(./gradlew properties | grep version | awk '{print $2}')
+            git fetch --all
+            if [ $(git tag | grep "$VERSION") ]; then
+              echo "Not tagging because the git tag $VERSION already exists."
+              circleci step halt
+            fi
+      - run:
+          name: Build and publish docs
+          command: |
+            VERSION=$(./gradlew properties | grep version | awk '{print $2}')
+            ./gradlew asciidoctor
+            mv http-requests-documentation/build/docs/asciidoc $VERSION
+            git checkout gh-pages
+            rm latest
+            ln -s $VERSION latest
+            git add $VERSION latest
+            git commit -m "Add documentation for $VERSION"
+            git push
+
+  tag-build:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    environment:
+      JVM_OPTS: -Xmx3200m
+      TERM: dumb
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - gradle-dependencies-{{ .Revision }}
+      - run:
+          name: Skip if version number was not updated.
+          command: |
+            VERSION=$(./gradlew properties | grep version | awk '{print $2}')
+            git fetch --all
+            if [ $(git tag | grep "$VERSION") ]; then
+              echo "Not tagging because the git tag $VERSION already exists."
+              circleci step halt
+            fi
+      - run:
+          name: Tag library version in GitHub
+          command: |
+            VERSION=$(./gradlew properties | grep version | awk '{print $2}')
+            git tag $VERSION
+            git push --tags
+
+  initialize-workspace:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    steps:
+      - checkout
+      - run: ./gradlew dependencies
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: gradle-dependencies-{{ .Revision }}
+
+workflows:
+  release:
+    jobs:
+      - initialize-workspace
+      - test:
+          requires:
+            - initialize-workspace
+      - build-and-publish:
+          requires:
+            - test
+          filters:
+            branches:
+              only:
+                - master
+      - publish-docs:
+          requires:
+            - build-and-publish
+          filters:
+            branches:
+              only:
+                - master
+      - tag-build:
+          requires:
+            - publish-docs
+          filters:
+            branches:
+              only:
+                - master
