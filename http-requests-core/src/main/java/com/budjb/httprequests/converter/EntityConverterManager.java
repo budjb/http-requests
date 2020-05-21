@@ -130,6 +130,10 @@ public class EntityConverterManager {
      * @throws UnsupportedConversionException when there are no entity writers that support the object type.
      */
     public HttpEntity write(Object entity, String contentType, String characterSet) throws UnsupportedConversionException {
+        if (entity == null) {
+            return null;
+        }
+
         Class<?> type = entity.getClass();
 
         for (EntityWriter writer : getEntityWriters()) {

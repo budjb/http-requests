@@ -222,7 +222,6 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         formData.addField('foo', 'baz')
         formData.addField('key', 'value')
 
-
         when:
         def response = httpClientFactory.createHttpClient().post("${baseUrl}/testForm", formData)
 
@@ -615,6 +614,45 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
 
         then:
         response.getHeader('content-type') == 'foo/bar'
+    }
+
+    def 'Sending a null request entity does not send any request entity'() {
+        setup:
+        HttpRequest request = new HttpRequest("${baseUrl}/testBasicPost")
+
+        when:
+        def response = httpClientFactory.createHttpClient().post(request, null)
+
+        then:
+        !response.hasEntity()
+    }
+
+    def 'Retrieving a response entity when the response does not contain and entity does not result in a NullPointerException'() {
+        setup:
+        HttpRequest request = new HttpRequest("${baseUrl}/testBasicPost")
+
+        when:
+        def response = httpClientFactory.createHttpClient().post(request, null)
+
+        then:
+        !response.hasEntity()
+        response.getEntity(String) == null
+    }
+
+    def 'Making a request with a URI that does not contain a scheme throws a URISyntaxException'() {
+        when:
+        httpClientFactory.createHttpClient().get('foobar')
+
+        then:
+        thrown URISyntaxException
+    }
+
+    def 'Making a request with a URI that does not contain a host throws a URISyntaxException'() {
+        when:
+        httpClientFactory.createHttpClient().get('https:///foo/bar')
+
+        then:
+        thrown URISyntaxException
     }
 
     static class CloseableFilter implements HttpClientFilter, Closeable {
