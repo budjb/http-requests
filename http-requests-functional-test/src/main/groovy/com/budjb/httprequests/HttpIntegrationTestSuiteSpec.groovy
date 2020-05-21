@@ -617,6 +617,17 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         response.getHeader('content-type') == 'foo/bar'
     }
 
+    def 'Sending a null request entity does not send any request entity'() {
+        setup:
+        HttpRequest request = new HttpRequest("${baseUrl}/testBasicPost")
+
+        when:
+        def response = httpClientFactory.createHttpClient().post(request, null)
+
+        then:
+        !response.hasEntity()
+    }
+
     static class CloseableFilter implements HttpClientFilter, Closeable {
         boolean closed = false
 

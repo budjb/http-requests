@@ -9,6 +9,8 @@ The changelog will be updated with release notes for each release of the library
   precedence over a user-specified one.
 * Add http-requests-mock library to enable easier testing of code using
   the http-requests libraries.
+* Fix `NullPointerException` when sending a request with a null entity
+  (https://github.com/budjb/http-requests/issues/14[#14]).
 
 2.0.6::
 
