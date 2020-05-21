@@ -11,6 +11,9 @@ The changelog will be updated with release notes for each release of the library
   the http-requests libraries.
 * Fix `NullPointerException` when sending a request with a null entity
   (https://github.com/budjb/http-requests/issues/14[#14]).
+* Write a test to ensure that retrieving an entity when the response does not contain
+  an entity does not result in a `NullPointerException`
+  (https://github.com/budjb/http-requests/issues/13[#13]).
 
 2.0.6::
 

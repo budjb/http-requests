@@ -628,6 +628,18 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         !response.hasEntity()
     }
 
+    def 'Retrieving a response entity when the response does not contain and entity does not result in a NullPointerException'() {
+        setup:
+        HttpRequest request = new HttpRequest("${baseUrl}/testBasicPost")
+
+        when:
+        def response = httpClientFactory.createHttpClient().post(request, null)
+
+        then:
+        !response.hasEntity()
+        response.getEntity(String) == null
+    }
+
     static class CloseableFilter implements HttpClientFilter, Closeable {
         boolean closed = false
 
