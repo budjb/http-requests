@@ -58,7 +58,7 @@ public class HttpRequestDelegate {
      *
      * @param uri The URI of the request.
      */
-    public void uri(URI uri) {
+    public void uri(URI uri) throws URISyntaxException {
         httpRequest.setUri(uri);
     }
 

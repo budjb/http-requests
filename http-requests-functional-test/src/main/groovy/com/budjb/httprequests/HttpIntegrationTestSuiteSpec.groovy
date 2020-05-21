@@ -222,7 +222,6 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         formData.addField('foo', 'baz')
         formData.addField('key', 'value')
 
-
         when:
         def response = httpClientFactory.createHttpClient().post("${baseUrl}/testForm", formData)
 
@@ -638,6 +637,22 @@ abstract class HttpIntegrationTestSuiteSpec extends AbstractIntegrationSpec {
         then:
         !response.hasEntity()
         response.getEntity(String) == null
+    }
+
+    def 'Making a request with a URI that does not contain a scheme throws a URISyntaxException'() {
+        when:
+        httpClientFactory.createHttpClient().get('foobar')
+
+        then:
+        thrown URISyntaxException
+    }
+
+    def 'Making a request with a URI that does not contain a host throws a URISyntaxException'() {
+        when:
+        httpClientFactory.createHttpClient().get('https:///foo/bar')
+
+        then:
+        thrown URISyntaxException
     }
 
     static class CloseableFilter implements HttpClientFilter, Closeable {

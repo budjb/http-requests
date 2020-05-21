@@ -86,7 +86,7 @@ public class HttpRequest implements Cloneable {
      *
      * @param uri URI of the request.
      */
-    public HttpRequest(URI uri) {
+    public HttpRequest(URI uri) throws URISyntaxException {
         parseUri(uri);
     }
 
@@ -131,7 +131,7 @@ public class HttpRequest implements Cloneable {
      * @param uri URI of the request.
      * @return The instance of this class the method was called with.
      */
-    public HttpRequest setUri(URI uri) {
+    public HttpRequest setUri(URI uri) throws URISyntaxException {
         parseUri(uri);
         return this;
     }
@@ -416,17 +416,25 @@ public class HttpRequest implements Cloneable {
      *
      * @param uri URI object to parse.
      */
-    private void parseUri(URI uri) {
+    private void parseUri(URI uri) throws URISyntaxException {
         String scheme = uri.getScheme();
         String host = uri.getHost();
         int port = uri.getPort();
         String path = uri.getRawPath();
         String query = uri.getQuery();
 
+        if (uri.getScheme() == null) {
+            throw new URISyntaxException(uri.toString(), "URI must contain a scheme");
+        }
+
+        if (uri.getHost() == null) {
+            throw new URISyntaxException(uri.toString(), "URI must contain a host");
+        }
+
         StringBuilder builder = new StringBuilder(scheme).append("://").append(host);
 
         if (port != -1 && !(scheme.equalsIgnoreCase("https") && port == 443) && !(scheme.equalsIgnoreCase("http") && port == 80)) {
-            builder = builder.append(':').append(port);
+            builder.append(':').append(port);
         }
 
         builder.append(path);
