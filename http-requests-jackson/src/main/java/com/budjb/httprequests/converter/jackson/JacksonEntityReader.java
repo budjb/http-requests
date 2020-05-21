@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-package com.budjb.httprequests.filter.jackson;
+package com.budjb.httprequests.converter.jackson;
 
 import com.budjb.httprequests.Ordered;
-import com.budjb.httprequests.converter.EntityWriter;
+import com.budjb.httprequests.converter.EntityReader;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class JacksonEntityWriter extends JacksonEntityConverter implements EntityWriter, Ordered {
+public class JacksonEntityReader extends JacksonEntityConverter implements EntityReader, Ordered {
     /**
      * Constructor.
      *
      * @param objectMapper Jackson object mapper.
      */
-    public JacksonEntityWriter(ObjectMapper objectMapper) {
+    public JacksonEntityReader(ObjectMapper objectMapper) {
         super(objectMapper);
     }
 
@@ -38,22 +39,14 @@ public class JacksonEntityWriter extends JacksonEntityConverter implements Entit
      * {@inheritDoc}
      */
     @Override
-    public String getContentType() {
-        return "application/json";
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean supports(Class<?> type) {
+    public boolean supports(Class<?> type, String contentType, String charset) {
         AtomicReference<Throwable> causeRef = new AtomicReference<>();
 
         if (getObjectMapper().canSerialize(type, causeRef)) {
             return true;
         }
 
-        logFailure("serializing", type, causeRef.get());
+        logFailure("de-serializing", type, causeRef.get());
 
         return false;
     }
@@ -62,8 +55,11 @@ public class JacksonEntityWriter extends JacksonEntityConverter implements Entit
      * {@inheritDoc}
      */
     @Override
-    public InputStream write(Object entity, String characterSet) throws Exception {
-        return new ByteArrayInputStream(getObjectMapper().writeValueAsBytes(entity));
+    @SuppressWarnings("unchecked")
+    public <T> T read(Class<? extends T> clazz, InputStream entity, String contentType, String charset) throws Exception {
+        TypeFactory typeFactory = getObjectMapper().getTypeFactory();
+        JavaType javaType = typeFactory.constructType(clazz);
+        return (T) getObjectMapper().readValue(entity, javaType);
     }
 
     /**

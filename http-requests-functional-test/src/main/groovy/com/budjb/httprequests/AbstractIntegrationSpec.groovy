@@ -17,8 +17,8 @@ package com.budjb.httprequests
 
 import com.budjb.httprequests.converter.EntityConverterManager
 import com.budjb.httprequests.converter.bundled.*
-import com.budjb.httprequests.filter.jackson.JacksonEntityReader
-import com.budjb.httprequests.filter.jackson.JacksonEntityWriter
+import com.budjb.httprequests.converter.jackson.JacksonEntityReader
+import com.budjb.httprequests.converter.jackson.JacksonEntityWriter
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Value
 import spock.lang.Ignore

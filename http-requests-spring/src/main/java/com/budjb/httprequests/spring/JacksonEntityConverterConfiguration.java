@@ -16,8 +16,8 @@
 
 package com.budjb.httprequests.spring;
 
-import com.budjb.httprequests.filter.jackson.JacksonEntityReader;
-import com.budjb.httprequests.filter.jackson.JacksonEntityWriter;
+import com.budjb.httprequests.converter.jackson.JacksonEntityReader;
+import com.budjb.httprequests.converter.jackson.JacksonEntityWriter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

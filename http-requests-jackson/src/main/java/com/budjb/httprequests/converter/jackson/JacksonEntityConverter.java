@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.budjb.httprequests.filter.jackson;
+package com.budjb.httprequests.converter.jackson;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
