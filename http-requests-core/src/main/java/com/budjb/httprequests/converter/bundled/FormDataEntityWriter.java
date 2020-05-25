@@ -16,10 +16,10 @@
 package com.budjb.httprequests.converter.bundled;
 
 import com.budjb.httprequests.FormData;
+import com.budjb.httprequests.HttpEntity;
 import com.budjb.httprequests.converter.EntityWriter;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -29,20 +29,17 @@ import java.util.Map;
 /**
  * An entity writer that formats form data.
  */
-public class FormDataEntityWriter implements EntityWriter {
+public class FormDataEntityWriter extends BuiltinEntityConverter implements EntityWriter {
     /**
-     * {@inheritDoc}
+     * Default content type.
      */
-    @Override
-    public String getContentType() {
-        return "application/x-www-form-urlencoded";
-    }
+    private final static String DEFAULT_CONTENT_TYPE = "application/x-www-form-urlencoded";
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean supports(Class<?> type) {
+    public boolean supports(Class<?> type, String contentType, String characterSet) {
         return FormData.class.isAssignableFrom(type);
     }
 
@@ -50,9 +47,13 @@ public class FormDataEntityWriter implements EntityWriter {
      * {@inheritDoc}
      */
     @Override
-    public InputStream write(Object entity, String characterSet) throws Exception {
+    public HttpEntity write(Object entity, String contentType, String characterSet) throws Exception {
         if (characterSet == null) {
             characterSet = Charset.defaultCharset().name();
+        }
+
+        if (contentType == null) {
+            contentType = DEFAULT_CONTENT_TYPE;
         }
 
         List<String> parts = new ArrayList<>();
@@ -65,6 +66,10 @@ public class FormDataEntityWriter implements EntityWriter {
             }
         }
 
-        return new ByteArrayInputStream(String.join("&", parts).getBytes(characterSet));
+        return new HttpEntity(
+            new ByteArrayInputStream(String.join("&", parts).getBytes(characterSet)),
+            contentType,
+            characterSet
+        );
     }
 }

@@ -15,12 +15,11 @@
  */
 package com.budjb.httprequests.converter.bundled;
 
+import com.budjb.httprequests.HttpEntity;
 import com.budjb.httprequests.StreamUtils;
 import com.budjb.httprequests.converter.EntityReader;
 
-import java.io.InputStream;
-
-public class ByteArrayEntityReader implements EntityReader {
+public class ByteArrayEntityReader extends BuiltinEntityConverter implements EntityReader {
     /**
      * {@inheritDoc}
      */
@@ -33,7 +32,7 @@ public class ByteArrayEntityReader implements EntityReader {
      * {@inheritDoc}
      */
     @Override
-    public <T> T read(Class<? extends T> clazz, InputStream entity, String contentType, String charset) throws Exception {
-        return (T) StreamUtils.readBytes(entity);
+    public <T> T read(Class<? extends T> clazz, HttpEntity entity) throws Exception {
+        return (T) StreamUtils.readBytes(entity.getInputStream());
     }
 }

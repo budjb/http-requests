@@ -15,17 +15,16 @@
  */
 package com.budjb.httprequests.converter.bundled;
 
-import com.budjb.httprequests.Ordered;
+import com.budjb.httprequests.HttpEntity;
 import com.budjb.httprequests.StreamUtils;
 import com.budjb.httprequests.converter.EntityReader;
 
-import java.io.InputStream;
 import java.nio.charset.Charset;
 
 /**
  * An entity reader that converts an entity into a String. The character set of the entity is respected.
  */
-public class StringEntityReader implements EntityReader, Ordered {
+public class StringEntityReader extends BuiltinEntityConverter implements EntityReader {
     /**
      * {@inheritDoc}
      */
@@ -39,12 +38,11 @@ public class StringEntityReader implements EntityReader, Ordered {
      */
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T read(Class<? extends T> clazz, InputStream entity, String contentType, String charset) throws Exception {
-        if (charset == null) {
-            charset = Charset.defaultCharset().name();
-        }
-
-        return (T) StreamUtils.readString(entity, charset);
+    public <T> T read(Class<? extends T> clazz, HttpEntity entity) throws Exception {
+        return (T) StreamUtils.readString(
+            entity.getInputStream(),
+            entity.getCharSet() != null ? entity.getCharSet() : Charset.defaultCharset().name()
+        );
     }
 
     /**
@@ -52,6 +50,6 @@ public class StringEntityReader implements EntityReader, Ordered {
      */
     @Override
     public int getOrder() {
-        return Ordered.LOWEST_PRIORITY + 10;
+        return MIN_BUILTIN_PRIORITY + 20;
     }
 }

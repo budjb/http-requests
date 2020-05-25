@@ -16,27 +16,25 @@
 
 package com.budjb.httprequests.groovy;
 
+import com.budjb.httprequests.HttpEntity;
 import com.budjb.httprequests.converter.EntityWriter;
+import com.budjb.httprequests.converter.bundled.BuiltinEntityConverter;
 import groovy.lang.GString;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.nio.charset.Charset;
 
-public class GStringEntityWriter implements EntityWriter {
+public class GStringEntityWriter extends BuiltinEntityConverter implements EntityWriter {
     /**
-     * {@inheritDoc}
+     * Default content type.
      */
-    @Override
-    public String getContentType() {
-        return "text/plain";
-    }
+    private static final String DEFAULT_CONTENT_TYPE = "text/plain";
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean supports(Class<?> type) {
+    public boolean supports(Class<?> type, String contentType, String characterSet) {
         return GString.class.isAssignableFrom(type);
     }
 
@@ -44,10 +42,19 @@ public class GStringEntityWriter implements EntityWriter {
      * {@inheritDoc}
      */
     @Override
-    public InputStream write(Object entity, String characterSet) throws Exception {
+    public HttpEntity write(Object entity, String contentType, String characterSet) throws Exception {
         if (characterSet == null) {
             characterSet = Charset.defaultCharset().toString();
         }
-        return new ByteArrayInputStream(entity.toString().getBytes(characterSet));
+
+        if (contentType == null) {
+            contentType = DEFAULT_CONTENT_TYPE;
+        }
+
+        return new HttpEntity(
+            new ByteArrayInputStream(entity.toString().getBytes(characterSet)),
+            contentType,
+            characterSet
+        );
     }
 }

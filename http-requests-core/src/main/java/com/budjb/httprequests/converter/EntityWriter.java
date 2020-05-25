@@ -15,36 +15,20 @@
  */
 package com.budjb.httprequests.converter;
 
-import java.io.IOException;
-import java.io.InputStream;
+import com.budjb.httprequests.HttpEntity;
 
 public interface EntityWriter extends EntityConverter {
     /**
-     * Returns a Content-Type of the converted object that will be set in the HTTP request.
+     * Convert the given object and return it as an {@link HttpEntity}.
      * <p>
-     * If no Content-Type is known, null is returned.
-     *
-     * @return Content-Type of the converted object, or null if unknown.
-     */
-    String getContentType();
-
-    /**
-     * Determines whether the given class type is supported by the writer.
-     *
-     * @param type Type to convert.
-     * @return Whether the type is supported.
-     */
-    boolean supports(Class<?> type);
-
-    /**
-     * Convert the given entity.
-     * <p>
-     * If an error occurs, null may be returned so that another converter may attempt conversion.
+     * If an expected error occurs, null may be returned so that another converter may
+     * attempt conversion.
      *
      * @param entity       Entity object to convert into a byte array.
-     * @param characterSet The character set of the request.
-     * @return An {@link InputStream} containing the converted entity.
-     * @throws Exception when an unexpected error occurs.
+     * @param contentType  Content-Type of the object (may be {@code null}).
+     * @param characterSet The character set of the request (may be {@code null}).
+     * @return An {@link HttpEntity} on successful conversion, or {@code null}.
+     * @throws Exception when an unexpected conversion error occurs.
      */
-    InputStream write(Object entity, String characterSet) throws Exception;
+    HttpEntity write(Object entity, String contentType, String characterSet) throws Exception;
 }

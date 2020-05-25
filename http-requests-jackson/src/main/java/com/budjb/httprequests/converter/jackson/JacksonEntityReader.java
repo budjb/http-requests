@@ -16,13 +16,13 @@
 
 package com.budjb.httprequests.converter.jackson;
 
+import com.budjb.httprequests.HttpEntity;
 import com.budjb.httprequests.Ordered;
 import com.budjb.httprequests.converter.EntityReader;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
-import java.io.InputStream;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class JacksonEntityReader extends JacksonEntityConverter implements EntityReader, Ordered {
@@ -56,10 +56,10 @@ public class JacksonEntityReader extends JacksonEntityConverter implements Entit
      */
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T read(Class<? extends T> clazz, InputStream entity, String contentType, String charset) throws Exception {
+    public <T> T read(Class<? extends T> clazz, HttpEntity entity) throws Exception {
         TypeFactory typeFactory = getObjectMapper().getTypeFactory();
         JavaType javaType = typeFactory.constructType(clazz);
-        return (T) getObjectMapper().readValue(entity, javaType);
+        return (T) getObjectMapper().readValue(entity.getInputStream(), javaType);
     }
 
     /**

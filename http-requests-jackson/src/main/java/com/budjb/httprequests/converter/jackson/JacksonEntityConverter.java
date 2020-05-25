@@ -16,13 +16,14 @@
 
 package com.budjb.httprequests.converter.jackson;
 
+import com.budjb.httprequests.converter.bundled.BuiltinEntityConverter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 
-public abstract class JacksonEntityConverter {
+public abstract class JacksonEntityConverter extends BuiltinEntityConverter {
     /**
      * Logger.
      */
@@ -66,5 +67,13 @@ public abstract class JacksonEntityConverter {
         else {
             log.trace("Jackson does not support " + action + " class type " + type.getName());
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getOrder() {
+        return MIN_BUILTIN_PRIORITY + 15;
     }
 }

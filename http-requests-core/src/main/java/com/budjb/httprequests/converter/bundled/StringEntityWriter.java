@@ -15,30 +15,26 @@
  */
 package com.budjb.httprequests.converter.bundled;
 
-import com.budjb.httprequests.Ordered;
+import com.budjb.httprequests.HttpEntity;
 import com.budjb.httprequests.converter.EntityWriter;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.nio.charset.Charset;
 
 /**
  * An entity writer that converts a String.
  */
-public class StringEntityWriter implements EntityWriter, Ordered {
+public class StringEntityWriter extends BuiltinEntityConverter implements EntityWriter {
     /**
-     * {@inheritDoc}
+     * Default content-type.
      */
-    @Override
-    public String getContentType() {
-        return "text/plain";
-    }
+    private final static String DEFAULT_CONTENT_TYPE = "text/plain";
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean supports(Class<?> type) {
+    public boolean supports(Class<?> type, String contentType, String characterSet) {
         return String.class.isAssignableFrom(type);
     }
 
@@ -46,12 +42,16 @@ public class StringEntityWriter implements EntityWriter, Ordered {
      * {@inheritDoc}
      */
     @Override
-    public InputStream write(Object entity, String characterSet) throws Exception {
+    public HttpEntity write(Object entity, String contentType, String characterSet) throws Exception {
         if (characterSet == null) {
             characterSet = Charset.defaultCharset().name();
         }
 
-        return new ByteArrayInputStream(((String) entity).getBytes(characterSet));
+        if (contentType == null) {
+            contentType = DEFAULT_CONTENT_TYPE;
+        }
+
+        return new HttpEntity(new ByteArrayInputStream(((String) entity).getBytes(characterSet)), contentType, characterSet);
     }
 
     /**
@@ -59,6 +59,6 @@ public class StringEntityWriter implements EntityWriter, Ordered {
      */
     @Override
     public int getOrder() {
-        return Ordered.LOWEST_PRIORITY + 10;
+        return MIN_BUILTIN_PRIORITY + 20;
     }
 }

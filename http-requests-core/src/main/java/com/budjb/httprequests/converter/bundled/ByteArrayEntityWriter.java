@@ -15,25 +15,22 @@
  */
 package com.budjb.httprequests.converter.bundled;
 
+import com.budjb.httprequests.HttpEntity;
 import com.budjb.httprequests.converter.EntityWriter;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 
-public class ByteArrayEntityWriter implements EntityWriter {
+public class ByteArrayEntityWriter extends BuiltinEntityConverter implements EntityWriter {
     /**
-     * {@inheritDoc}
+     * Default content type.
      */
-    @Override
-    public String getContentType() {
-        return "application/octet-stream";
-    }
+    private final static String DEFAULT_CONTENT_TYPE = "application/octet-stream";
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean supports(Class<?> type) {
+    public boolean supports(Class<?> type, String contentType, String characterSet) {
         return type.isArray() && byte.class.isAssignableFrom(type.getComponentType());
     }
 
@@ -41,7 +38,11 @@ public class ByteArrayEntityWriter implements EntityWriter {
      * {@inheritDoc}
      */
     @Override
-    public InputStream write(Object entity, String characterSet) throws Exception {
-        return new ByteArrayInputStream((byte[]) entity);
+    public HttpEntity write(Object entity, String contentType, String characterSet) throws Exception {
+        return new HttpEntity(
+            new ByteArrayInputStream((byte[]) entity),
+            contentType != null ? contentType : DEFAULT_CONTENT_TYPE,
+            characterSet
+        );
     }
 }

@@ -137,19 +137,13 @@ public class EntityConverterManager {
         Class<?> type = entity.getClass();
 
         for (EntityWriter writer : getEntityWriters()) {
-            if (writer.supports(type)) {
+            if (writer.supports(type, contentType, characterSet)) {
                 try {
-                    InputStream inputStream = writer.write(entity, characterSet);
+                    HttpEntity result = writer.write(entity, contentType, characterSet);
 
-                    if (inputStream == null) {
-                        continue;
+                    if (result != null) {
+                        return result;
                     }
-
-                    if (contentType == null) {
-                        contentType = writer.getContentType();
-                    }
-
-                    return new HttpEntity(inputStream, contentType, characterSet);
                 }
                 catch (Exception e) {
                     log.trace("error occurred during conversion with EntityWriter " + writer.getClass().getName(), e);
@@ -172,14 +166,10 @@ public class EntityConverterManager {
      */
     @SuppressWarnings("unchecked")
     public <T> T read(Class<?> type, HttpEntity entity) throws UnsupportedConversionException, IOException {
-        InputStream inputStream = entity.getInputStream();
-        String contentType = entity.getContentType();
-        String charset = entity.getCharSet();
-
         for (EntityReader reader : getEntityReaders()) {
-            if (reader.supports(type, contentType, charset)) {
+            if (reader.supports(type, entity.getContentType(), entity.getCharSet())) {
                 try {
-                    T object = (T) reader.read(type, inputStream, contentType, charset);
+                    T object = (T) reader.read(type, entity);
 
                     if (object != null) {
                         return object;

@@ -100,11 +100,11 @@ class EntityConverterManagerSpec extends Specification {
         EntityWriter bad = Mock(EntityWriter)
         EntityReader reader = Mock(EntityReader)
 
+        good.supports(String, _, _) >> true
+
         EntityConverterManager converterManager = new EntityConverterManager([bad, good, reader])
 
-        good.supports(String) >> true
-
-        InputStream inputStream = new ByteArrayInputStream([1, 2, 3] as byte[])
+        HttpEntity entity = new HttpEntity(new ByteArrayInputStream([1, 2, 3] as byte[]), null, null)
 
         when:
         HttpEntity result = converterManager.write("foo", null, null)
@@ -112,8 +112,8 @@ class EntityConverterManagerSpec extends Specification {
         then:
         0 * bad.write(*_)
         0 * reader.read(*_)
-        1 * good.write(*_) >> inputStream
-        ((PushbackInputStream) result.inputStream).in.is inputStream
+        1 * good.write(*_) >> entity
+        ((PushbackInputStream) result.inputStream).in.is entity.inputStream.in
     }
 
     def 'When no reader is available to perform conversion, an UnsupportedConversionException is thrown'() {
@@ -143,7 +143,7 @@ class EntityConverterManagerSpec extends Specification {
     def 'When writing an entity with no content type or character set, null values are used'() {
         setup:
         EntityWriter converter = Mock(EntityWriter)
-        converter.supports(_) >> true
+        converter.supports(*_) >> true
 
         EntityConverterManager manager = new EntityConverterManager([converter])
 
@@ -151,48 +151,48 @@ class EntityConverterManagerSpec extends Specification {
         manager.write('foo')
 
         then:
-        1 * converter.write('foo', null) >> new ByteArrayInputStream('foo'.getBytes())
+        1 * converter.write('foo', null, null) >> new HttpEntity(new ByteArrayInputStream('foo'.getBytes()), null, null)
     }
 
     def 'If an entity writer returns null, other entity writers are attempted'() {
         setup:
-        ByteArrayInputStream inputStream = new ByteArrayInputStream('foo'.getBytes())
+        HttpEntity entity = new HttpEntity(new ByteArrayInputStream('foo'.getBytes()), null, null)
 
         EntityWriter c1 = Mock(EntityWriter)
-        c1.supports(_) >> true
+        c1.supports(*_) >> true
 
         EntityWriter c2 = Mock(EntityWriter)
-        c2.supports(_) >> true
-        c2.write(*_) >> inputStream
+        c2.supports(*_) >> true
+        c2.write(*_) >> entity
 
         EntityConverterManager manager = new EntityConverterManager([c1, c2])
 
         when:
-        HttpEntity entity = manager.write('foo')
+        HttpEntity result = manager.write('foo')
 
         then:
-        entity.inputStream.in.is inputStream
+        result.inputStream.in.is entity.inputStream.in
     }
 
     def 'If an entity writer throws an exception, other entity writers are attempted'() {
         setup:
-        ByteArrayInputStream inputStream = new ByteArrayInputStream('foo'.getBytes())
+        HttpEntity entity = new HttpEntity(new ByteArrayInputStream('foo'.getBytes()), null, null)
 
         EntityWriter c1 = Mock(EntityWriter)
-        c1.supports(_) >> true
+        c1.supports(*_) >> true
         c1.write(*_) >> { throw new RuntimeException() }
 
         EntityWriter c2 = Mock(EntityWriter)
-        c2.supports(_) >> true
-        c2.write(*_) >> inputStream
+        c2.supports(*_) >> true
+        c2.write(*_) >> entity
 
         EntityConverterManager manager = new EntityConverterManager([c1, c2])
 
         when:
-        HttpEntity entity = manager.write('foo')
+        HttpEntity result = manager.write('foo')
 
         then:
-        entity.inputStream.in.is inputStream
+        result.inputStream.in.is entity.inputStream.in
     }
 
     def 'If an entity reader throws an exception, other entity readers are attempted'() {

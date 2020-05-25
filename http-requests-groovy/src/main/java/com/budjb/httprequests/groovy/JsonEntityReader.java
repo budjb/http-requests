@@ -16,15 +16,16 @@
 
 package com.budjb.httprequests.groovy;
 
+import com.budjb.httprequests.HttpEntity;
 import com.budjb.httprequests.converter.EntityReader;
+import com.budjb.httprequests.converter.bundled.BuiltinEntityConverter;
 import groovy.json.JsonSlurper;
 
-import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 
-public class JsonEntityReader implements EntityReader {
+public class JsonEntityReader extends BuiltinEntityConverter implements EntityReader {
     /**
      * {@inheritDoc}
      */
@@ -38,10 +39,16 @@ public class JsonEntityReader implements EntityReader {
      */
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T read(Class<? extends T> clazz, InputStream entity, String contentType, String charset) {
-        if (charset == null) {
-            charset = Charset.defaultCharset().toString();
-        }
-        return (T) new JsonSlurper().parse(entity, charset);
+    public <T> T read(Class<? extends T> clazz, HttpEntity entity) {
+        String charset = entity.getCharSet() != null ? entity.getCharSet() : Charset.defaultCharset().name();
+        return (T) new JsonSlurper().parse(entity.getInputStream(), charset);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getOrder() {
+        return MIN_BUILTIN_PRIORITY + 14; // just below the Jackson converter
     }
 }

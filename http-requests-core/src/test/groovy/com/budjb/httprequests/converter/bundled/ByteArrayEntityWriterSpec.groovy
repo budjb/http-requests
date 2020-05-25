@@ -16,6 +16,7 @@
 
 package com.budjb.httprequests.converter.bundled
 
+import com.budjb.httprequests.HttpEntity
 import com.budjb.httprequests.StreamUtils
 import spock.lang.Specification
 
@@ -25,10 +26,10 @@ class ByteArrayEntityWriterSpec extends Specification {
         ByteArrayEntityWriter writer = new ByteArrayEntityWriter()
 
         expect:
-        writer.supports(byte[])
-        !writer.supports(String[])
-        !writer.supports(Object)
-        !writer.supports(String)
+        writer.supports(byte[], null, null)
+        !writer.supports(String[], null, null)
+        !writer.supports(Object, null, null)
+        !writer.supports(String, null, null)
     }
 
     def 'ByteArrayEntityWriter creates an input stream from a byte array'() {
@@ -36,14 +37,20 @@ class ByteArrayEntityWriterSpec extends Specification {
         ByteArrayEntityWriter writer = new ByteArrayEntityWriter()
 
         when:
-        InputStream inputStream = writer.write([1, 2, 3] as byte[], null)
+        HttpEntity entity = writer.write([1, 2, 3] as byte[], null, null)
 
         then:
-        StreamUtils.readBytes(inputStream) == [1, 2, 3] as byte[]
+        StreamUtils.readBytes(entity.getInputStream()) == [1, 2, 3] as byte[]
     }
 
     def 'ByteArrayEntityWriter has a default content type of application/octet-stream'() {
-        expect:
-        new ByteArrayEntityWriter().contentType == 'application/octet-stream'
+        setup:
+        ByteArrayEntityWriter writer = new ByteArrayEntityWriter()
+
+        when:
+        HttpEntity entity = writer.write([1, 2, 3] as byte[], null, null)
+
+        then:
+        entity.getContentType() == 'application/octet-stream'
     }
 }

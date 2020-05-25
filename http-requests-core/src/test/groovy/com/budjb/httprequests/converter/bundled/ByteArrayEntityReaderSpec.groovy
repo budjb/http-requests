@@ -16,6 +16,7 @@
 
 package com.budjb.httprequests.converter.bundled
 
+import com.budjb.httprequests.HttpEntity
 import spock.lang.Specification
 
 class ByteArrayEntityReaderSpec extends Specification {
@@ -36,6 +37,6 @@ class ByteArrayEntityReaderSpec extends Specification {
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream([1, 2, 3] as byte[])
 
         expect:
-        reader.read(byte[].class, byteArrayInputStream, null, null) == [1, 2, 3] as byte[]
+        reader.read(byte[].class, new HttpEntity(byteArrayInputStream, null, null)) == [1, 2, 3] as byte[]
     }
 }

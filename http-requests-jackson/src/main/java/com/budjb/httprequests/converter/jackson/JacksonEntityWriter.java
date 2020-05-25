@@ -16,15 +16,21 @@
 
 package com.budjb.httprequests.converter.jackson;
 
+import com.budjb.httprequests.HttpEntity;
 import com.budjb.httprequests.Ordered;
 import com.budjb.httprequests.converter.EntityWriter;
+import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class JacksonEntityWriter extends JacksonEntityConverter implements EntityWriter, Ordered {
+    /**
+     * Default content type.
+     */
+    private final static String DEFAULT_CONTENT_TYPE = "application/json";
+
     /**
      * Constructor.
      *
@@ -38,15 +44,7 @@ public class JacksonEntityWriter extends JacksonEntityConverter implements Entit
      * {@inheritDoc}
      */
     @Override
-    public String getContentType() {
-        return "application/json";
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean supports(Class<?> type) {
+    public boolean supports(Class<?> type, String contentType, String characterSet) {
         AtomicReference<Throwable> causeRef = new AtomicReference<>();
 
         if (getObjectMapper().canSerialize(type, causeRef)) {
@@ -62,8 +60,20 @@ public class JacksonEntityWriter extends JacksonEntityConverter implements Entit
      * {@inheritDoc}
      */
     @Override
-    public InputStream write(Object entity, String characterSet) throws Exception {
-        return new ByteArrayInputStream(getObjectMapper().writeValueAsBytes(entity));
+    public HttpEntity write(Object entity, String contentType, String characterSet) throws Exception {
+        if (characterSet == null) {
+            characterSet = JsonEncoding.UTF8.getJavaName();
+        }
+
+        if (contentType == null) {
+            contentType = DEFAULT_CONTENT_TYPE;
+        }
+
+        return new HttpEntity(
+            new ByteArrayInputStream(getObjectMapper().writeValueAsBytes(entity)),
+            contentType,
+            characterSet
+        );
     }
 
     /**

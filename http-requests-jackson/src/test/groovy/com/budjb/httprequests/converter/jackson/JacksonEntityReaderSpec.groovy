@@ -16,6 +16,7 @@
 
 package com.budjb.httprequests.converter.jackson
 
+import com.budjb.httprequests.HttpEntity
 import com.fasterxml.jackson.databind.ObjectMapper
 import spock.lang.Specification
 
@@ -30,13 +31,13 @@ class JacksonEntityReaderSpec extends Specification {
 
     def 'The Jackson entity reader supports de-serializing to a POGO'() {
         setup:
-        InputStream entity = new ByteArrayInputStream('{"foo": "hi", "bar": true, "baz": 5}'.getBytes('utf-8'))
+        HttpEntity entity = new HttpEntity(new ByteArrayInputStream('{"foo": "hi", "bar": true, "baz": 5}'.getBytes('utf-8')), null, null)
 
         expect:
         reader.supports(Foo, null, null)
 
         when:
-        def result = reader.read(Foo, entity, null, null)
+        def result = reader.read(Foo, entity)
 
         then:
         result instanceof Foo
@@ -47,13 +48,13 @@ class JacksonEntityReaderSpec extends Specification {
 
     def 'The Jackson entity reader supports de-serializing to a Map'() {
         setup:
-        InputStream entity = new ByteArrayInputStream('{"foo": "hi", "bar": true, "baz": 5}'.getBytes('utf-8'))
+        HttpEntity entity = new HttpEntity(new ByteArrayInputStream('{"foo": "hi", "bar": true, "baz": 5}'.getBytes('utf-8')), null, null)
 
         expect:
         reader.supports(Map, null, null)
 
         when:
-        def result = reader.read(Map, entity, null, null)
+        def result = reader.read(Map, entity)
 
         then:
         result instanceof Map
@@ -64,13 +65,13 @@ class JacksonEntityReaderSpec extends Specification {
 
     def 'The Jackson entity read supports de-serializing to a List'() {
         setup:
-        InputStream entity = new ByteArrayInputStream('[{"foo": "hi", "bar": true, "baz": 5}]'.getBytes('utf-8'))
+        HttpEntity entity = new HttpEntity(new ByteArrayInputStream('[{"foo": "hi", "bar": true, "baz": 5}]'.getBytes('utf-8')), null, null)
 
         expect:
         reader.supports(List, null, null)
 
         when:
-        def result = reader.read(List, entity, null, null)
+        def result = reader.read(List, entity)
 
         then:
         result instanceof List

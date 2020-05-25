@@ -16,13 +16,13 @@
 
 package com.budjb.httprequests.groovy;
 
+import com.budjb.httprequests.HttpEntity;
 import com.budjb.httprequests.converter.EntityReader;
+import com.budjb.httprequests.converter.bundled.BuiltinEntityConverter;
 import groovy.util.XmlSlurper;
 import groovy.util.slurpersupport.GPathResult;
 
-import java.io.InputStream;
-
-public class XmlSlurperEntityReader implements EntityReader {
+public class XmlSlurperEntityReader extends BuiltinEntityConverter implements EntityReader {
     /**
      * {@inheritDoc}
      */
@@ -36,7 +36,7 @@ public class XmlSlurperEntityReader implements EntityReader {
      */
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T read(Class<? extends T> clazz, InputStream entity, String contentType, String charset) throws Exception {
-        return (T) new XmlSlurper(false, false).parse(entity);
+    public <T> T read(Class<? extends T> clazz, HttpEntity entity) throws Exception {
+        return (T) new XmlSlurper(false, false).parse(entity.getInputStream());
     }
 }

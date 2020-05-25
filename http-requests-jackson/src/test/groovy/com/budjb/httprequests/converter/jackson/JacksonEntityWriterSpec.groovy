@@ -48,10 +48,10 @@ class JacksonEntityWriterSpec extends Specification {
         foo.baz = 5
 
         expect:
-        writer.supports(Foo)
+        writer.supports(Foo, null, null)
 
         when:
-        def result = readInputStream(writer.write(foo, null))
+        def result = readInputStream(writer.write(foo, null, null).inputStream)
 
         then:
         result == '{"foo":"hi","bar":true,"baz":5}'
@@ -66,10 +66,10 @@ class JacksonEntityWriterSpec extends Specification {
         ]
 
         expect:
-        writer.supports(Map)
+        writer.supports(Map, null, null)
 
         when:
-        def result = readInputStream(writer.write(foo, null))
+        def result = readInputStream(writer.write(foo, null, null).inputStream)
 
         then:
         result == '{"foo":"hi","bar":true,"baz":5}'
@@ -86,10 +86,10 @@ class JacksonEntityWriterSpec extends Specification {
         ]
 
         expect:
-        writer.supports(List)
+        writer.supports(List, null, null)
 
         when:
-        def result = readInputStream(writer.write(foo, null))
+        def result = readInputStream(writer.write(foo, null, null).inputStream)
 
         then:
         result == '[{"foo":"hi","bar":true,"baz":5}]'
