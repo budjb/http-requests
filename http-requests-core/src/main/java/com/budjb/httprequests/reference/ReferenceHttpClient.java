@@ -86,7 +86,7 @@ class ReferenceHttpClient extends AbstractHttpClient {
             }
 
             connection.setDoOutput(true);
-            connection.setRequestProperty("Content-Type", request.getHeaders().containsKey("Content-Type") ? request.getHeaders().getFlat("Content-Type") : httpEntity.getFullContentType());
+            connection.setRequestProperty("Content-Type", httpEntity.getFullContentType());
 
             OutputStream outputStream = filterProcessor.filterOutputStream(connection.getOutputStream());
             StreamUtils.shovel(httpEntity.getInputStream(), outputStream);

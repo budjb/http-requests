@@ -77,12 +77,10 @@ public class HttpComponentsHttpClient extends AbstractHttpClient {
         });
 
         if (httpEntity != null && httpRequest instanceof HttpEntityEnclosingRequest) {
-            ContentType contentType = null;
-            if (httpEntity.getFullContentType() != null) {
-                contentType = ContentType.parse(httpEntity.getFullContentType());
-            }
-
-            org.apache.http.HttpEntity entity = new InputStreamEntity(httpEntity.getInputStream(), contentType) {
+            org.apache.http.HttpEntity entity = new InputStreamEntity(
+                httpEntity.getInputStream(),
+                ContentType.parse(httpEntity.getFullContentType())
+            ) {
                 @Override
                 public void writeTo(final OutputStream outputStream) throws IOException {
                     OutputStream filtered = filterProcessor.filterOutputStream(outputStream);

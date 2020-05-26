@@ -19,14 +19,15 @@ import com.budjb.httprequests.HttpEntity;
 
 public interface EntityReader extends EntityConverter {
     /**
-     * Convert the given entity.
+     * Convert the given entity from an {@link HttpEntity} to some other object.
      * <p>
-     * If an error occurs, null may be returned so that another converter can attempt a conversion.
+     * If an error occurs, {@code null} may be returned so that another converter can
+     * attempt a conversion.
      *
      * @param clazz  Class of the object that should be returned by the converter.
      * @param entity The HTTP entity to convert from.
      * @param <T>    Type of the object that should be returned by the converter
-     * @return The converted entity.
+     * @return The converted entity, or {@code null} if it can not be converted.
      * @throws Exception when an unexpected error occurs during conversion.
      */
     <T> T read(Class<? extends T> clazz, HttpEntity entity) throws Exception;

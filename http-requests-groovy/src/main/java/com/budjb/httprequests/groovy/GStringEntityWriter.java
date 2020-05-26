@@ -43,16 +43,15 @@ public class GStringEntityWriter extends BuiltinEntityConverter implements Entit
      */
     @Override
     public HttpEntity write(Object entity, String contentType, String characterSet) throws Exception {
-        if (characterSet == null) {
-            characterSet = Charset.defaultCharset().toString();
-        }
+        String charset = characterSet != null ? characterSet : Charset.defaultCharset().name();
 
         if (contentType == null) {
             contentType = DEFAULT_CONTENT_TYPE;
+            characterSet = charset;
         }
 
         return new HttpEntity(
-            new ByteArrayInputStream(entity.toString().getBytes(characterSet)),
+            new ByteArrayInputStream(entity.toString().getBytes(charset)),
             contentType,
             characterSet
         );

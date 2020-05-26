@@ -48,26 +48,25 @@ public class FormDataEntityWriter extends BuiltinEntityConverter implements Enti
      */
     @Override
     public HttpEntity write(Object entity, String contentType, String characterSet) throws Exception {
-        if (characterSet == null) {
-            characterSet = Charset.defaultCharset().name();
-        }
+        String charset = characterSet != null ? characterSet : Charset.defaultCharset().name();
 
         if (contentType == null) {
             contentType = DEFAULT_CONTENT_TYPE;
+            characterSet = charset;
         }
 
         List<String> parts = new ArrayList<>();
 
         for (Map.Entry<String, List<String>> entry : ((FormData) entity).getFields().entrySet()) {
-            String k = URLEncoder.encode(entry.getKey(), characterSet);
+            String k = URLEncoder.encode(entry.getKey(), charset);
 
             for (String value : entry.getValue()) {
-                parts.add(k + "=" + URLEncoder.encode(value, characterSet));
+                parts.add(k + "=" + URLEncoder.encode(value, charset));
             }
         }
 
         return new HttpEntity(
-            new ByteArrayInputStream(String.join("&", parts).getBytes(characterSet)),
+            new ByteArrayInputStream(String.join("&", parts).getBytes(charset)),
             contentType,
             characterSet
         );

@@ -21,8 +21,17 @@ public interface EntityWriter extends EntityConverter {
     /**
      * Convert the given object and return it as an {@link HttpEntity}.
      * <p>
-     * If an expected error occurs, null may be returned so that another converter may
+     * If an expected error occurs, {@code null} may be returned so that another converter may
      * attempt conversion.
+     * <p>
+     * A writer may be provided with a content-type and character set. If provided, these
+     * values were set directly by the caller of the conversion operation and should,
+     * in the vast majority of cases, be respected and returned (unmodified) in the resulting
+     * HTTP entity. There may be use cases where it makes sense to force a content-type or
+     * character set, and the decision is left to the implementation of a writer.
+     * <p>
+     * It should be noted that all of the built-in writers provided by this library always
+     * respect these values if they are provided.
      *
      * @param entity       Entity object to convert into a byte array.
      * @param contentType  Content-Type of the object (may be {@code null}).

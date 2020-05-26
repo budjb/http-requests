@@ -45,16 +45,15 @@ public class JsonEntityWriter extends BuiltinEntityConverter implements EntityWr
      */
     @Override
     public HttpEntity write(Object entity, String contentType, String characterSet) throws Exception {
-        if (characterSet == null) {
-            characterSet = Charset.defaultCharset().toString();
-        }
+        String charset = characterSet != null ? characterSet : Charset.defaultCharset().name();
 
         if (contentType == null) {
             contentType = DEFAULT_CONTENT_TYPE;
+            characterSet = charset;
         }
 
         return new HttpEntity(
-            new ByteArrayInputStream(new JsonBuilder(entity).toString().getBytes(characterSet)),
+            new ByteArrayInputStream(new JsonBuilder(entity).toString().getBytes(charset)),
             contentType,
             characterSet
         );

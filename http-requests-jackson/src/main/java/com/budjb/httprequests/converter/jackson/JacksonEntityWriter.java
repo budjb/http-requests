@@ -61,12 +61,9 @@ public class JacksonEntityWriter extends JacksonEntityConverter implements Entit
      */
     @Override
     public HttpEntity write(Object entity, String contentType, String characterSet) throws Exception {
-        if (characterSet == null) {
-            characterSet = JsonEncoding.UTF8.getJavaName();
-        }
-
         if (contentType == null) {
             contentType = DEFAULT_CONTENT_TYPE;
+            characterSet = JsonEncoding.UTF8.name();
         }
 
         return new HttpEntity(
