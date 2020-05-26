@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
 /**
  * An {@link HttpResponse} implementation that wraps a {@link RequestMock}.
  */
-class MockHttpResponse extends HttpResponse {
+public class MockHttpResponse extends HttpResponse {
     /**
      * Pattern to parse content type.
      */
