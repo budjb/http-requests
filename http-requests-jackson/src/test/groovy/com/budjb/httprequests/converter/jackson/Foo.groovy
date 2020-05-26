@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 the original author or authors.
+ * Copyright 2016-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-apply from: "${rootDir}/gradle/library-publish.gradle"
+package com.budjb.httprequests.converter.jackson
 
-dependencies {
-    api project(":http-requests-core")
-    api "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
-
-    testImplementation project(":http-requests-functional-test")
+class Foo {
+    String foo
+    boolean bar
+    int baz
 }

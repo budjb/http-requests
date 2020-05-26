@@ -15,57 +15,42 @@
  */
 package com.budjb.httprequests.converter.bundled;
 
-import com.budjb.httprequests.Ordered;
+import com.budjb.httprequests.HttpEntity;
 import com.budjb.httprequests.converter.EntityWriter;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.nio.charset.Charset;
 
 /**
  * An entity writer that converts a String.
  */
-public class StringEntityWriter implements EntityWriter, Ordered {
+public class StringEntityWriter extends BuiltinEntityConverter implements EntityWriter {
     /**
-     * Returns a Content-Type of the converted object that will be set in the HTTP request.
-     * <p>
-     * If no Content-Type is known, null is returned.
-     *
-     * @return Content-Type of the converted object, or null if unknown.
+     * Default content-type.
      */
-    @Override
-    public String getContentType() {
-        return "text/plain";
-    }
+    private final static String DEFAULT_CONTENT_TYPE = "text/plain";
 
     /**
-     * Determines whether the given class type is supported by the writer.
-     *
-     * @param type Type to convert.
-     * @return Whether the type is supported.
+     * {@inheritDoc}
      */
     @Override
-    public boolean supports(Class<?> type) {
+    public boolean supports(Class<?> type, String contentType, String characterSet) {
         return String.class.isAssignableFrom(type);
     }
 
     /**
-     * Convert the given entity.
-     * <p>
-     * If an error occurs, null may be returned so that another converter may attempt conversion.
-     *
-     * @param entity       Entity object to convert into a byte array.
-     * @param characterSet The character set of the request.
-     * @return An {@link InputStream} containing the converted entity.
-     * @throws Exception when an unexpected error occurs.
+     * {@inheritDoc}
      */
     @Override
-    public InputStream write(Object entity, String characterSet) throws Exception {
-        if (characterSet == null) {
-            characterSet = Charset.defaultCharset().name();
+    public HttpEntity write(Object entity, String contentType, String characterSet) throws Exception {
+        String charset = characterSet != null ? characterSet : Charset.defaultCharset().name();
+
+        if (contentType == null) {
+            contentType = DEFAULT_CONTENT_TYPE;
+            characterSet = charset;
         }
 
-        return new ByteArrayInputStream(((String) entity).getBytes(characterSet));
+        return new HttpEntity(new ByteArrayInputStream(((String) entity).getBytes(charset)), contentType, characterSet);
     }
 
     /**
@@ -73,6 +58,6 @@ public class StringEntityWriter implements EntityWriter, Ordered {
      */
     @Override
     public int getOrder() {
-        return Ordered.LOWEST_PRIORITY + 10;
+        return MIN_BUILTIN_PRIORITY + 20;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 the original author or authors.
+ * Copyright 2016-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,30 +14,46 @@
  * limitations under the License.
  */
 
-package com.budjb.httprequests.groovy;
+package com.budjb.httprequests.converter.jackson;
 
 import com.budjb.httprequests.HttpEntity;
+import com.budjb.httprequests.Ordered;
 import com.budjb.httprequests.converter.EntityWriter;
-import com.budjb.httprequests.converter.bundled.BuiltinEntityConverter;
-import groovy.json.JsonBuilder;
+import com.fasterxml.jackson.core.JsonEncoding;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.ByteArrayInputStream;
-import java.nio.charset.Charset;
-import java.util.List;
-import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
-public class JsonEntityWriter extends BuiltinEntityConverter implements EntityWriter {
+public class JacksonEntityWriter extends JacksonEntityConverter implements EntityWriter, Ordered {
     /**
      * Default content type.
      */
     private final static String DEFAULT_CONTENT_TYPE = "application/json";
 
     /**
+     * Constructor.
+     *
+     * @param objectMapper Jackson object mapper.
+     */
+    public JacksonEntityWriter(ObjectMapper objectMapper) {
+        super(objectMapper);
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public boolean supports(Class<?> type, String contentType, String characterSet) {
-        return List.class.isAssignableFrom(type) || Map.class.isAssignableFrom(type);
+        AtomicReference<Throwable> causeRef = new AtomicReference<>();
+
+        if (getObjectMapper().canSerialize(type, causeRef)) {
+            return true;
+        }
+
+        logFailure("serializing", type, causeRef.get());
+
+        return false;
     }
 
     /**
@@ -45,15 +61,13 @@ public class JsonEntityWriter extends BuiltinEntityConverter implements EntityWr
      */
     @Override
     public HttpEntity write(Object entity, String contentType, String characterSet) throws Exception {
-        String charset = characterSet != null ? characterSet : Charset.defaultCharset().name();
-
         if (contentType == null) {
             contentType = DEFAULT_CONTENT_TYPE;
-            characterSet = charset;
+            characterSet = JsonEncoding.UTF8.name();
         }
 
         return new HttpEntity(
-            new ByteArrayInputStream(new JsonBuilder(entity).toString().getBytes(charset)),
+            new ByteArrayInputStream(getObjectMapper().writeValueAsBytes(entity)),
             contentType,
             characterSet
         );
@@ -64,6 +78,6 @@ public class JsonEntityWriter extends BuiltinEntityConverter implements EntityWr
      */
     @Override
     public int getOrder() {
-        return MIN_BUILTIN_PRIORITY + 14; // Just below the Jackson converter
+        return Ordered.LOWEST_PRIORITY + 5;
     }
 }

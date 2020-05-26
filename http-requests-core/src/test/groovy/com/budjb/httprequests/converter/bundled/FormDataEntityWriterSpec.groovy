@@ -17,6 +17,7 @@
 package com.budjb.httprequests.converter.bundled
 
 import com.budjb.httprequests.FormData
+import com.budjb.httprequests.HttpEntity
 import com.budjb.httprequests.StreamUtils
 import spock.lang.Specification
 
@@ -26,10 +27,10 @@ class FormDataEntityWriterSpec extends Specification {
         FormDataEntityWriter writer = new FormDataEntityWriter()
 
         expect:
-        writer.supports(FormData)
-        !writer.supports(String[])
-        !writer.supports(Object)
-        !writer.supports(String)
+        writer.supports(FormData, null, null)
+        !writer.supports(String[], null, null)
+        !writer.supports(Object, null, null)
+        !writer.supports(String, null, null)
     }
 
     def 'FormDataEntityWriter creates an input stream from a FormData object'() {
@@ -38,14 +39,21 @@ class FormDataEntityWriterSpec extends Specification {
         FormData formData = new FormData().addField('foo', 'bar').addField('foo', 'baz')
 
         when:
-        InputStream inputStream = writer.write(formData, null)
+        HttpEntity entity = writer.write(formData, null, null)
 
         then:
-        new String(StreamUtils.readBytes(inputStream)) == 'foo=bar&foo=baz'
+        new String(StreamUtils.readBytes(entity.getInputStream())) == 'foo=bar&foo=baz'
     }
 
     def 'FormDataEntityWriter has a default content type of application/x-www-form-urlencoded'() {
-        expect:
-        new FormDataEntityWriter().contentType == 'application/x-www-form-urlencoded'
+        setup:
+        FormDataEntityWriter writer = new FormDataEntityWriter()
+        FormData formData = new FormData().addField('foo', 'bar').addField('foo', 'baz')
+
+        when:
+        HttpEntity entity = writer.write(formData, null, null)
+
+        then:
+        entity.getContentType() == 'application/x-www-form-urlencoded'
     }
 }

@@ -15,4 +15,14 @@
  */
 package com.budjb.httprequests.converter;
 
-public interface EntityConverter {}
+public interface EntityConverter {
+    /**
+     * Determines if the converter supports an entity of the given class and content types.
+     *
+     * @param type        Type to convert.
+     * @param contentType Content-Type of the entity.
+     * @param charset     Character set of the entity.
+     * @return Whether the type is supported.
+     */
+    boolean supports(Class<?> type, String contentType, String charset);
+}

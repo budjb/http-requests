@@ -15,47 +15,34 @@
  */
 package com.budjb.httprequests.converter.bundled;
 
+import com.budjb.httprequests.HttpEntity;
 import com.budjb.httprequests.converter.EntityWriter;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 
-public class ByteArrayEntityWriter implements EntityWriter {
+public class ByteArrayEntityWriter extends BuiltinEntityConverter implements EntityWriter {
     /**
-     * Returns a Content-Type of the converted object that will be set in the HTTP request.
-     * <p>
-     * If no Content-Type is known, null is returned.
-     *
-     * @return Content-Type of the converted object, or null if unknown.
+     * Default content type.
      */
-    @Override
-    public String getContentType() {
-        return "application/octet-stream";
-    }
+    private final static String DEFAULT_CONTENT_TYPE = "application/octet-stream";
 
     /**
-     * Determines whether the given class type is supported by the writer.
-     *
-     * @param type Type to convert.
-     * @return Whether the type is supported.
+     * {@inheritDoc}
      */
     @Override
-    public boolean supports(Class<?> type) {
+    public boolean supports(Class<?> type, String contentType, String characterSet) {
         return type.isArray() && byte.class.isAssignableFrom(type.getComponentType());
     }
 
     /**
-     * Convert the given entity.
-     * <p>
-     * If an error occurs, null may be returned so that another converter may attempt conversion.
-     *
-     * @param entity       Entity object to convert into a byte array.
-     * @param characterSet The character set of the request.
-     * @return An {@link InputStream} containing the converted entity.
-     * @throws Exception when an unexpected error occurs.
+     * {@inheritDoc}
      */
     @Override
-    public InputStream write(Object entity, String characterSet) throws Exception {
-        return new ByteArrayInputStream((byte[]) entity);
+    public HttpEntity write(Object entity, String contentType, String characterSet) throws Exception {
+        return new HttpEntity(
+            new ByteArrayInputStream((byte[]) entity),
+            contentType != null ? contentType : DEFAULT_CONTENT_TYPE,
+            characterSet
+        );
     }
 }

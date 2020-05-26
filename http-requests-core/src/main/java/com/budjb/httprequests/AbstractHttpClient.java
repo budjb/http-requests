@@ -101,7 +101,13 @@ public abstract class AbstractHttpClient implements HttpClient {
      */
     @Override
     public HttpResponse execute(HttpMethod method, HttpRequest request, Object entity) throws IOException, UnsupportedConversionException {
-        return execute(method, request, converterManager.write(entity, null, null));
+        if (entity != null) {
+            return execute(method, request, new ConvertingHttpEntity(entity,
+                request.getHeaders().containsKey("Content-Type") ? request.getHeaders().getFlat("Content-Type") : null));
+        }
+        else {
+            return execute(method, request);
+        }
     }
 
     /**

@@ -15,46 +15,34 @@
  */
 package com.budjb.httprequests.converter.bundled;
 
-import com.budjb.httprequests.Ordered;
+import com.budjb.httprequests.HttpEntity;
 import com.budjb.httprequests.StreamUtils;
 import com.budjb.httprequests.converter.EntityReader;
 
-import java.io.InputStream;
 import java.nio.charset.Charset;
 
 /**
  * An entity reader that converts an entity into a String. The character set of the entity is respected.
  */
-public class StringEntityReader implements EntityReader, Ordered {
+public class StringEntityReader extends BuiltinEntityConverter implements EntityReader {
     /**
-     * Determines if the reader supports converting an entity to the given class type.
-     *
-     * @param type Type to convert to.
-     * @return Whether the type is supported.
+     * {@inheritDoc}
      */
     @Override
-    public boolean supports(Class<?> type) {
+    public boolean supports(Class<?> type, String contentType, String charset) {
         return String.class.isAssignableFrom(type);
     }
 
     /**
-     * Convert the given entity.
-     * <p>
-     * If an error occurs, null may be returned so that another converter can attempt a conversion.
-     *
-     * @param entity      Entity as an {@link InputStream}.
-     * @param contentType Content-Type of the entity.
-     * @param charset     Character set of the entity.
-     * @return The converted entity.
-     * @throws Exception when an unexpected error occurs during conversion.
+     * {@inheritDoc}
      */
     @Override
-    public Object read(InputStream entity, String contentType, String charset) throws Exception {
-        if (charset == null) {
-            charset = Charset.defaultCharset().name();
-        }
-
-        return StreamUtils.readString(entity, charset);
+    @SuppressWarnings("unchecked")
+    public <T> T read(Class<? extends T> clazz, HttpEntity entity) throws Exception {
+        return (T) StreamUtils.readString(
+            entity.getInputStream(),
+            entity.getCharSet() != null ? entity.getCharSet() : Charset.defaultCharset().name()
+        );
     }
 
     /**
@@ -62,6 +50,6 @@ public class StringEntityReader implements EntityReader, Ordered {
      */
     @Override
     public int getOrder() {
-        return Ordered.LOWEST_PRIORITY + 10;
+        return MIN_BUILTIN_PRIORITY + 20;
     }
 }

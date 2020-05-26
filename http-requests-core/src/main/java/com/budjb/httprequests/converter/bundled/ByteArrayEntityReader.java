@@ -15,36 +15,24 @@
  */
 package com.budjb.httprequests.converter.bundled;
 
+import com.budjb.httprequests.HttpEntity;
 import com.budjb.httprequests.StreamUtils;
 import com.budjb.httprequests.converter.EntityReader;
 
-import java.io.InputStream;
-
-public class ByteArrayEntityReader implements EntityReader {
+public class ByteArrayEntityReader extends BuiltinEntityConverter implements EntityReader {
     /**
-     * Determines if the reader supports converting an entity to the given class type.
-     *
-     * @param type Type to convert to.
-     * @return Whether the type is supported.
+     * {@inheritDoc}
      */
     @Override
-    public boolean supports(Class<?> type) {
+    public boolean supports(Class<?> type, String contentType, String charset) {
         return type.isArray() && byte.class.isAssignableFrom(type.getComponentType());
     }
 
     /**
-     * Convert the given entity.
-     * <p>
-     * If an error occurs, null may be returned so that another converter can attempt a conversion.
-     *
-     * @param entity      Entity as an {@link InputStream}.
-     * @param contentType Content-Type of the entity.
-     * @param charset     Character set of the entity.
-     * @return The converted entity.
-     * @throws Exception when an unexpected error occurs during conversion.
+     * {@inheritDoc}
      */
     @Override
-    public Object read(InputStream entity, String contentType, String charset) throws Exception {
-        return StreamUtils.readBytes(entity);
+    public <T> T read(Class<? extends T> clazz, HttpEntity entity) throws Exception {
+        return (T) StreamUtils.readBytes(entity.getInputStream());
     }
 }

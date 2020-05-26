@@ -16,6 +16,7 @@
 
 package com.budjb.httprequests.converter.bundled
 
+import com.budjb.httprequests.HttpEntity
 import com.budjb.httprequests.StreamUtils
 import spock.lang.Specification
 
@@ -25,9 +26,9 @@ class StringEntityWriterSpec extends Specification {
         StringEntityWriter writer = new StringEntityWriter()
 
         expect:
-        writer.supports(String)
-        !writer.supports(String[])
-        !writer.supports(Object)
+        writer.supports(String, null, null)
+        !writer.supports(String[], null, null)
+        !writer.supports(Object, null, null)
     }
 
     def 'StringEntityWriter creates an input stream from a String'() {
@@ -35,14 +36,20 @@ class StringEntityWriterSpec extends Specification {
         StringEntityWriter writer = new StringEntityWriter()
 
         when:
-        InputStream inputStream = writer.write("foobar", null)
+        HttpEntity entity = writer.write("foobar", null, null)
 
         then:
-        StreamUtils.readBytes(inputStream) == [102, 111, 111, 98, 97, 114] as byte[]
+        StreamUtils.readBytes(entity.getInputStream()) == [102, 111, 111, 98, 97, 114] as byte[]
     }
 
     def 'StringEntityWriter has a default content type of text/plain'() {
-        expect:
-        new StringEntityWriter().contentType == 'text/plain'
+        setup:
+        StringEntityWriter writer = new StringEntityWriter()
+
+        when:
+        HttpEntity entity = writer.write("foobar", null, null)
+
+        then:
+        entity.getContentType() == 'text/plain'
     }
 }
