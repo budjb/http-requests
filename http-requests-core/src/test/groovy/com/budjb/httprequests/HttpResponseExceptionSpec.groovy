@@ -17,7 +17,7 @@ package com.budjb.httprequests
 
 import com.budjb.httprequests.converter.EntityConverterManager
 import com.budjb.httprequests.exception.*
-import com.budjb.httprequests.mock.MockHttpResponse
+import com.budjb.httprequests.test.MockHttpResponse
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -25,13 +25,8 @@ class HttpResponseExceptionSpec extends Specification {
     @Unroll
     def 'When an HttpResponseException is build with status #status, exception type #type is returned'() {
         setup:
-        HttpResponse response = new MockHttpResponse(
-            new EntityConverterManager([]),
-            new HttpRequest(),
-            status,
-            new MultiValuedMap(),
-            null
-        )
+        HttpResponse response = new MockHttpResponse(EntityConverterManager.empty)
+        response.status = status
 
         expect:
         HttpStatusException.build(response).getClass() == type

@@ -15,10 +15,7 @@
  */
 package com.budjb.httprequests.reference;
 
-import com.budjb.httprequests.HttpEntity;
-import com.budjb.httprequests.HttpRequest;
-import com.budjb.httprequests.HttpResponse;
-import com.budjb.httprequests.MultiValuedMap;
+import com.budjb.httprequests.*;
 import com.budjb.httprequests.converter.EntityConverterManager;
 
 import java.io.IOException;
@@ -31,7 +28,7 @@ import java.util.regex.Pattern;
 /**
  * An {@link HttpResponse} implementation that wraps an {@link HttpURLConnection} object.
  */
-class ReferenceHttpResponse extends HttpResponse {
+class ReferenceHttpResponse extends AbstractHttpResponse {
     /**
      * Pattern to parse content type.
      */

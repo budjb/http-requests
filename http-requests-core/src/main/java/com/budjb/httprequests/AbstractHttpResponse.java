@@ -15,29 +15,81 @@
  */
 package com.budjb.httprequests;
 
+import com.budjb.httprequests.converter.EntityConverterManager;
 import com.budjb.httprequests.exception.UnsupportedConversionException;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.util.List;
 
 /**
  * An object that represents the response of an HTTP request.
  */
-public interface HttpResponse extends Closeable {
+public abstract class AbstractHttpResponse implements HttpResponse {
+    /**
+     * Request properties used to configure the request that generated this response.
+     */
+    private final HttpRequest request;
+
+    /**
+     * HTTP response status.
+     */
+    private final int status;
+
+    /**
+     * Response headers.
+     */
+    private final MultiValuedMap headers = new MultiValuedMap();
+
+    /**
+     * Converter manager.
+     */
+    private final EntityConverterManager converterManager;
+
+    /**
+     * Response entity.
+     */
+    private HttpEntity entity;
+
+    /**
+     * Constructor.
+     *
+     * @param converterManager Converter manager.
+     * @param request          Request properties used to make the request.
+     * @param status           HTTP response code.
+     * @param headers          Headers contained in the response.
+     * @param entity           Response entity (may be null).
+     * @throws IOException When an IO exception occurs.
+     */
+    protected AbstractHttpResponse(EntityConverterManager converterManager, HttpRequest request, int status, MultiValuedMap headers, HttpEntity entity) throws IOException {
+        this.request = request;
+        this.converterManager = converterManager;
+        this.status = status;
+        this.headers.putAll(headers);
+        this.entity = entity;
+
+        if (entity != null && request.isBufferResponseEntity()) {
+            entity.buffer();
+        }
+    }
+
     /**
      * Returns the status code of the response.
      *
      * @return The status code of the response.
      */
-    int getStatus();
+
+    public int getStatus() {
+        return status;
+    }
 
     /**
      * Returns the HTTP request.
      *
      * @return The HTTP request.
      */
-    HttpRequest getRequest();
+    public HttpRequest getRequest() {
+        return request;
+    }
 
     /**
      * Returns the first value of the header with the given name, or null if it doesn't exist.
@@ -45,7 +97,12 @@ public interface HttpResponse extends Closeable {
      * @param name Name of the header.
      * @return The first value of the requested header, or null if it doesn't exist.
      */
-    String getHeader(String name);
+    public String getHeader(String name) {
+        if (getHeaders().containsKey(name) && getHeaders().get(name).size() > 0) {
+            return getHeaders().get(name).get(0);
+        }
+        return null;
+    }
 
     /**
      * Returns a list of values of the header with the given name, or null if the header doesn't exist.
@@ -53,7 +110,9 @@ public interface HttpResponse extends Closeable {
      * @param name Name of the header.
      * @return A list of values of the requested header, or null if it doesn't exist.
      */
-    List<String> getHeaders(String name);
+    public List<String> getHeaders(String name) {
+        return getHeaders().getOrDefault(name, null);
+    }
 
     /**
      * Return all response headers.
@@ -63,7 +122,9 @@ public interface HttpResponse extends Closeable {
      *
      * @return A copy of the map containing the response headers.
      */
-    MultiValuedMap getHeaders();
+    public MultiValuedMap getHeaders() {
+        return headers;
+    }
 
     /**
      * Returns the entity.
@@ -74,14 +135,18 @@ public interface HttpResponse extends Closeable {
      *
      * @return The response entity.
      */
-    HttpEntity getEntity();
+    public HttpEntity getEntity() {
+        return entity;
+    }
 
     /**
      * Sets the HTTP entity of the response.
      *
      * @param entity HTTP entity.
      */
-    void setEntity(HttpEntity entity);
+    public void setEntity(HttpEntity entity) {
+        this.entity = entity;
+    }
 
     /**
      * Returns the entity, converted to the given class type.
@@ -92,12 +157,36 @@ public interface HttpResponse extends Closeable {
      * @throws UnsupportedConversionException when no converter is found to convert the entity.
      * @throws IOException                    When an IO exception occurs.
      */
-    <T> T getEntity(Class<T> type) throws UnsupportedConversionException, IOException;
+    public <T> T getEntity(Class<T> type) throws UnsupportedConversionException, IOException {
+        if (entity == null) {
+            return null;
+        }
+
+        T object = converterManager.read(type, entity);
+        entity.close();
+        return object;
+    }
+
+    /**
+     * Closes the entity and releases any system resources associated
+     * with it. If the response is already closed then invoking this
+     * method has no effect.
+     *
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    public void close() throws IOException {
+        if (entity != null) {
+            entity.close();
+        }
+    }
 
     /**
      * Returns whether the response contains an entity.
      *
      * @return Whether the response contains an entity.
      */
-    boolean hasEntity();
+    public boolean hasEntity() {
+        return entity != null;
+    }
 }

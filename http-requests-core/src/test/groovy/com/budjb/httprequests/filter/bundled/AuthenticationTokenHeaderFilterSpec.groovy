@@ -15,32 +15,33 @@
  */
 package com.budjb.httprequests.filter.bundled
 
-import com.budjb.httprequests.HttpClientFactory
 import com.budjb.httprequests.HttpContext
 import com.budjb.httprequests.HttpRequest
 import com.budjb.httprequests.converter.EntityConverterManager
 import com.budjb.httprequests.converter.bundled.ByteArrayEntityWriter
 import com.budjb.httprequests.converter.bundled.StringEntityWriter
-import com.budjb.httprequests.mock.MockHttpClient
-import com.budjb.httprequests.mock.MockHttpClientFactory
+import com.budjb.httprequests.test.MockHttpClientFactory
+import com.budjb.httprequests.test.MockHttpResponse
+import com.budjb.httprequests.test.RequestMock
 import spock.lang.Specification
 
 import java.time.LocalDate
 
 class AuthenticationTokenHeaderFilterSpec extends Specification {
-    MockHttpClient client
+    MockHttpClientFactory httpClientFactory
 
     def setup() {
         EntityConverterManager converterManager = new EntityConverterManager([
             new StringEntityWriter(),
             new ByteArrayEntityWriter()
         ])
-        HttpClientFactory httpClientFactory = new MockHttpClientFactory(converterManager)
-        client = (MockHttpClient) httpClientFactory.createHttpClient()
+        httpClientFactory = new MockHttpClientFactory(converterManager)
     }
 
     def 'When authentication is valid, the request succeeds'() {
         setup:
+        httpClientFactory.createMock().setRequestUri('http://foo.bar.com').setResponseStatusCode(200)
+
         AuthenticationTokenHeaderFilter filter = new AuthenticationTokenHeaderFilter() {
             {
                 setAuthenticationToken('foo')
@@ -60,15 +61,17 @@ class AuthenticationTokenHeaderFilterSpec extends Specification {
         HttpRequest request = new HttpRequest('http://foo.bar.com').addFilter(filter)
 
         when:
-        client.get request
+        MockHttpResponse response = (MockHttpResponse) httpClientFactory.createHttpClient().get(request)
 
         then:
-        client.httpContext.retries == 0
-        client.httpContext.request.getHeaders().get('X-Auth-Token') == ['foo']
+        response.context.retries == 0
+        response.context.request.getHeaders().get('X-Auth-Token') == ['foo']
     }
 
     def 'When authentication fails, the request is retried'() {
         setup:
+        RequestMock mock = httpClientFactory.createMock().setRequestUri('http://foo.bar.com').setResponseStatusCode(401)
+
         AuthenticationTokenHeaderFilter filter = new AuthenticationTokenHeaderFilter() {
             {
                 setAuthenticationToken('foo')
@@ -86,25 +89,26 @@ class AuthenticationTokenHeaderFilterSpec extends Specification {
 
             @Override
             boolean isRetryRequired(HttpContext httpContext) {
-                client.status = 200
+                mock.setResponseStatusCode(200)
                 super.isRetryRequired(httpContext)
             }
         }
-        client.status = 401
 
         HttpRequest request = new HttpRequest('http://foo.bar.com').addFilter(filter)
 
         when:
-        def response = client.get request
+        MockHttpResponse response = (MockHttpResponse) httpClientFactory.createHttpClient().get(request)
 
         then:
-        client.httpContext.retries == 1
-        client.httpContext.request.getHeaders().get('X-Auth-Token') == ['bar']
+        response.context.retries == 1
+        response.context.request.getHeaders().get('X-Auth-Token') == ['bar']
         response.status == 200
     }
 
     def 'When the authentication token has expired, the client is re-authenticated'() {
         setup:
+        httpClientFactory.createMock().setRequestUri('http://foo.bar.com').setResponseStatusCode(200)
+
         AuthenticationTokenHeaderFilter filter = new AuthenticationTokenHeaderFilter() {
             {
                 setAuthenticationToken('foo')
@@ -125,10 +129,10 @@ class AuthenticationTokenHeaderFilterSpec extends Specification {
         HttpRequest request = new HttpRequest('http://foo.bar.com').addFilter(filter)
 
         when:
-        client.get request
+        MockHttpResponse response = (MockHttpResponse) httpClientFactory.createHttpClient().get(request)
 
         then:
-        client.httpContext.retries == 0
-        client.httpContext.request.getHeaders().get('X-Auth-Token') == ['bar']
+        response.context.retries == 0
+        response.context.request.getHeaders().get('X-Auth-Token') == ['bar']
     }
 }

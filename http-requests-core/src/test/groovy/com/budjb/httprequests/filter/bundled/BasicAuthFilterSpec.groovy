@@ -16,22 +16,26 @@
 
 package com.budjb.httprequests.filter.bundled
 
-import com.budjb.httprequests.HttpClient
+
 import com.budjb.httprequests.HttpRequest
-import com.budjb.httprequests.mock.MockHttpClientFactory
+import com.budjb.httprequests.converter.EntityConverterManager
+import com.budjb.httprequests.test.MockHttpClientFactory
+import com.budjb.httprequests.test.MockHttpResponse
 import spock.lang.Specification
 
 class BasicAuthFilterSpec extends Specification {
     def 'When the basic auth filter is used, the correct header is set'() {
         setup:
-        HttpClient client = new MockHttpClientFactory().createHttpClient()
+        MockHttpClientFactory httpClientFactory = new MockHttpClientFactory(EntityConverterManager.empty)
+        httpClientFactory.createMock().setRequestUri('http://foo.bar.com')
+
         String username = 'foo'
         String password = 'bar'
 
         HttpRequest request = new HttpRequest('http://foo.bar.com').addFilter(new BasicAuthFilter(username, password))
 
         when:
-        def response = client.get request
+        MockHttpResponse response = (MockHttpResponse) httpClientFactory.createHttpClient().get(request)
 
         then:
         response.request.getHeaders().get('Authorization') == ["Basic " + "$username:$password".getBytes().encodeBase64()]

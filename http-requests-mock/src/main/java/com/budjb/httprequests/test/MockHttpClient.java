@@ -56,6 +56,6 @@ public class MockHttpClient extends AbstractHttpClient {
 
         mock.incrementCalled();
 
-        return new MockHttpResponse(request, getConverterManager(), mock);
+        return new MockHttpResponse(getConverterManager(), context, request, mock);
     }
 }

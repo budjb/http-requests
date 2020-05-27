@@ -15,10 +15,7 @@
  */
 package com.budjb.httprequests.jersey2;
 
-import com.budjb.httprequests.HttpEntity;
-import com.budjb.httprequests.HttpRequest;
-import com.budjb.httprequests.HttpResponse;
-import com.budjb.httprequests.MultiValuedMap;
+import com.budjb.httprequests.*;
 import com.budjb.httprequests.converter.EntityConverterManager;
 
 import javax.ws.rs.core.MediaType;
@@ -29,7 +26,7 @@ import java.io.InputStream;
 /**
  * An {@link HttpResponse} implementation that wraps a {@link Response}.
  */
-class JerseyHttpResponse extends HttpResponse {
+class JerseyHttpResponse extends AbstractHttpResponse {
     /**
      * Jersey Client response.
      */
@@ -76,6 +73,15 @@ class JerseyHttpResponse extends HttpResponse {
         }
 
         return new HttpEntity((InputStream) response.getEntity(), contentType, charSet);
+    }
+
+    /**
+     * Returns the Jersey response object.
+     *
+     * @return The Jersey response object.
+     */
+    public Response getResponse() {
+        return response;
     }
 
     /**

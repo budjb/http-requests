@@ -15,6 +15,7 @@
  */
 package com.budjb.httprequests.httpcomponents.client;
 
+import com.budjb.httprequests.AbstractHttpResponse;
 import com.budjb.httprequests.HttpRequest;
 import com.budjb.httprequests.HttpResponse;
 import com.budjb.httprequests.MultiValuedMap;
@@ -31,7 +32,7 @@ import java.util.Arrays;
 /**
  * An {@link HttpResponse} implementation that wraps an Apache {@link CloseableHttpResponse}.
  */
-class HttpComponentsResponse extends HttpResponse {
+class HttpComponentsResponse extends AbstractHttpResponse {
     /**
      * The response returned from the Apache HTTP client.
      */

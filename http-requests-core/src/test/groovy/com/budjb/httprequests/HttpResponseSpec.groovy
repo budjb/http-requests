@@ -17,7 +17,7 @@ package com.budjb.httprequests
 
 import com.budjb.httprequests.converter.EntityConverterManager
 import com.budjb.httprequests.converter.bundled.StringEntityReader
-import com.budjb.httprequests.mock.MockHttpResponse
+import com.budjb.httprequests.test.MockHttpResponse
 import spock.lang.Specification
 
 class HttpResponseSpec extends Specification {
@@ -26,13 +26,9 @@ class HttpResponseSpec extends Specification {
         EntityConverterManager converterManager = new EntityConverterManager([new StringEntityReader()])
 
         HttpEntity httpEntity = new HttpEntity(new ByteArrayInputStream('åäö'.getBytes()), 'text/plain', 'euc-jp')
-        HttpResponse response = new MockHttpResponse(
-            converterManager,
-            new HttpRequest(),
-            200,
-            new MultiValuedMap(),
-            httpEntity
-        )
+        HttpResponse response = new MockHttpResponse(converterManager)
+        response.entity = httpEntity
+
 
         when:
         String entity = response.getEntity(String)
@@ -48,13 +44,8 @@ class HttpResponseSpec extends Specification {
         headers.add("hi", "there")
         headers.add("peek", "boo")
 
-        HttpResponse response = new MockHttpResponse(
-            new EntityConverterManager([]),
-            new HttpRequest(),
-            200,
-            headers,
-            null
-        )
+        HttpResponse response = new MockHttpResponse(EntityConverterManager.empty)
+        response.headers = headers
 
         expect:
         response.getHeaders() == [
@@ -72,13 +63,7 @@ class HttpResponseSpec extends Specification {
 
     def 'When the response contains no entity, hasEntity() returns false'() {
         setup:
-        HttpResponse response = new MockHttpResponse(
-            new EntityConverterManager([]),
-            new HttpRequest(),
-            200,
-            new MultiValuedMap(),
-            null
-        )
+        HttpResponse response = new MockHttpResponse(EntityConverterManager.empty)
 
         expect:
         !response.hasEntity()
@@ -86,15 +71,9 @@ class HttpResponseSpec extends Specification {
 
     def 'When the response contains an entity, hasEntity() returns true'() {
         setup:
-        HttpRequest request = new HttpRequest().setBufferResponseEntity(false)
         HttpEntity entity = new HttpEntity(new ByteArrayInputStream([1, 2, 3] as byte[]))
-        HttpResponse response = new MockHttpResponse(
-            new EntityConverterManager([]),
-            request,
-            200,
-            new MultiValuedMap(),
-            entity
-        )
+        HttpResponse response = new MockHttpResponse(EntityConverterManager.empty)
+        response.entity = entity
 
         expect:
         response.hasEntity()

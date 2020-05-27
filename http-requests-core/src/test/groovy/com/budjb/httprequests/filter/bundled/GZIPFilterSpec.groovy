@@ -17,26 +17,29 @@
 package com.budjb.httprequests.filter.bundled
 
 import com.budjb.httprequests.HttpRequest
-import com.budjb.httprequests.converter.EntityConverterManager
-import com.budjb.httprequests.converter.bundled.StringEntityWriter
 import com.budjb.httprequests.exception.EntityConverterException
-import com.budjb.httprequests.mock.MockHttpClient
-import com.budjb.httprequests.mock.MockHttpClientFactory
 import spock.lang.Specification
 
 class GZIPFilterSpec extends Specification {
     def 'When the GZIP filter is used, the input is compressed and the proper header is set'() {
         setup:
-        EntityConverterManager converterManager = new EntityConverterManager([new StringEntityWriter()])
-        MockHttpClient client = (MockHttpClient) new MockHttpClientFactory(converterManager).createHttpClient()
-        HttpRequest request = new HttpRequest('http://foo.bar.com').addFilter(new GZIPFilter())
+        HttpRequest request = new HttpRequest()
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()
+        GZIPFilter filter = new GZIPFilter()
+        OutputStream filteredStream = filter.filter(byteArrayOutputStream)
 
         when:
-        def response = client.post request, 'hi there'
+        filteredStream.write('hi there'.bytes)
 
         then:
-        response.request.getHeaders().get('Content-Encoding') == ['gzip']
-        client.requestBuffer == [31, -117, 8, 0, 0, 0, 0, 0, 0, 0] as byte[]
+        byteArrayOutputStream.toByteArray() == [31, -117, 8, 0, 0, 0, 0, 0, 0, 0] as byte[]
+
+        when:
+        filter.filter(request)
+
+        then:
+        request.getHeaders().get('Content-Encoding') == ['gzip']
     }
 
     def 'When an IOException occurs, it is wrapped in an EntityConverterException'() {

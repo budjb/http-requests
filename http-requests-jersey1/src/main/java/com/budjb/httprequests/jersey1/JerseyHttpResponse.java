@@ -15,10 +15,7 @@
  */
 package com.budjb.httprequests.jersey1;
 
-import com.budjb.httprequests.HttpEntity;
-import com.budjb.httprequests.HttpRequest;
-import com.budjb.httprequests.HttpResponse;
-import com.budjb.httprequests.MultiValuedMap;
+import com.budjb.httprequests.*;
 import com.budjb.httprequests.converter.EntityConverterManager;
 import com.sun.jersey.api.client.ClientResponse;
 
@@ -28,7 +25,7 @@ import java.io.IOException;
 /**
  * An {@link HttpResponse} implementation that wraps a {@link ClientResponse}.
  */
-class JerseyHttpResponse extends HttpResponse {
+class JerseyHttpResponse extends AbstractHttpResponse {
     /**
      * Jersey Client response.
      */

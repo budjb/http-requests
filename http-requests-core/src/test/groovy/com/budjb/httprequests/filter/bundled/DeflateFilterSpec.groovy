@@ -16,25 +16,27 @@
 package com.budjb.httprequests.filter.bundled
 
 import com.budjb.httprequests.HttpRequest
-import com.budjb.httprequests.converter.EntityConverterManager
-import com.budjb.httprequests.converter.bundled.StringEntityWriter
-import com.budjb.httprequests.mock.MockHttpClient
-import com.budjb.httprequests.mock.MockHttpClientFactory
 import spock.lang.Specification
 
-class DeflateFilterspec extends Specification {
+class DeflateFilterSpec extends Specification {
     def 'When the deflate filter is used, the input is compressed and the proper header is set'() {
         setup:
-        EntityConverterManager converterManager = new EntityConverterManager([new StringEntityWriter()])
-        MockHttpClient client = (MockHttpClient) new MockHttpClientFactory(converterManager).createHttpClient()
+        HttpRequest request = new HttpRequest()
 
-        HttpRequest request = new HttpRequest('http://foo.bar.com').addFilter(new DeflateFilter())
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()
+        DeflateFilter filter = new DeflateFilter()
+        OutputStream filteredStream = filter.filter(byteArrayOutputStream)
 
         when:
-        def response = client.post request, 'hi there'
+        filteredStream.write('hi there'.bytes)
 
         then:
-        response.request.getHeaders().get('Content-Encoding') == ['deflate']
-        client.requestBuffer == [120, -100] as byte[]
+        byteArrayOutputStream.toByteArray() == [120, -100] as byte[]
+
+        when:
+        filter.filter(request)
+
+        then:
+        request.getHeaders().get('Content-Encoding') == ['deflate']
     }
 }
