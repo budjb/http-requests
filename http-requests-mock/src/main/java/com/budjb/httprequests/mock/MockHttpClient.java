@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.budjb.httprequests.test;
+package com.budjb.httprequests.mock;
 
 import com.budjb.httprequests.*;
 import com.budjb.httprequests.converter.EntityConverterManager;

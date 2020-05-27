@@ -20,9 +20,9 @@ import com.budjb.httprequests.HttpRequest
 import com.budjb.httprequests.converter.EntityConverterManager
 import com.budjb.httprequests.converter.bundled.ByteArrayEntityWriter
 import com.budjb.httprequests.converter.bundled.StringEntityWriter
-import com.budjb.httprequests.test.MockHttpClientFactory
-import com.budjb.httprequests.test.MockHttpResponse
-import com.budjb.httprequests.test.RequestMock
+import com.budjb.httprequests.mock.MockHttpClientFactory
+import com.budjb.httprequests.mock.MockHttpResponse
+import com.budjb.httprequests.mock.RequestMock
 import spock.lang.Specification
 
 import java.time.LocalDate

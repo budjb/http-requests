@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.budjb.httprequests.test
+package com.budjb.httprequests.mock
 
 import com.budjb.httprequests.HttpMethod
 import com.budjb.httprequests.HttpRequest

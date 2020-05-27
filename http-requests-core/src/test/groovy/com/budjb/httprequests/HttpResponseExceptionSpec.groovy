@@ -17,7 +17,7 @@ package com.budjb.httprequests
 
 import com.budjb.httprequests.converter.EntityConverterManager
 import com.budjb.httprequests.exception.*
-import com.budjb.httprequests.test.MockHttpResponse
+import com.budjb.httprequests.mock.MockHttpResponse
 import spock.lang.Specification
 import spock.lang.Unroll
 
