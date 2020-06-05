@@ -20,10 +20,11 @@ import org.springframework.boot.test.context.SpringBootTest
 import spock.lang.Ignore
 
 import javax.net.ssl.SSLException
+import java.security.KeyStore
 
 @Ignore
 @SpringBootTest(classes = TestApp, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = [
-    'server.ssl.key-store=classpath:keystore.jks',
+    'server.ssl.key-store=classpath:server-keystore.jks',
     'server.ssl.key-password=password',
     'spring.mvc.dispatch-trace-request=true'
 ])
@@ -45,6 +46,18 @@ abstract class HttpsIntegrationTestSuiteSpec extends AbstractHttpsIntegrationSpe
 
         when:
         client.get(new HttpRequest().setUri("${baseUrl}/testBasicGet").setSslValidated(false))
+
+        then:
+        notThrown SSLException
+    }
+
+    def 'Given that the client truststore accepts the self-signed server certificate, when a request is made over SSL, no SSL exception is thrown'() {
+        setup:
+        HttpClient client = httpClientFactory.createHttpClient()
+
+        when:
+        KeyStore trustStore = getClientTrustStore()
+        client.get(new HttpRequest().setUri("${baseUrl}/testBasicGet").setSslTrustStore(trustStore))
 
         then:
         notThrown SSLException

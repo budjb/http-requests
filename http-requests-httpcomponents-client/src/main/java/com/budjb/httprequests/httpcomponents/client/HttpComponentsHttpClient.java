@@ -119,8 +119,8 @@ public class HttpComponentsHttpClient extends AbstractHttpClient {
 
         builder.setDefaultRequestConfig(requestConfig);
 
+        builder.setSSLContext(this.createSSLContext(request));
         if (!request.isSslValidated()) {
-            builder.setSSLContext(createTrustingSSLContext());
             builder.setSSLHostnameVerifier(createTrustingHostnameVerifier());
         }
 
