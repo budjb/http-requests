@@ -94,14 +94,10 @@ public class JerseyHttpClient extends AbstractHttpClient {
      * @return Configured Jersey {@link Client}.
      */
     private Client createClient(HttpRequest request) throws GeneralSecurityException {
-        if (request.isSslValidated()) {
-            return Client.create();
-        }
-
         ClientConfig config = new DefaultClientConfig();
         config.getProperties().put(HTTPSProperties.PROPERTY_HTTPS_PROPERTIES, new HTTPSProperties(
-            createTrustingHostnameVerifier(),
-            createTrustingSSLContext()
+            request.isSslValidated() ? null : createTrustingHostnameVerifier(),
+            this.createSSLContext(request)
         ));
 
         return Client.create(config);

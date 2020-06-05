@@ -20,9 +20,12 @@ import com.budjb.httprequests.exception.HttpClientException;
 import com.budjb.httprequests.exception.UnsupportedConversionException;
 import com.budjb.httprequests.filter.HttpClientFilterProcessor;
 
+import java.security.KeyStore;
 import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 import java.io.IOException;
 import java.io.InputStream;
@@ -765,6 +768,27 @@ public abstract class AbstractHttpClient implements HttpClient {
 
         SSLContext sslContext = SSLContext.getInstance("TLS");
         sslContext.init(null, certs, new SecureRandom());
+
+        return sslContext;
+    }
+
+    protected SSLContext createSSLContext(HttpRequest request) throws GeneralSecurityException {
+        if (!request.isSslValidated()) {
+            return this.createTrustingSSLContext();
+        }
+
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        KeyStore truststore = request.getTrustStore();
+
+        final TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        tmf.init(truststore);
+
+        final TrustManager[] tms = tmf.getTrustManagers();
+
+        sslContext.init(
+                null,
+                tms.length == 0 ? null : tms,
+                null);
 
         return sslContext;
     }

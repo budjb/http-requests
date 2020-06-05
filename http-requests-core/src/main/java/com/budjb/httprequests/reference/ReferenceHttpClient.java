@@ -68,9 +68,12 @@ class ReferenceHttpClient extends AbstractHttpClient {
 
         HttpURLConnection connection = (HttpURLConnection) uri.toURL().openConnection();
 
-        if (connection instanceof HttpsURLConnection && !request.isSslValidated()) {
-            ((HttpsURLConnection) connection).setHostnameVerifier(createTrustingHostnameVerifier());
-            ((HttpsURLConnection) connection).setSSLSocketFactory(createTrustingSSLContext().getSocketFactory());
+        if (connection instanceof HttpsURLConnection) {
+            ((HttpsURLConnection) connection).setSSLSocketFactory(this.createSSLContext(request).getSocketFactory());
+            if (!request.isSslValidated()) {
+                ((HttpsURLConnection) connection).setHostnameVerifier(createTrustingHostnameVerifier());
+            }
+
         }
 
         connection.setRequestMethod(context.getMethod().name());

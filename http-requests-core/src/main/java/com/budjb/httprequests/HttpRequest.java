@@ -19,6 +19,7 @@ import com.budjb.httprequests.filter.HttpClientFilter;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -57,6 +58,11 @@ public class HttpRequest implements Cloneable {
      * Whether SSL certificates will be validated.
      */
     private boolean sslValidated = true;
+
+    /**
+     * {@link KeyStore} that holds trusted certificates.
+     */
+    private KeyStore trustStore;
 
     /**
      * Whether the client should automatically follow redirects.
@@ -193,6 +199,25 @@ public class HttpRequest implements Cloneable {
      */
     public HttpRequest setSslValidated(boolean sslValidated) {
         this.sslValidated = sslValidated;
+        return this;
+    }
+
+    /**
+     * Returns the {@link KeyStore} that contains trusted certificates. Default is null.
+     *
+     * @return The trust-store for the client.
+     */
+    public KeyStore getTrustStore() {
+        return this.trustStore;
+    }
+
+    /**
+     * Set the {@link KeyStore} with trusted certificate. Default is null.
+     *
+     * @param trustStore The trust-store the client should use to validate certificates.
+     */
+    public HttpRequest setSslTrustStore(KeyStore trustStore) {
+        this.trustStore = trustStore;
         return this;
     }
 

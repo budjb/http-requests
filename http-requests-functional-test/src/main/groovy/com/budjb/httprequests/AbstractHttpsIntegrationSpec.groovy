@@ -22,11 +22,10 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.test.context.junit4.SpringRunner
 import spock.lang.Ignore
 
+import java.security.KeyStore
+
 @Ignore
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, properties = [
-    'server.ssl.key-store = classpath:keystore.jks',
-    'server.ssl.key-password = password'
-])
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 abstract class AbstractHttpsIntegrationSpec extends AbstractIntegrationSpec {
     /**
      * Return the base URL of the running server.
@@ -36,5 +35,13 @@ abstract class AbstractHttpsIntegrationSpec extends AbstractIntegrationSpec {
     @Override
     String getBaseUrl() {
         return "https://localhost:${webPort}"
+    }
+
+    KeyStore getClientTrustStore() {
+        KeyStore trustStore = KeyStore.getInstance("JKS")
+        this.getClass().getClassLoader().getResource("client-keystore.jks").withInputStream {
+            trustStore.load(it, "password".toCharArray())
+        }
+        return trustStore
     }
 }

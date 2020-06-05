@@ -46,7 +46,8 @@ public class JerseyHttpClient extends AbstractHttpClient {
      * {@inheritDoc}
      */
     @Override
-    protected HttpResponse execute(HttpContext context, HttpEntity httpEntity, HttpClientFilterProcessor filterProcessor) throws IOException, GeneralSecurityException {
+    protected HttpResponse execute(HttpContext context, HttpEntity httpEntity,
+            HttpClientFilterProcessor filterProcessor) throws IOException, GeneralSecurityException {
         HttpRequest request = context.getRequest();
         HttpMethod method = context.getMethod();
 
@@ -101,8 +102,9 @@ public class JerseyHttpClient extends AbstractHttpClient {
     private Client createClient(HttpRequest request) throws GeneralSecurityException {
         ClientBuilder builder = ClientBuilder.newBuilder();
 
-        if (!request.isSslValidated()) {
-            builder = builder.hostnameVerifier(createTrustingHostnameVerifier()).sslContext(createTrustingSSLContext());
+        builder.sslContext(this.createSSLContext(request));
+        if (request.isSslValidated()) {
+            builder.hostnameVerifier(createTrustingHostnameVerifier());
         }
 
         ClientConfig clientConfig = new ClientConfig();
@@ -126,7 +128,7 @@ public class JerseyHttpClient extends AbstractHttpClient {
     /**
      * Applies the request's query parameters to the web target.
      *
-     * @param target          Web target.
+     * @param target Web target.
      * @param queryParameters Query parameters.
      * @return The new web resource with query parameters applied.
      */
